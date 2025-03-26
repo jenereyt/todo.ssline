@@ -1,0 +1,522 @@
+/* Общие стили */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7fa;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+/* Таблица */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #fff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 25px 0;
+    display: block;
+    height: 80vh;
+}
+
+button {
+    border: none;
+    color: white;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+}
+
+th {
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    padding: 15px 20px;
+    text-align: left;
+}
+
+tbody {
+    display: block;
+    overflow-y: auto;
+    max-height: calc(80vh - 48px);
+    width: 100%;
+}
+
+tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+td {
+    background-color: #fff;
+    font-size: 15px;
+    transition: background-color 0.3s ease;
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #e6eaee;
+}
+
+tr:hover td {
+    background-color: #f8fafc;
+}
+
+.editable:hover {
+    background-color: #e9f1ff;
+    cursor: pointer;
+    color: #4a90e2;
+}
+
+.selected {
+    background-color: #e6f3ff;
+    border: 2px solid #4d94ff;
+    color: #333;
+}
+
+td.clicked {
+    background-color: #cce5ff;
+    font-weight: 600;
+}
+
+/* Контролы */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: end;
+    position: relative;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.date-range {
+    display: flex;
+    gap: 5px;
+}
+
+.date-range input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d8dde3;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.date-range input[type="date"]:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
+}
+
+.filter-group input[type="text"] {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #d8dde3;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.filter-group input[type="text"]:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
+}
+
+.filters button {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+#saveGlobalExecutor,#closeGlobalModal,#addGlobalExecutorBtn,#addExecutorBtn{
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 5px;
+}
+
+.filters button:hover {
+    background: linear-gradient(135deg, #357abd, #2a6396);
+    transform: translateY(-1px);
+}
+
+#resetFiltersBtn {
+    background-color: #ff4444;
+}
+
+#resetFiltersBtn:hover {
+    background-color: #cc0000;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    position: relative;
+}
+
+#searchInput {
+    padding: 12px 20px;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #d8dde3;
+    border-radius: 8px 0 0 8px;
+    font-size: 14px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+#searchBtn {
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+#searchBtn:hover {
+    background: linear-gradient(135deg, #357abd, #2a6396);
+    transform: translateY(-1px);
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.25);
+}
+
+/* Рекомендации */
+.suggestions {
+    position: absolute;
+    top: 20px;
+    background: #fff;
+    border: 1px solid #e6eaee;
+    border-radius: 6px;
+    max-height: 150px;
+    overflow-y: auto;
+    width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 20;
+    margin-top: 40px;
+}
+
+.suggestions.hidden {
+    display: none;
+}
+
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+    background-color: #f8fafc;
+}
+
+/* Модальное окно */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.full-task-modal {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 850px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid #e6eaee;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content h2 {
+    margin: 0 0 25px;
+    font-size: 24px;
+    color: #4a90e2;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e6f3ff;
+    padding-bottom: 10px;
+}
+
+.task-details .field {
+    margin: 15px 0;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-details .field:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.task-details label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #357abd;
+    font-size: 15px;
+}
+
+.task-details input[type="text"],
+.task-details input[type="date"],
+.task-details textarea,
+.task-details select {
+    width: 780px;
+    padding: 12px;
+    border: 1px solid #d8dde3;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#editAccepted,
+#editCompleted {
+    width: 100%;
+}
+
+modal-content h2 {
+    margin: 0 0 15px;
+    font-size: 20px;
+    color: #333;
+}
+
+.modal-content input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.modal-content input[type="text"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.modal-contente {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.task-details input[type="text"]:focus,
+.task-details input[type="date"]:focus,
+.task-details textarea:focus,
+.task-details select:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+}
+
+.task-details textarea {
+    min-height: 80px;
+    resize: none;
+}
+
+.executor-item, .comment-item, .file-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.executor-item:hover, .comment-item:hover, .file-item:hover {
+    transform: translateX(2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.executor-item button, .comment-item button, .file-item button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.executor-item button:hover, .comment-item button:hover, .file-item button:hover {
+    background: #c0392b;
+}
+
+#newExecutor, #newComment, #newFile {
+    margin-top: 10px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+    justify-content: flex-end;
+}
+
+#saveBtn, #addExecutor, #addComment, #addFile {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+#saveBtn:hover, #addExecutor:hover, #addComment:hover, #addFile:hover {
+    background: linear-gradient(135deg, #357abd, #2a6396);
+}
+
+#closeBtn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+#closeBtn:hover {
+    background: linear-gradient(135deg, #c0392b, #a32e23);
+}
+
+.comment-item small {
+    color: #888;
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.input-with-clear {
+    position: relative;
+    display: inline-block;
+}
+
+.clear-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+}
+
+/* Пагинация */
+.pagination {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    border: 1px solid #d8dde3;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination button:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.pagination button:disabled {
+    background-color: #e6eaee;
+    cursor: not-allowed;
+    color: #999;
+}
+
+.pagination button.active {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
+    border: none;
+}
+
+#resetFiltersBtn {
+    padding: 10px;
+}
