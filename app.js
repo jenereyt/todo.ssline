@@ -1,6 +1,17 @@
 let tasks = [
-    { id: 1, dateSet: "2025-03-25", project: "Проект Alpha", theme: "Разработка UI", description: "Создать интерфейс главной страницы", completed: true, executors: ["Иван Иванов", "Пётр Сидоров"], dateCompleted: "2025-03-26", accepted: "Да" },
-    { id: 2, dateSet: "2025-03-24", project: "Заказчик Beta", theme: "Исправление багов", description: "Пофиксить ошибку в авторизации", completed: false, executors: [], dateCompleted: "", accepted: "Нет" },
+    {
+        id: 1,
+        dateSet: "2025-03-25",
+        project: "Afrosiyob paranda",
+        theme: "Разработка UI",
+        description: "Создать интерфейс главной страницы",
+        completed: true,
+        executors: ["Иван Иванов", "Пётр Сидоров"],
+        dateCompleted: "2025-03-26",
+        accepted: "Да",
+        files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }]
+    },
+    { id: 2, dateSet: "2025-03-24", project: "Заказчик Beta", theme: "Исправление багов", description: "Пофиксить ошибку в авторизации", completed: false, executors: [], dateCompleted: "", accepted: "Нет", files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }, { name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }] },
     { id: 3, dateSet: "2025-03-20", project: "Проект Gamma", theme: "Тестирование API", description: "Проверить все эндпоинты", completed: false, executors: ["Анна Смирнова"], dateCompleted: "", accepted: "Нет" },
     { id: 4, dateSet: "2025-03-22", project: "Заказчик Delta", theme: "Дизайн логотипа", description: "Разработать новый логотип компании", completed: true, executors: ["Мария Петрова", "Алексей Кузнецов"], dateCompleted: "2025-03-24", accepted: "Да" },
     { id: 5, dateSet: "2025-03-23", project: "Проект Epsilon", theme: "Оптимизация кода", description: "Ускорить загрузку страницы", completed: false, executors: ["Дмитрий Соколов", "Ольга Николаева"], dateCompleted: "", accepted: "Нет" },
@@ -213,7 +224,7 @@ function createInterface() {
             projectSuggestions.classList.add("hidden");
         }
         // if (!executorInput.contains(e.target) && !executorSuggestions.contains)
-});
+    });
 }
 
 function applyFilters() {
@@ -373,53 +384,69 @@ function openEditModal(task) {
     modal.className = "modal";
 
     if (!task.comments) task.comments = [];
-    if (!task.files) task.files = []; // Предполагается, что files содержит { name, url }
+    if (!task.files) task.files = [];
 
     modal.innerHTML = `
         <div class="modal-content full-task-modal">
-            <h2>Задача #${task.id}</h2>
+            <button class="close-modal-btn" id="closeModalBtn">×</button>
+            <div class="modal-header">
+                <h2>Задача #${task.id}</h2>
+                <span>От: ${task.dateSet}</span>
+                <span>Проект: ${task.project}</span>
+                <div class="header-details">
+                    <div class="status-toggle">
+                        <label>Выполнено:</label>
+                        <label class="checkbox-google">
+                            <input type="checkbox" id="editCompleted" ${task.completed ? 'checked' : ''}>
+                            <span class="checkbox-google-switch"></span>
+                        </label>
+                    </div>
+                    <div class="status-toggle">
+                        <label>Принято:</label>
+                        <label class="checkbox-google">
+                            <input type="checkbox" id="editAccepted" ${task.accepted === 'Да' ? 'checked' : ''}>
+                            <span class="checkbox-google-switch"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
             <div class="task-details">
                 <div class="field">
-                    <label>Дата постановки:</label>
-                    <input type="date" value="${task.dateSet}" id="editDateSet" readonly>
-                </div>
-                <div class="field">
-                    <label>Проект:</label>
-                    <input type="text" value="${task.project}" id="editProject" readonly>
-                </div>
-                <div class="field">
                     <label>Тема:</label>
-                    <input type="text" value="${task.theme}" id="editTheme" readonly>
+                    <div class="editable-field">
+                        <span id="themeDisplay">${task.theme}</span>
+                        <button class="edit-btn" data-field="theme">✏️</button>
+                        <input type="text" id="editTheme" value="${task.theme}" class="hidden">
+                    </div>
                 </div>
                 <div class="field">
                     <label>Описание:</label>
-                    <textarea id="editDescription" readonly>${task.description}</textarea>
+                    <div class="editable-field">
+                        <span id="descriptionDisplay">${task.description}</span>
+                        <button class="edit-btn" data-field="description">✏️</button>
+                        <textarea id="editDescription" class="hidden">${task.description}</textarea>
+                    </div>
                 </div>
                 <div class="field">
                     <label>Исполнители:</label>
                     <div id="executorList" class="executor-list">
-                        <span>${task.executors.length ? task.executors.join(", ") : "Не назначены"}</span>
-                        <button id="addExecutorBtn">+</button>
+                        ${task.executors.length ? task.executors.map(ex => `
+                            <div class="executor-item">
+                                <span>${ex}</span>
+                                <button class="remove-executor" data-executor="${ex}">×</button>
+                            </div>
+                        `).join('') : '<span>Не назначены</span>'}
+                        <select id="addExecutorSelect">
+                            <option value="">Добавить исполнителя</option>
+                            ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(ex => `
+                                <option value="${ex}">${ex}</option>
+                            `).join('')}
+                        </select>
                     </div>
-                    <div id="executorDropdown" class="suggestions hidden"></div>
-                </div>
-                <div class="field">
-                    <label>Статус:</label>
-                    <select id="editCompleted">
-                        <option value="true" ${task.completed ? 'selected' : ''}>Выполнено</option>
-                        <option value="false" ${!task.completed ? 'selected' : ''}>Не выполнено</option>
-                    </select>
                 </div>
                 <div class="field">
                     <label>Дата выполнения:</label>
                     <input type="date" value="${task.dateCompleted || ''}" id="editDateCompleted">
-                </div>
-                <div class="field">
-                    <label>Принято:</label>
-                    <select id="editAccepted">
-                        <option value="Да" ${task.accepted === 'Да' ? 'selected' : ''}>Да</option>
-                        <option value="Нет" ${task.accepted === 'Нет' ? 'selected' : ''}>Нет</option>
-                    </select>
                 </div>
                 <div class="field comments">
                     <label>Комментарии:</label>
@@ -454,26 +481,41 @@ function openEditModal(task) {
     `;
     document.body.appendChild(modal);
 
-    // Обработчик кнопки "+"
-    const addExecutorBtn = modal.querySelector("#addExecutorBtn");
-    const executorDropdown = modal.querySelector("#executorDropdown");
-    addExecutorBtn.addEventListener("click", () => {
-        executorDropdown.innerHTML = "";
-        executorDropdown.classList.toggle("hidden");
-        const allExecutors = getAllExecutors();
-        allExecutors.forEach(ex => {
-            if (!task.executors.includes(ex)) {
-                const div = document.createElement("div");
-                div.textContent = ex;
-                div.className = "suggestion-item";
-                div.style.cursor = "pointer";
-                div.addEventListener("click", () => {
-                    task.executors.push(ex);
-                    updateExecutorList(task, modal);
-                    executorDropdown.classList.add("hidden");
-                });
-                executorDropdown.appendChild(div);
+    // Редактирование темы и описания
+    modal.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const field = btn.dataset.field;
+            const display = modal.querySelector(`#${field}Display`);
+            const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
+
+            display.classList.toggle("hidden");
+            input.classList.toggle("hidden");
+            btn.textContent = display.classList.contains("hidden") ? "💾" : "✏️";
+
+            if (!display.classList.contains("hidden")) {
+                task[field] = input.value;
+                display.textContent = task[field];
             }
+        });
+    });
+
+    // Добавление исполнителя через селект
+    const addExecutorSelect = modal.querySelector("#addExecutorSelect");
+    addExecutorSelect.addEventListener("change", (e) => {
+        const newExecutor = e.target.value;
+        if (newExecutor && !task.executors.includes(newExecutor)) {
+            task.executors.push(newExecutor);
+            updateExecutorList(task, modal);
+        }
+        e.target.value = ""; // Сбрасываем выбор
+    });
+
+    // Удаление исполнителей
+    modal.querySelectorAll(".remove-executor").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const executor = btn.dataset.executor;
+            task.executors = task.executors.filter(ex => ex !== executor);
+            updateExecutorList(task, modal);
         });
     });
 
@@ -499,42 +541,52 @@ function openEditModal(task) {
 
     // Сохранение
     modal.querySelector("#saveBtn").addEventListener("click", () => {
-        task.completed = modal.querySelector("#editCompleted").value === "true";
+        task.completed = modal.querySelector("#editCompleted").checked;
+        task.accepted = modal.querySelector("#editAccepted").checked ? "Да" : "Нет";
         task.dateCompleted = modal.querySelector("#editDateCompleted").value;
-        task.accepted = modal.querySelector("#editAccepted").value;
-
-        modal.remove();
         applyFilters();
+        modal.remove();
     });
 
+    // Закрытие модалки
     modal.querySelector("#closeBtn").addEventListener("click", () => modal.remove());
+    modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
 }
 
 function updateExecutorList(task, modal) {
     const executorList = modal.querySelector("#executorList");
+    const allExecutors = getAllExecutors();
     executorList.innerHTML = `
-        <span>${task.executors.length ? task.executors.join(", ") : "Не назначены"}</span>
-        <button id="addExecutorBtn">+</button>
+        ${task.executors.length ? task.executors.map(ex => `
+            <div class="executor-item">
+                <span>${ex}</span>
+                <button class="remove-executor" data-executor="${ex}">×</button>
+            </div>
+        `).join('') : '<span>Не назначены</span>'}
+        <select id="addExecutorSelect">
+            <option value="">Добавить исполнителя</option>
+            ${allExecutors.filter(ex => !task.executors.includes(ex)).map(ex => `
+                <option value="${ex}">${ex}</option>
+            `).join('')}
+        </select>
     `;
-    const addExecutorBtn = modal.querySelector("#addExecutorBtn");
-    const executorDropdown = modal.querySelector("#executorDropdown");
-    addExecutorBtn.addEventListener("click", () => {
-        executorDropdown.innerHTML = "";
-        executorDropdown.classList.toggle("hidden");
-        const allExecutors = getAllExecutors();
-        allExecutors.forEach(ex => {
-            if (!task.executors.includes(ex)) {
-                const div = document.createElement("div");
-                div.textContent = ex;
-                div.className = "suggestion-item";
-                div.style.cursor = "pointer";
-                div.addEventListener("click", () => {
-                    task.executors.push(ex);
-                    updateExecutorList(task, modal);
-                    executorDropdown.classList.add("hidden");
-                });
-                executorDropdown.appendChild(div);
-            }
+
+    // Перепривязываем обработчики
+    const addExecutorSelect = modal.querySelector("#addExecutorSelect");
+    addExecutorSelect.addEventListener("change", (e) => {
+        const newExecutor = e.target.value;
+        if (newExecutor && !task.executors.includes(newExecutor)) {
+            task.executors.push(newExecutor);
+            updateExecutorList(task, modal);
+        }
+        e.target.value = "";
+    });
+
+    modal.querySelectorAll(".remove-executor").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const executor = btn.dataset.executor;
+            task.executors = task.executors.filter(ex => ex !== executor);
+            updateExecutorList(task, modal);
         });
     });
 }
@@ -621,3 +673,5 @@ function openGlobalExecutorModal() {
 }
 
 document.addEventListener("DOMContentLoaded", createInterface);
+
+

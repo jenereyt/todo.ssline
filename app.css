@@ -159,7 +159,8 @@ td.clicked {
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
 }
-#saveGlobalExecutor,#closeGlobalModal,#addGlobalExecutorBtn,#addExecutorBtn{
+
+#saveGlobalExecutor, #closeGlobalModal, #addGlobalExecutorBtn, #addExecutorBtn {
     background: linear-gradient(135deg, #4a90e2, #357abd);
     border-radius: 6px;
     font-size: 14px;
@@ -277,7 +278,7 @@ td.clicked {
 .full-task-modal {
     background: #fff;
     padding: 30px;
-    border-radius: 20px;
+    border-radius: 20px 0 0 20px;
     max-width: 850px;
     width: 90%;
     max-height: 85vh;
@@ -285,6 +286,7 @@ td.clicked {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
     border: 1px solid #e6eaee;
     animation: slideUp 0.3s ease-out;
+    position: relative;
 }
 
 @keyframes slideUp {
@@ -299,8 +301,68 @@ td.clicked {
     }
 }
 
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #4a90e2;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.modal-header span{
+    color: #4a90e2;
+    font-weight: 700;
+}
+
+.header-details {
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+.header-details span {
+    margin-right: 20px;
+}
+
+.status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-toggle label {
+    font-size: 14px;
+    color: #357abd;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s ease;
+}
+
+.close-modal-btn:hover {
+    color: #e74c3c;
+}
+
 .modal-content h2 {
-    margin: 0 0 25px;
     font-size: 24px;
     color: #4a90e2;
     font-weight: 700;
@@ -342,17 +404,6 @@ td.clicked {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-#editAccepted,
-#editCompleted {
-    width: 100%;
-}
-
-modal-content h2 {
-    margin: 0 0 15px;
-    font-size: 20px;
-    color: #333;
-}
-
 .modal-content input[type="text"] {
     width: 100%;
     padding: 8px;
@@ -388,12 +439,219 @@ modal-content h2 {
     box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
 }
 
+.checkbox-google {
+    display: inline-block;
+    height: 28px;
+    line-height: 28px;
+    margin-right: 10px;
+    position: relative;
+    vertical-align: middle;
+    font-size: 14px;
+    user-select: none;
+}
+
+.checkbox-google .checkbox-google-switch {
+    display: inline-block;
+    width: 36px;
+    height: 14px;
+    border-radius: 20px;
+    position: relative;
+    top: 6px;
+    vertical-align: top;
+    background: #9f9f9f;
+    transition: .2s;
+}
+
+.checkbox-google .checkbox-google-switch:before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: -3px;
+    left: -1px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    transition: .15s;
+}
+
+.checkbox-google input[type=checkbox] {
+    display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+
+.checkbox-google input[type=checkbox]:checked+.checkbox-google-switch {
+    background: #9ABEF7;
+}
+
+.checkbox-google input[type=checkbox]:checked+.checkbox-google-switch:before {
+    background: #1a73e8;
+    transform: translateX(18px);
+}
+
+/* Hover */
+.checkbox-google input[type="checkbox"]:not(:disabled)+.checkbox-google-switch {
+    cursor: pointer;
+    border-color: rgba(0, 0, 0, .3);
+}
+
+/* Active/Focus */
+.checkbox-google input[type="checkbox"]:not(:disabled):active+.checkbox-google-switch:before,
+.checkbox-google input[type="checkbox"]:not(:disabled):focus+.checkbox-google-switch:before {
+    animation: checkbox-active-on 0.5s forwards linear;
+}
+
+@keyframes checkbox-active-on {
+    0% {
+        box-shadow: 0 0 0 0 rgba(212, 212, 212, 0);
+    }
+
+    99% {
+        box-shadow: 0 0 0 10px rgba(212, 212, 212, 0.5);
+    }
+}
+
+.checkbox-google input[type="checkbox"]:not(:disabled):checked:active+.checkbox-google-switch:before,
+.checkbox-google input[type="checkbox"]:not(:disabled):checked:focus+.checkbox-google-switch:before {
+    animation: checkbox-active-off 0.5s forwards linear;
+}
+
+@keyframes checkbox-active-off {
+    0% {
+        box-shadow: 0 0 0 0 rgba(154, 190, 247, 0);
+    }
+
+    99% {
+        box-shadow: 0 0 0 10px rgba(154, 190, 247, 0.5);
+    }
+}
+
+/* Disabled */
+.checkbox-google input[type=checkbox]:disabled+.checkbox-google-switch {
+    filter: grayscale(60%);
+    border-color: rgba(0, 0, 0, .1);
+}
+
+.checkbox-google input[type=checkbox]:disabled+.checkbox-google-switch:before {
+    background: #eee;
+}
+
 .task-details textarea {
     min-height: 80px;
     resize: none;
 }
 
-.executor-item, .comment-item, .file-item {
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+input:checked+.slider {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+    /* Исправлено для правильного смещения */
+}
+
+/* Убедимся, что ползунок не выходит за границы */
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.editable-field {
+    display: flex;
+    align-items: center;
+}
+
+.editable-field span {
+    flex-grow: 1;
+    word-break: break-word;
+}
+
+.edit-btn {
+    margin-left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #357abd;
+    transition: color 0.2s ease;
+}
+
+.edit-btn:hover {
+    color: #4a90e2;
+}
+
+.hidden {
+    display: none;
+}
+
+.executor-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.executor-item {
+    display: flex;
+    align-items: center;
+    background: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.executor-item:hover {
+    transform: translateX(2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.remove-executor {
+    margin-left: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #e74c3c;
+    font-size: 16px;
+    transition: color 0.2s ease;
+}
+
+.remove-executor:hover {
+    color: #c0392b;
+}
+
+.executor-list select {
+    padding: 8px;
+    border: 1px solid #d8dde3;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.comment-item, .file-item {
     display: flex;
     align-items: center;
     margin: 8px 0;
@@ -404,12 +662,12 @@ modal-content h2 {
     transition: all 0.2s ease;
 }
 
-.executor-item:hover, .comment-item:hover, .file-item:hover {
+.comment-item:hover, .file-item:hover {
     transform: translateX(2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.executor-item button, .comment-item button, .file-item button {
+.comment-item button, .file-item button {
     margin-left: 10px;
     padding: 5px 10px;
     background: #e74c3c;
@@ -420,7 +678,7 @@ modal-content h2 {
     transition: background 0.2s ease;
 }
 
-.executor-item button:hover, .comment-item button:hover, .file-item button:hover {
+.comment-item button:hover, .file-item button:hover {
     background: #c0392b;
 }
 
