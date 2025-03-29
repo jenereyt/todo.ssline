@@ -41,9 +41,6 @@ let tasks = [
     { id: 29, dateSet: "2025-04-19", project: "Проект Epsilon-2", theme: "Оптимизация", description: "Улучшить SEO", completed: false, executors: ["Дмитрий Соколов"], dateCompleted: "", accepted: "Нет" },
     { id: 30, dateSet: "2025-04-20", project: "Заказчик Zeta-2", theme: "Тестирование", description: "Проверить адаптивность", completed: true, executors: ["Ольга Николаева"], dateCompleted: "2025-04-21", accepted: "Да" }
 ];
-// Объект tasks остается без изменений, но предположим, что files теперь содержит ссылки
-// Пример: task.files = [{ name: "document.pdf", url: "http://backend.com/files/document.pdf" }, ...]
-
 // Объект для хранения фильтров и состояния сортировки
 let filters = {};
 let sortState = { field: null, ascending: true };
@@ -72,14 +69,6 @@ function createInterface() {
                     </div>
                 </div>
                 <div class="filter-group">
-                    <label>Заказчик:</label>
-                    <div class="input-with-clear">
-                        <input type="text" id="projectFilter" placeholder="Введите заказчика...">
-                        <button class="clear-btn" id="clearProject">×</button>
-                    </div>
-                    <div id="projectSuggestions" class="suggestions hidden"></div>
-                </div>
-                <div class="filter-group">
                     <label>Исполнитель:</label>
                     <div class="input-with-clear">
                         <input type="text" id="executorFilter" placeholder="Введите исполнителя...">
@@ -92,7 +81,7 @@ function createInterface() {
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Поиск по таблице...">
                 <button id="searchBtn">🔍</button>
-                <button id="addGlobalExecutorBtn">Добавить исполнителя</button>
+                <button id="addGlobalExecutorBtn">Исполнители</button>
             </div>
         </div>
     `;
@@ -109,12 +98,7 @@ function createInterface() {
         });
     });
 
-    // Кнопки очистки
-    document.getElementById("clearProject").addEventListener("click", () => {
-        document.getElementById("projectFilter").value = "";
-        filters.project = "";
-        applyFilters();
-    });
+    // Кнопка очистки для исполнителя
     document.getElementById("clearExecutor").addEventListener("click", () => {
         document.getElementById("executorFilter").value = "";
         filters.executors = "";
@@ -126,7 +110,6 @@ function createInterface() {
         filters = {};
         document.getElementById("dateFrom").value = "";
         document.getElementById("dateTo").value = "";
-        document.getElementById("projectFilter").value = "";
         document.getElementById("executorFilter").value = "";
         document.getElementById("searchInput").value = "";
         sortState = { field: null, ascending: true };
@@ -152,35 +135,6 @@ function createInterface() {
     });
     document.getElementById("searchInput").addEventListener("keypress", (e) => {
         if (e.key === "Enter") document.getElementById("searchBtn").click();
-    });
-
-    // Автодополнение для заказчика
-    const projectInput = document.getElementById("projectFilter");
-    const projectSuggestions = document.getElementById("projectSuggestions");
-    projectInput.addEventListener("input", (e) => {
-        const value = e.target.value.toLowerCase();
-        projectSuggestions.innerHTML = "";
-        if (value) {
-            projectSuggestions.classList.remove("hidden");
-            const matches = allProjects.filter(p => p.toLowerCase().includes(value));
-            matches.forEach(match => {
-                const div = document.createElement("div");
-                div.textContent = match;
-                div.className = "suggestion-item";
-                div.style.cursor = "pointer";
-                div.addEventListener("click", () => {
-                    projectInput.value = match;
-                    filters.project = match;
-                    projectSuggestions.classList.add("hidden");
-                    applyFilters();
-                });
-                projectSuggestions.appendChild(div);
-            });
-        } else {
-            projectSuggestions.classList.add("hidden");
-            filters.project = "";
-            applyFilters();
-        }
     });
 
     // Автодополнение для исполнителя
@@ -220,20 +174,17 @@ function createInterface() {
 
     // Закрытие предложений при клике вне
     document.addEventListener("click", (e) => {
-        if (!projectInput.contains(e.target) && !projectSuggestions.contains(e.target)) {
-            projectSuggestions.classList.add("hidden");
+        if (!executorInput.contains(e.target) && !executorSuggestions.contains(e.target)) {
+            executorSuggestions.classList.add("hidden");
         }
-        // if (!executorInput.contains(e.target) && !executorSuggestions.contains)
     });
 }
 
 function applyFilters() {
-    filters.project = document.getElementById("projectFilter").value;
     filters.executors = document.getElementById("executorFilter").value;
 
     let filteredTasks = tasks.filter(task => {
         return (
-            (!filters.project || task.project.toLowerCase().includes(filters.project.toLowerCase())) &&
             (!filters.executors || task.executors.some(ex => ex.toLowerCase().includes(filters.executors.toLowerCase()))) &&
             (!filters.dateFrom || task.dateSet >= filters.dateFrom) &&
             (!filters.dateTo || task.dateSet <= filters.dateTo)
@@ -242,6 +193,243 @@ function applyFilters() {
     sortTasks(filteredTasks);
     currentPage = 1;
     createTable(filteredTasks);
+}
+
+function openGlobalExecutorModal() {
+    const modal = document.createElement("div");
+    modal.className = "modal";
+
+    // Get all executors
+    const allExecutors = getAllExecutors();
+
+    modal.innerHTML = `
+        <div class="modal-contente">
+            <h2>Управление исполнителями</h2>
+            
+            <!-- Секция добавления нового исполнителя -->
+            <div class="add-executor-section">
+                <h3>Добавить нового исполнителя</h3>
+                <div class="input-with-clear">
+                    <input type="text" id="newGlobalExecutor" placeholder="Введите имя исполнителя">
+                    <button id="saveGlobalExecutor" class="action-btn">Добавить</button>
+                </div>
+                <div class="suggestions" id="globalExecutorSuggestions"></div>
+            </div>
+            
+            <!-- Секция списка всех исполнителей -->
+            <div class="all-executors-section">
+                <h3>Список исполнителей</h3>
+                <div class="executors-list" id="allExecutorsList">
+                    ${allExecutors.map(executor => `
+                        <div class="executor-list-item" data-executor="${executor}">
+                            <span class="executor-name">${executor}</span>
+                            <div class="executor-actions">
+                                <button class="edit-executor-btn" data-executor="${executor}">✏️</button>
+                                <button class="delete-executor-btn" data-executor="${executor}">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <!-- Модальное окно редактирования (скрыто по умолчанию) -->
+            <div id="editExecutorPanel" class="edit-executor-panel hidden">
+                <h3>Редактировать исполнителя</h3>
+                <input type="text" id="editExecutorInput">
+                <input type="hidden" id="originalExecutorName">
+                <div class="modal-buttons">
+                    <button id="saveEditExecutor">Сохранить</button>
+                    <button id="cancelEditExecutor">Отмена</button>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button id="closeGlobalModal">Закрыть</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Обработчик добавления нового исполнителя
+    const input = modal.querySelector("#newGlobalExecutor");
+    const suggestions = modal.querySelector("#globalExecutorSuggestions");
+
+    input.addEventListener("input", (e) => {
+        const value = e.target.value.toLowerCase();
+        suggestions.innerHTML = "";
+        if (value) {
+            const matches = allExecutors.filter(ex => ex.toLowerCase().includes(value) && !tasks.some(t => t.executors.includes(ex)));
+            matches.forEach(match => {
+                const div = document.createElement("div");
+                div.textContent = match;
+                div.className = "suggestion-item";
+                div.style.cursor = "pointer";
+                div.addEventListener("click", () => {
+                    input.value = match;
+                    suggestions.innerHTML = "";
+                });
+                suggestions.appendChild(div);
+            });
+        }
+    });
+
+    // Сохранение нового исполнителя
+    modal.querySelector("#saveGlobalExecutor").addEventListener("click", () => {
+        const newExecutor = input.value.trim();
+        if (newExecutor && !allExecutors.includes(newExecutor)) {
+            // Добавляем фиктивную задачу, чтобы исполнитель попал в пул
+            tasks.push({
+                id: tasks.length + 1,
+                dateSet: new Date().toISOString().split("T")[0],
+                project: "Без проекта",
+                theme: "Без темы",
+                description: "Фиктивная задача для исполнителя",
+                completed: false,
+                executors: [newExecutor],
+                dateCompleted: "",
+                accepted: "Нет",
+                comments: [],
+                files: []
+            });
+
+            // Обновляем список исполнителей в модальном окне
+            refreshExecutorsList(modal);
+            input.value = "";
+        }
+    });
+
+    // Обработчики кнопок редактирования
+    modal.querySelectorAll(".edit-executor-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const executor = e.target.dataset.executor;
+            const editPanel = modal.querySelector("#editExecutorPanel");
+            const editInput = modal.querySelector("#editExecutorInput");
+            const originalInput = modal.querySelector("#originalExecutorName");
+
+            editInput.value = executor;
+            originalInput.value = executor;
+            editPanel.classList.remove("hidden");
+        });
+    });
+
+    // Обработчики кнопок удаления
+    modal.querySelectorAll(".delete-executor-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const executor = e.target.dataset.executor;
+            if (confirm(`Вы уверены, что хотите удалить исполнителя "${executor}"?`)) {
+                // Удаляем исполнителя из всех задач
+                tasks.forEach(task => {
+                    task.executors = task.executors.filter(ex => ex !== executor);
+                });
+                refreshExecutorsList(modal);
+            }
+        });
+    });
+
+    // Сохранение отредактированного исполнителя
+    modal.querySelector("#saveEditExecutor").addEventListener("click", () => {
+        const newName = modal.querySelector("#editExecutorInput").value.trim();
+        const originalName = modal.querySelector("#originalExecutorName").value;
+
+        if (newName && newName !== originalName && !allExecutors.includes(newName)) {
+            // Заменяем имя исполнителя во всех задачах
+            tasks.forEach(task => {
+                task.executors = task.executors.map(ex => ex === originalName ? newName : ex);
+            });
+
+            modal.querySelector("#editExecutorPanel").classList.add("hidden");
+            refreshExecutorsList(modal);
+        }
+    });
+
+    // Отмена редактирования
+    modal.querySelector("#cancelEditExecutor").addEventListener("click", () => {
+        modal.querySelector("#editExecutorPanel").classList.add("hidden");
+    });
+
+    // Закрытие модального окна
+    modal.querySelector("#closeGlobalModal").addEventListener("click", () => modal.remove());
+}
+
+function refreshExecutorsList(modal) {
+    const allExecutors = getAllExecutors();
+    const listContainer = modal.querySelector("#allExecutorsList");
+
+    listContainer.innerHTML = allExecutors.map(executor => `
+        <div class="executor-list-item" data-executor="${executor}">
+            <span class="executor-name">${executor}</span>
+            <div class="executor-actions">
+                <button class="edit-executor-btn" data-executor="${executor}">✏️</button>
+                <button class="delete-executor-btn" data-executor="${executor}">🗑️</button>
+            </div>
+        </div>
+    `).join('');
+
+    // Перепривязываем обработчики событий
+    modal.querySelectorAll(".edit-executor-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const executor = e.target.dataset.executor;
+            const editPanel = modal.querySelector("#editExecutorPanel");
+            const editInput = modal.querySelector("#editExecutorInput");
+            const originalInput = modal.querySelector("#originalExecutorName");
+
+            editInput.value = executor;
+            originalInput.value = executor;
+            editPanel.classList.remove("hidden");
+        });
+    });
+
+    modal.querySelectorAll(".delete-executor-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const executor = e.target.dataset.executor;
+            if (confirm(`Вы уверены, что хотите удалить исполнителя "${executor}"?`)) {
+                // Удаляем исполнителя из всех задач
+                tasks.forEach(task => {
+                    task.executors = task.executors.filter(ex => ex !== executor);
+                });
+                refreshExecutorsList(modal);
+            }
+        });
+    });
+}
+
+function updateExecutorList(task, modal) {
+    const executorList = modal.querySelector("#executorList");
+    const allExecutors = getAllExecutors();
+    executorList.innerHTML = `
+        ${task.executors.length ? task.executors.map(ex => `
+            <div class="executor-item">
+                <span>${ex}</span>
+                <button class="remove-executor" data-executor="${ex}">×</button>
+            </div>
+        `).join('') : '<span>Не назначены</span>'}
+        <select id="addExecutorSelect">
+            <option value="">Добавить исполнителя</option>
+            ${allExecutors.filter(ex => !task.executors.includes(ex)).map(ex => `
+                <option value="${ex}">${ex}</option>
+            `).join('')}
+        </select>
+    `;
+
+    // Перепривязываем обработчики
+    const addExecutorSelect = modal.querySelector("#addExecutorSelect");
+    addExecutorSelect.addEventListener("change", (e) => {
+        const newExecutor = e.target.value;
+        if (newExecutor && !task.executors.includes(newExecutor)) {
+            task.executors.push(newExecutor);
+            updateExecutorList(task, modal);
+        }
+        e.target.value = "";
+    });
+
+    modal.querySelectorAll(".remove-executor").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const executor = btn.dataset.executor;
+            task.executors = task.executors.filter(ex => ex !== executor);
+            updateExecutorList(task, modal);
+        });
+    });
 }
 
 function sortTasks(taskList) {
@@ -429,19 +617,15 @@ function openEditModal(task) {
                 </div>
                 <div class="field">
                     <label>Исполнители:</label>
-                    <div id="executorList" class="executor-list">
+                    <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
                         ${task.executors.length ? task.executors.map(ex => `
-                            <div class="executor-item">
-                                <span>${ex}</span>
-                                <button class="remove-executor" data-executor="${ex}">×</button>
-                            </div>
-                        `).join('') : '<span>Не назначены</span>'}
-                        <select id="addExecutorSelect">
-                            <option value="">Добавить исполнителя</option>
-                            ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(ex => `
-                                <option value="${ex}">${ex}</option>
-                            `).join('')}
-                        </select>
+                            <span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">
+                                ${ex}
+                                <button class="edit-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
+                                <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
+                            </span>
+                        `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
+                        <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;">+</button>
                     </div>
                 </div>
                 <div class="field">
@@ -480,6 +664,14 @@ function openEditModal(task) {
         </div>
     `;
     document.body.appendChild(modal);
+    
+    // Добавляем обработчик для закрытия модального окна при клике вне содержимого
+    modal.addEventListener("click", function(event) {
+        // Проверяем, был ли клик вне modal-content
+        if (!modal.querySelector(".modal-content").contains(event.target)) {
+            modal.remove();
+        }
+    });
 
     // Редактирование темы и описания
     modal.querySelectorAll(".edit-btn").forEach(btn => {
@@ -499,23 +691,119 @@ function openEditModal(task) {
         });
     });
 
-    // Добавление исполнителя через селект
-    const addExecutorSelect = modal.querySelector("#addExecutorSelect");
-    addExecutorSelect.addEventListener("change", (e) => {
-        const newExecutor = e.target.value;
-        if (newExecutor && !task.executors.includes(newExecutor)) {
-            task.executors.push(newExecutor);
-            updateExecutorList(task, modal);
-        }
-        e.target.value = ""; // Сбрасываем выбор
-    });
-
+    // Остальная часть кода функции остается без изменений...
+    
     // Удаление исполнителей
-    modal.querySelectorAll(".remove-executor").forEach(btn => {
+    const removeExecutorHandler = (btn) => {
         btn.addEventListener("click", () => {
             const executor = btn.dataset.executor;
             task.executors = task.executors.filter(ex => ex !== executor);
-            updateExecutorList(task, modal);
+            btn.parentElement.remove();
+            if (!task.executors.length) {
+                const executorList = modal.querySelector("#executorList");
+                const noExecutorsSpan = document.createElement("span");
+                noExecutorsSpan.className = "executor-item";
+                noExecutorsSpan.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px;";
+                noExecutorsSpan.textContent = "Не назначены";
+                executorList.insertBefore(noExecutorsSpan, executorList.querySelector(".add-executor-btn"));
+            }
+        });
+    };
+    modal.querySelectorAll(".remove-executor").forEach(removeExecutorHandler);
+
+    // Редактирование исполнителей
+    const editExecutorHandler = (btn) => {
+        btn.addEventListener("click", () => {
+            const oldExecutor = btn.dataset.executor;
+            const executorItem = btn.parentElement;
+            const originalContent = executorItem.innerHTML;
+
+            const select = document.createElement("select");
+            select.className = "executor-select";
+            select.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px; border: none; font-size: 14px; max-width: 150px;";
+            select.innerHTML = `
+                <option value="">Выберите...</option>
+                ${getAllExecutors().filter(ex => !task.executors.includes(ex) || ex === oldExecutor).map(exec => `
+                    <option value="${exec}" ${exec === oldExecutor ? 'selected' : ''}>${exec}</option>
+                `).join('')}
+            `;
+
+            const cancelBtn = document.createElement("button");
+            cancelBtn.textContent = "⟲";
+            cancelBtn.style.cssText = "border: none; background: #4a90e2; cursor: pointer; margin-left: 5px;";
+            cancelBtn.title = "Отменить";
+
+            executorItem.innerHTML = '';
+            executorItem.appendChild(select);
+            executorItem.appendChild(cancelBtn);
+
+            select.addEventListener("change", (e) => {
+                const newExecutor = e.target.value;
+                if (newExecutor && newExecutor !== oldExecutor) {
+                    const index = task.executors.indexOf(oldExecutor);
+                    if (index !== -1) {
+                        task.executors[index] = newExecutor;
+                    }
+                    executorItem.innerHTML = `
+                        ${newExecutor}
+                        <button class="edit-executor" data-executor="${newExecutor}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
+                        <button class="remove-executor" data-executor="${newExecutor}" style="border: none; background: none; cursor: pointer;">×</button>
+                    `;
+                    editExecutorHandler(executorItem.querySelector(".edit-executor"));
+                    removeExecutorHandler(executorItem.querySelector(".remove-executor"));
+                }
+            });
+
+            cancelBtn.addEventListener("click", () => {
+                executorItem.innerHTML = originalContent;
+                editExecutorHandler(executorItem.querySelector(".edit-executor"));
+                removeExecutorHandler(executorItem.querySelector(".remove-executor"));
+            });
+        });
+    };
+    modal.querySelectorAll(".edit-executor").forEach(editExecutorHandler);
+
+    // Добавление нового исполнителя
+    const addExecutorBtn = modal.querySelector(".add-executor-btn");
+    addExecutorBtn.addEventListener("click", () => {
+        const executorList = modal.querySelector("#executorList");
+        const existingSelect = executorList.querySelector("select");
+        if (existingSelect) return;
+
+        const noExecutorsSpan = executorList.querySelector("span.executor-item");
+        if (noExecutorsSpan && noExecutorsSpan.textContent === "Не назначены") {
+            noExecutorsSpan.remove();
+        }
+
+        const select = document.createElement("select");
+        select.className = "executor-select";
+        select.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px; border: none; font-size: 14px; max-width: 150px;";
+        select.innerHTML = `
+            <option value="">Выберите...</option>
+            ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(exec => `
+                <option value="${exec}">${exec}</option>
+            `).join('')}
+        `;
+        executorList.insertBefore(select, addExecutorBtn);
+
+        select.addEventListener("change", (e) => {
+            const selectedExecutor = e.target.value;
+            if (selectedExecutor) {
+                task.executors.push(selectedExecutor);
+                const span = document.createElement("span");
+                span.className = "executor-item";
+                span.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px;";
+                span.innerHTML = `
+                    ${selectedExecutor}
+                    <button class="edit-executor" data-executor="${selectedExecutor}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
+                    <button class="remove-executor" data-executor="${selectedExecutor}" style="border: none; background: none; cursor: pointer;">×</button>
+                `;
+                executorList.insertBefore(span, addExecutorBtn);
+                select.remove();
+
+                editExecutorHandler(span.querySelector(".edit-executor"));
+                removeExecutorHandler(span.querySelector(".remove-executor"));
+            }
         });
     });
 
@@ -548,47 +836,9 @@ function openEditModal(task) {
         modal.remove();
     });
 
-    // Закрытие модалки
+    // Закрытие модалки по кнопкам внутри модалки
     modal.querySelector("#closeBtn").addEventListener("click", () => modal.remove());
     modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
-}
-
-function updateExecutorList(task, modal) {
-    const executorList = modal.querySelector("#executorList");
-    const allExecutors = getAllExecutors();
-    executorList.innerHTML = `
-        ${task.executors.length ? task.executors.map(ex => `
-            <div class="executor-item">
-                <span>${ex}</span>
-                <button class="remove-executor" data-executor="${ex}">×</button>
-            </div>
-        `).join('') : '<span>Не назначены</span>'}
-        <select id="addExecutorSelect">
-            <option value="">Добавить исполнителя</option>
-            ${allExecutors.filter(ex => !task.executors.includes(ex)).map(ex => `
-                <option value="${ex}">${ex}</option>
-            `).join('')}
-        </select>
-    `;
-
-    // Перепривязываем обработчики
-    const addExecutorSelect = modal.querySelector("#addExecutorSelect");
-    addExecutorSelect.addEventListener("change", (e) => {
-        const newExecutor = e.target.value;
-        if (newExecutor && !task.executors.includes(newExecutor)) {
-            task.executors.push(newExecutor);
-            updateExecutorList(task, modal);
-        }
-        e.target.value = "";
-    });
-
-    modal.querySelectorAll(".remove-executor").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const executor = btn.dataset.executor;
-            task.executors = task.executors.filter(ex => ex !== executor);
-            updateExecutorList(task, modal);
-        });
-    });
 }
 
 function updateCommentList(task, modal) {
@@ -610,67 +860,7 @@ function updateCommentList(task, modal) {
     });
 }
 
-function openGlobalExecutorModal() {
-    const modal = document.createElement("div");
-    modal.className = "modal";
-    modal.innerHTML = `
-        <div class="modal-contente">
-            <h2>Добавить нового исполнителя</h2>
-            <input type="text" id="newGlobalExecutor" placeholder="Введите имя исполнителя">
-            <div class="suggestions" id="globalExecutorSuggestions"></div>
-            <div class="modal-buttons">
-                <button id="saveGlobalExecutor">Добавить</button>
-                <button id="closeGlobalModal">Закрыть</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
 
-    const input = modal.querySelector("#newGlobalExecutor");
-    const suggestions = modal.querySelector("#globalExecutorSuggestions");
-    const allExecutors = getAllExecutors();
-
-    input.addEventListener("input", (e) => {
-        const value = e.target.value.toLowerCase();
-        suggestions.innerHTML = "";
-        if (value) {
-            const matches = allExecutors.filter(ex => ex.toLowerCase().includes(value) && !tasks.some(t => t.executors.includes(ex)));
-            matches.forEach(match => {
-                const div = document.createElement("div");
-                div.textContent = match;
-                div.className = "suggestion-item";
-                div.style.cursor = "pointer";
-                div.addEventListener("click", () => {
-                    input.value = match;
-                    suggestions.innerHTML = "";
-                });
-                suggestions.appendChild(div);
-            });
-        }
-    });
-
-    modal.querySelector("#saveGlobalExecutor").addEventListener("click", () => {
-        const newExecutor = input.value.trim();
-        if (newExecutor && !allExecutors.includes(newExecutor)) {
-            tasks.push({ // Добавляем фиктивную задачу, чтобы исполнитель попал в пул
-                id: tasks.length + 1,
-                dateSet: new Date().toISOString().split("T")[0],
-                project: "Без проекта",
-                theme: "Без темы",
-                description: "Фиктивная задача для исполнителя",
-                completed: false,
-                executors: [newExecutor],
-                dateCompleted: "",
-                accepted: "Нет",
-                comments: [],
-                files: []
-            });
-        }
-        modal.remove();
-    });
-
-    modal.querySelector("#closeGlobalModal").addEventListener("click", () => modal.remove());
-}
 
 document.addEventListener("DOMContentLoaded", createInterface);
 
