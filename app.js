@@ -9,7 +9,12 @@ let tasks = [
         executors: ["Иван Иванов", "Пётр Сидоров"],
         dateCompleted: "2025-03-26",
         accepted: "Да",
-        files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }]
+        files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }],
+        comments: [
+            { text: "Дизайн утверждён заказчиком", date: "2025-03-25" },
+            { text: "Добавлены новые шрифты", date: "2025-03-26" },
+            { text: "Исправлены отступы на мобильной версии", date: "2025-03-26" }
+        ]
     },
     { id: 2, dateSet: "2025-03-24", project: "Заказчик Beta", theme: "Исправление багов", description: "Пофиксить ошибку в авторизации", completed: false, executors: [], dateCompleted: "", accepted: "Нет", files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }, { name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }] },
     { id: 3, dateSet: "2025-03-20", project: "Проект Gamma", theme: "Тестирование API", description: "Проверить все эндпоинты", completed: false, executors: ["Анна Смирнова"], dateCompleted: "", accepted: "Нет" },
@@ -844,12 +849,15 @@ function updateCommentList(task, modal) {
     `).join('');
     modal.querySelector("#newComment").value = "";
 
-    // Обработчик для кнопок показа комментария в модалке
+    // Привязываем обработчики к кнопкам удаления
     modal.querySelectorAll(".remove-comment").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", (event) => {
+            event.stopPropagation(); // Останавливаем всплытие события
             const index = parseInt(btn.dataset.index);
-            const comment = task.comments[index];
-            showCommentModal(comment.text, comment.date);
+            if (index >= 0 && index < task.comments.length) {
+                task.comments.splice(index, 1); // Удаляем комментарий
+                updateCommentList(task, modal); // Обновляем список
+            }
         });
     });
 }
