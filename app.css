@@ -185,11 +185,18 @@ td.clicked {
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
-#saveGlobalExecutor, #closeGlobalModal, #addGlobalExecutorBtn, #addExecutorBtn {
+#saveGlobalExecutor, #closeGlobalModal, #addExecutorBtn {
     background: linear-gradient(135deg, #4a90e2, #357abd);
     border-radius: 6px;
     font-size: 14px;
     padding: 10px;
+}
+
+#addGlobalExecutorBtn {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 11px;
 }
 
 .filters button:hover {
@@ -219,7 +226,7 @@ td.clicked {
 }
 
 #searchBtn {
-    padding: 10px 15px;
+    padding: 11px 15px;
     background: linear-gradient(135deg, #4a90e2, #357abd);
     color: white;
     border: none;
@@ -296,6 +303,7 @@ td.clicked {
 }
 
 .full-task-modal {
+    position: relative;
     background: #fff;
     padding: 20px;
     border-radius: 20px 0 0 20px;
@@ -323,12 +331,15 @@ td.clicked {
 
 .modal-header {
     display: flex;
-justify-content: space-around;
+    justify-content: space-around;
     align-items: center;
     margin-bottom: 20px;
 }
-#openExtraModalBtn{
+
+#openExtraModalBtn {
     background-color: #1a73e8;
+    padding: 7px;
+    border-radius: 5px;
 }
 
 .modal-header h2 {
@@ -371,9 +382,10 @@ justify-content: space-around;
 }
 
 .close-modal-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    margin-left: 820px;
+    position: sticky;
+    top: 1px;
+    right: 1px;
     background: none;
     border: none;
     font-size: 30px;
@@ -684,6 +696,16 @@ input:checked+.slider:before {
     cursor: pointer;
 }
 
+
+#commentList {
+    width: 810px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* Добавим для уверенности, что контент не вылезает */
+    overflow: hidden;
+}
+
 .comment-item, .file-item {
     padding: 10px;
     background: #fff;
@@ -696,12 +718,10 @@ input:checked+.slider:before {
     /* Современный стандарт */
     white-space: normal;
     /* Разрешает перенос текста на новую строку */
-}
-
-#commentList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    max-width: 100%;
+    /* Ограничиваем ширину до ширины родителя */
+    box-sizing: border-box;
+    /* Учитываем padding в ширине */
 }
 
 .comment-item:hover, .file-item:hover {
@@ -1007,7 +1027,7 @@ input:checked+.slider:before {
 }
 
 #editExecutorInput {
-    width: 100%;
+    width: 540px;
     padding: 10px 12px;
     border: 1px solid #ced4da;
     border-radius: 6px;

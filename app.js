@@ -598,7 +598,7 @@ function openEditModal(task) {
                                 <option value="${status}" ${task.status === status ? 'selected' : ''}>${status}</option>
                             `).join('')}
                         </select>
-                        <button id="openExtraModalBtn" style="margin-left: 10px;">+</button>
+                        <button id="openExtraModalBtn"">История</button>
                     </div>
                 </div>
             </div>
@@ -607,16 +607,16 @@ function openEditModal(task) {
                     <label>Тема:</label>
                     <div class="editable-field">
                         <span id="themeDisplay">${task.theme}</span>
-                        <button class="edit-btn" data-field="theme">✏️</button>
                         <input type="text" id="editTheme" value="${task.theme}" class="hidden">
+                        <button class="edit-btn" data-field="theme">✏️</button>
                     </div>
                 </div>
                 <div class="field">
                     <label>Описание:</label>
                     <div class="editable-field">
                         <span id="descriptionDisplay">${task.description}</span>
-                        <button class="edit-btn" data-field="description">✏️</button>
                         <textarea id="editDescription" class="hidden">${task.description}</textarea>
+                        <button class="edit-btn" data-field="description">✏️</button>
                     </div>
                 </div>
                 <div class="field">
@@ -776,7 +776,6 @@ function openEditModal(task) {
     };
     modal.querySelectorAll(".edit-executor").forEach(editExecutorHandler);
 
-    // Добавление нового исполнителя с кнопкой удаления
     const addExecutorBtn = modal.querySelector(".add-executor-btn");
     addExecutorBtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -793,9 +792,12 @@ function openEditModal(task) {
         select.className = "executor-select";
         select.innerHTML = `
         <option value="">Выберите...</option>
-        ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(exec => `
-            <option value="${exec}">${exec}</option>
-        `).join('')}
+        ${getAllExecutors()
+                .filter(ex => !task.executors.includes(ex)) // Фильтруем уже назначенных
+                .sort((a, b) => a.localeCompare(b)) // Сортируем в алфавитном порядке
+                .map(exec => `
+                <option value="${exec}">${exec}</option>
+            `).join('')}
     `;
 
         const removeSelectBtn = document.createElement("button");
@@ -899,5 +901,5 @@ function updateCommentList(task, modal) {
 }
 
 document.addEventListener("DOMContentLoaded", createInterface);
-
+sort()
 
