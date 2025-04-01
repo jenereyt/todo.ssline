@@ -3,9 +3,9 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7fa;
     margin: 0;
-    padding: 20px;
+    padding: 15px;
+    /* Уменьшил отступы для меньших экранов */
     color: #333;
-    overflow-y: hidden;
 }
 
 /* Таблица */
@@ -18,7 +18,7 @@ table {
     border-radius: 12px;
     overflow: hidden;
     display: block;
-    height: 80vh;
+    height: 75vh;
 }
 
 button {
@@ -37,16 +37,19 @@ th {
     color: white;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 13px;
+    font-size: 12px;
+    /* Уменьшил размер шрифта */
     letter-spacing: 0.5px;
-    padding: 15px 20px;
+    padding: 12px 15px;
+    /* Уменьшил отступы */
     text-align: left;
 }
 
 tbody {
     display: block;
     overflow-y: auto;
-    max-height: calc(80vh - 48px);
+    max-height: calc(75vh - 44px);
+    /* Скорректировал высоту с учетом уменьшенного thead */
     width: 100%;
 }
 
@@ -58,15 +61,37 @@ tr {
 
 td {
     background-color: #fff;
-    font-size: 15px;
+    font-size: 14px;
     transition: background-color 0.3s ease;
-    padding: 15px 20px;
+    padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #e6eaee;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 0;
 }
 
 tr:hover td {
-    background-color: #f8fafc;
+    background-color: #dfe1e3;
+    cursor: pointer;
+}
+
+.editable:hover {
+    background-color: #e9f1ff;
+    cursor: pointer;
+    color: #4a90e2;
+}
+
+.selected {
+    background-color: #e6f3ff;
+    border: 2px solid #4d94ff;
+    color: #333;
+}
+
+td.clicked {
+    background-color: #cce5ff;
+    font-weight: 600;
 }
 
 .editable:hover {
@@ -169,15 +194,10 @@ td.clicked {
 
 .filters button:hover {
     background: linear-gradient(135deg, #357abd, #2a6396);
-    transform: translateY(-1px);
 }
 
 #resetFiltersBtn {
     background-color: #ff4444;
-}
-
-#resetFiltersBtn:hover {
-    background-color: #cc0000;
 }
 
 .search-container {
@@ -277,11 +297,11 @@ td.clicked {
 
 .full-task-modal {
     background: #fff;
-    padding: 30px;
+    padding: 20px;
     border-radius: 20px 0 0 20px;
     max-width: 850px;
     width: 90%;
-    max-height: 85vh;
+    max-height: 80vh;
     overflow-y: auto;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
     border: 1px solid #e6eaee;
@@ -547,7 +567,7 @@ td.clicked {
 }
 
 .task-details textarea {
-    min-height: 80px;
+    min-height: 50px;
     resize: none;
 }
 
@@ -657,15 +677,20 @@ input:checked+.slider:before {
 }
 
 .comment-item, .file-item {
-    display: flex;
-    align-items: center;
     margin: 8px 0;
     padding: 10px;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
+    word-wrap: break-word;
+    /* Переносит длинные слова */
+    overflow-wrap: break-word;
+    /* Современный стандарт */
+    white-space: normal;
+    /* Разрешает перенос текста на новую строку */
 }
+
 
 .comment-item:hover, .file-item:hover {
     transform: translateX(2px);
@@ -748,19 +773,24 @@ input:checked+.slider:before {
 /* Пагинация */
 .pagination {
     display: flex;
-    gap: 8px;
+    gap: 6px;
+    /* Уменьшил промежуток */
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 15px;
+    /* Уменьшил отступ */
 }
 
 .pagination button {
-    padding: 8px 12px;
+    padding: 6px 10px;
+    /* Уменьшил размер кнопок */
     border: 1px solid #d8dde3;
     border-radius: 6px;
     background-color: #fff;
     color: #333;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-size: 13px;
+    /* Добавил размер шрифта */
 }
 
 .pagination button:hover {
@@ -1045,3 +1075,4 @@ input:checked+.slider:before {
 .hidden {
     display: none;
 }
+

@@ -46,7 +46,7 @@ let filters = {};
 let sortState = { field: null, ascending: true };
 
 // Уникальный список всех проектов для рекомендаций
-const allProjects = [...new Set(tasks.map(task => task.project))];
+let allProjects = [...new Set(tasks.map(task => task.project))];
 
 // Функция для получения актуального списка исполнителей
 function getAllExecutors() {
@@ -54,10 +54,10 @@ function getAllExecutors() {
 }
 
 let currentPage = 1;
-const tasksPerPage = 20;
+let tasksPerPage = 20;
 
 function createInterface() {
-    const appDiv = document.getElementById("app");
+    let appDiv = document.getElementById("app");
     appDiv.innerHTML = `
         <div class="controls">
             <div class="filters">
@@ -88,8 +88,8 @@ function createInterface() {
     createTable(tasks);
 
     // Автоматическое применение фильтров по дате
-    const dateFrom = document.getElementById("dateFrom");
-    const dateTo = document.getElementById("dateTo");
+    let dateFrom = document.getElementById("dateFrom");
+    let dateTo = document.getElementById("dateTo");
     [dateFrom, dateTo].forEach(input => {
         input.addEventListener("change", () => {
             filters.dateFrom = dateFrom.value;
@@ -119,8 +119,8 @@ function createInterface() {
 
     // Поиск
     document.getElementById("searchBtn").addEventListener("click", () => {
-        const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-        const filteredTasks = tasks.filter(task =>
+        let searchTerm = document.getElementById("searchInput").value.toLowerCase();
+        let filteredTasks = tasks.filter(task =>
             task.id.toString().includes(searchTerm) ||
             task.dateSet.toLowerCase().includes(searchTerm) ||
             task.project.toLowerCase().includes(searchTerm) ||
@@ -664,10 +664,9 @@ function openEditModal(task) {
         </div>
     `;
     document.body.appendChild(modal);
-    
-    // Добавляем обработчик для закрытия модального окна при клике вне содержимого
-    modal.addEventListener("click", function(event) {
-        // Проверяем, был ли клик вне modal-content
+
+    // Закрытие по клику вне модалки
+    modal.addEventListener("click", function (event) {
         if (!modal.querySelector(".modal-content").contains(event.target)) {
             modal.remove();
         }
@@ -691,8 +690,6 @@ function openEditModal(task) {
         });
     });
 
-    // Остальная часть кода функции остается без изменений...
-    
     // Удаление исполнителей
     const removeExecutorHandler = (btn) => {
         btn.addEventListener("click", () => {
@@ -819,13 +816,8 @@ function openEditModal(task) {
         }
     });
 
-    modal.querySelectorAll(".remove-comment").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const index = parseInt(btn.dataset.index);
-            task.comments.splice(index, 1);
-            updateCommentList(task, modal);
-        });
-    });
+    // Инициализация списка комментариев
+    updateCommentList(task, modal);
 
     // Сохранение
     modal.querySelector("#saveBtn").addEventListener("click", () => {
@@ -836,7 +828,7 @@ function openEditModal(task) {
         modal.remove();
     });
 
-    // Закрытие модалки по кнопкам внутри модалки
+    // Закрытие модалки
     modal.querySelector("#closeBtn").addEventListener("click", () => modal.remove());
     modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
 }
@@ -851,11 +843,13 @@ function updateCommentList(task, modal) {
         </div>
     `).join('');
     modal.querySelector("#newComment").value = "";
+
+    // Обработчик для кнопок показа комментария в модалке
     modal.querySelectorAll(".remove-comment").forEach(btn => {
         btn.addEventListener("click", () => {
             const index = parseInt(btn.dataset.index);
-            task.comments.splice(index, 1);
-            updateCommentList(task, modal);
+            const comment = task.comments[index];
+            showCommentModal(comment.text, comment.date);
         });
     });
 }
