@@ -323,9 +323,12 @@ td.clicked {
 
 .modal-header {
     display: flex;
-    justify-content: space-between;
+justify-content: space-around;
     align-items: center;
     margin-bottom: 20px;
+}
+#openExtraModalBtn{
+    background-color: #1a73e8;
 }
 
 .modal-header h2 {
@@ -400,6 +403,12 @@ td.clicked {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.theme {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
 .task-details .field:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -419,8 +428,7 @@ td.clicked {
 
 .task-details input[type="text"],
 .task-details input[type="date"],
-.task-details textarea,
-.task-details select {
+.task-details textarea {
     width: 780px;
     padding: 12px;
     border: 1px solid #d8dde3;
@@ -432,7 +440,6 @@ td.clicked {
 .modal-content input[type="text"] {
     width: 100%;
     padding: 8px;
-    margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
@@ -604,6 +611,7 @@ input:checked+.slider:before {
 }
 
 .editable-field {
+    width: 100%;
     display: flex;
     align-items: center;
 }
@@ -677,7 +685,6 @@ input:checked+.slider:before {
 }
 
 .comment-item, .file-item {
-    margin: 8px 0;
     padding: 10px;
     background: #fff;
     border-radius: 8px;
@@ -691,6 +698,11 @@ input:checked+.slider:before {
     /* Разрешает перенос текста на новую строку */
 }
 
+#commentList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
 .comment-item:hover, .file-item:hover {
     transform: translateX(2px);
@@ -1076,3 +1088,61 @@ input:checked+.slider:before {
     display: none;
 }
 
+/* Стили для селекта статуса в модальном окне */
+#statusSelect, .executor-select {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease;
+    min-width: 150px;
+    /* Чтобы селект не был слишком узким */
+}
+
+/* При наведении */
+#statusSelect:hover, .executor-select:hover {
+    border-color: #4a90e2;
+}
+
+/* При фокусе */
+#statusSelect:focus, .executor-select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 3px rgba(74, 144, 226, 0.5);
+}
+
+/* Убираем стандартную стрелку в некоторых браузерах и добавляем свою */
+#statusSelect, .executor-select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="%234a90e2" d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 25px;
+    /* Учитываем место для стрелки */
+}
+
+/* Стили для кнопки удаления рядом с селектом при добавлении исполнителя */
+.executor-select+button {
+    padding: 2px 6px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #e74c3c;
+    /* Красный цвет для "удалить" */
+    border: none;
+    border-radius: 50%;
+    /* Круглая форма */
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.executor-select+button:hover {
+    background-color: #c0392b;
+    /* Темнее при наведении */
+}

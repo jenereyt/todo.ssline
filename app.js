@@ -5,10 +5,8 @@ let tasks = [
         project: "Afrosiyob paranda",
         theme: "Разработка UI",
         description: "Создать интерфейс главной страницы",
-        completed: true,
+        status: "Выполнено", // Новое поле
         executors: ["Иван Иванов", "Пётр Сидоров"],
-        dateCompleted: "2025-03-26",
-        accepted: "Да",
         files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }],
         comments: [
             { text: "Дизайн утверждён заказчиком", date: "2025-03-25" },
@@ -16,7 +14,16 @@ let tasks = [
             { text: "Исправлены отступы на мобильной версии", date: "2025-03-26" }
         ]
     },
-    { id: 2, dateSet: "2025-03-24", project: "Заказчик Beta", theme: "Исправление багов", description: "Пофиксить ошибку в авторизации", completed: false, executors: [], dateCompleted: "", accepted: "Нет", files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }, { name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }] },
+    {
+        id: 2,
+        dateSet: "2025-03-24",
+        project: "Заказчик Beta",
+        theme: "Исправление багов",
+        description: "Пофиксить ошибку в авторизации",
+        status: "Выполнено",
+        executors: [],
+        files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }, { name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }]
+    },
     { id: 3, dateSet: "2025-03-20", project: "Проект Gamma", theme: "Тестирование API", description: "Проверить все эндпоинты", completed: false, executors: ["Анна Смирнова"], dateCompleted: "", accepted: "Нет" },
     { id: 4, dateSet: "2025-03-22", project: "Заказчик Delta", theme: "Дизайн логотипа", description: "Разработать новый логотип компании", completed: true, executors: ["Мария Петрова", "Алексей Кузнецов"], dateCompleted: "2025-03-24", accepted: "Да" },
     { id: 5, dateSet: "2025-03-23", project: "Проект Epsilon", theme: "Оптимизация кода", description: "Ускорить загрузку страницы", completed: false, executors: ["Дмитрий Соколов", "Ольга Николаева"], dateCompleted: "", accepted: "Нет" },
@@ -444,19 +451,19 @@ function sortTasks(taskList) {
         let valA = a[sortState.field];
         let valB = b[sortState.field];
 
-        if (sortState.field === "dateSet" || sortState.field === "dateCompleted") {
+        if (sortState.field === "dateSet") {
             valA = valA || "9999-12-31";
             valB = valB || "9999-12-31";
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
         } else if (sortState.field === "id") {
             return sortState.ascending ? valA - valB : valB - valA;
-        } else if (sortState.field === "completed" || sortState.field === "accepted") {
-            valA = sortState.field === "completed" ? valA : valA === "Да";
-            valB = sortState.field === "completed" ? valB : valB === "Да";
-            return sortState.ascending ? (valB - valA) : (valA - valB);
         } else if (sortState.field === "executors") {
             valA = valA.length ? valA.join(", ") : "";
             valB = valB.length ? valB.join(", ") : "";
+            return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else if (sortState.field === "status") {
+            valA = valA || "Не указан";
+            valB = valB || "Не указан";
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
         } else {
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
@@ -486,9 +493,7 @@ function createTable(taskList) {
                 <th data-sort="theme">Тема</th>
                 <th data-sort="description">Описание</th>
                 <th data-sort="executors">Исполнители</th>
-                <th data-sort="completed">Выполнено</th>
-                <th data-sort="dateCompleted">Дата выполнения</th>
-                <th data-sort="accepted">Принято заказчиком</th>
+                <th data-sort="status">Статус</th> <!-- Обновлено -->
             </tr>
         </thead>
         <tbody></tbody>
@@ -504,9 +509,7 @@ function createTable(taskList) {
             <td>${task.theme}</td>
             <td>${task.description}</td>
             <td>${task.executors.length ? task.executors.join(", ") : "Не назначены"}</td>
-            <td>${task.completed ? "Да" : "Нет"}</td>
-            <td>${task.dateCompleted || "Не указано"}</td>
-            <td>${task.accepted}</td>
+            <td>${task.status || "Не указан"}</td> <!-- Отображаем статус -->
         `;
         row.addEventListener("click", () => openEditModal(task));
         tbody.appendChild(row);
@@ -579,6 +582,8 @@ function openEditModal(task) {
     if (!task.comments) task.comments = [];
     if (!task.files) task.files = [];
 
+    const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
+
     modal.innerHTML = `
         <div class="modal-content full-task-modal">
             <button class="close-modal-btn" id="closeModalBtn">×</button>
@@ -588,23 +593,17 @@ function openEditModal(task) {
                 <span>Проект: ${task.project}</span>
                 <div class="header-details">
                     <div class="status-toggle">
-                        <label>Выполнено:</label>
-                        <label class="checkbox-google">
-                            <input type="checkbox" id="editCompleted" ${task.completed ? 'checked' : ''}>
-                            <span class="checkbox-google-switch"></span>
-                        </label>
-                    </div>
-                    <div class="status-toggle">
-                        <label>Принято:</label>
-                        <label class="checkbox-google">
-                            <input type="checkbox" id="editAccepted" ${task.accepted === 'Да' ? 'checked' : ''}>
-                            <span class="checkbox-google-switch"></span>
-                        </label>
+                        <select id="statusSelect">
+                            ${statuses.map(status => `
+                                <option value="${status}" ${task.status === status ? 'selected' : ''}>${status}</option>
+                            `).join('')}
+                        </select>
+                        <button id="openExtraModalBtn" style="margin-left: 10px;">+</button>
                     </div>
                 </div>
             </div>
             <div class="task-details">
-                <div class="field">
+                <div class="field theme">
                     <label>Тема:</label>
                     <div class="editable-field">
                         <span id="themeDisplay">${task.theme}</span>
@@ -632,10 +631,6 @@ function openEditModal(task) {
                         `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
                         <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;">+</button>
                     </div>
-                </div>
-                <div class="field">
-                    <label>Дата выполнения:</label>
-                    <input type="date" value="${task.dateCompleted || ''}" id="editDateCompleted">
                 </div>
                 <div class="field comments">
                     <label>Комментарии:</label>
@@ -670,6 +665,18 @@ function openEditModal(task) {
     `;
     document.body.appendChild(modal);
 
+    // Обновление статуса при выборе
+    const statusSelect = modal.querySelector("#statusSelect");
+    statusSelect.addEventListener("change", () => {
+        task.status = statusSelect.value;
+    });
+
+    // Кнопка для будущей модалки
+    modal.querySelector("#openExtraModalBtn").addEventListener("click", (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие
+        alert("Здесь будет открываться новая модалка в будущем!");
+    });
+
     // Закрытие по клику вне модалки
     modal.addEventListener("click", function (event) {
         if (!modal.querySelector(".modal-content").contains(event.target)) {
@@ -679,7 +686,8 @@ function openEditModal(task) {
 
     // Редактирование темы и описания
     modal.querySelectorAll(".edit-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Предотвращаем всплытие
             const field = btn.dataset.field;
             const display = modal.querySelector(`#${field}Display`);
             const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
@@ -695,9 +703,10 @@ function openEditModal(task) {
         });
     });
 
-    // Удаление исполнителей
+    // Удаление исполнителей с исправлением бага
     const removeExecutorHandler = (btn) => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Предотвращаем всплытие до modal
             const executor = btn.dataset.executor;
             task.executors = task.executors.filter(ex => ex !== executor);
             btn.parentElement.remove();
@@ -715,14 +724,14 @@ function openEditModal(task) {
 
     // Редактирование исполнителей
     const editExecutorHandler = (btn) => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Предотвращаем всплытие
             const oldExecutor = btn.dataset.executor;
             const executorItem = btn.parentElement;
             const originalContent = executorItem.innerHTML;
 
             const select = document.createElement("select");
             select.className = "executor-select";
-            select.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px; border: none; font-size: 14px; max-width: 150px;";
             select.innerHTML = `
                 <option value="">Выберите...</option>
                 ${getAllExecutors().filter(ex => !task.executors.includes(ex) || ex === oldExecutor).map(exec => `
@@ -740,6 +749,7 @@ function openEditModal(task) {
             executorItem.appendChild(cancelBtn);
 
             select.addEventListener("change", (e) => {
+                e.stopPropagation(); // Предотвращаем всплытие
                 const newExecutor = e.target.value;
                 if (newExecutor && newExecutor !== oldExecutor) {
                     const index = task.executors.indexOf(oldExecutor);
@@ -756,7 +766,8 @@ function openEditModal(task) {
                 }
             });
 
-            cancelBtn.addEventListener("click", () => {
+            cancelBtn.addEventListener("click", (e) => {
+                e.stopPropagation(); // Предотвращаем всплытие
                 executorItem.innerHTML = originalContent;
                 editExecutorHandler(executorItem.querySelector(".edit-executor"));
                 removeExecutorHandler(executorItem.querySelector(".remove-executor"));
@@ -765,9 +776,10 @@ function openEditModal(task) {
     };
     modal.querySelectorAll(".edit-executor").forEach(editExecutorHandler);
 
-    // Добавление нового исполнителя
+    // Добавление нового исполнителя с кнопкой удаления
     const addExecutorBtn = modal.querySelector(".add-executor-btn");
-    addExecutorBtn.addEventListener("click", () => {
+    addExecutorBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
         const executorList = modal.querySelector("#executorList");
         const existingSelect = executorList.querySelector("select");
         if (existingSelect) return;
@@ -779,16 +791,25 @@ function openEditModal(task) {
 
         const select = document.createElement("select");
         select.className = "executor-select";
-        select.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px; border: none; font-size: 14px; max-width: 150px;";
         select.innerHTML = `
-            <option value="">Выберите...</option>
-            ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(exec => `
-                <option value="${exec}">${exec}</option>
-            `).join('')}
-        `;
-        executorList.insertBefore(select, addExecutorBtn);
+        <option value="">Выберите...</option>
+        ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(exec => `
+            <option value="${exec}">${exec}</option>
+        `).join('')}
+    `;
+
+        const removeSelectBtn = document.createElement("button");
+        removeSelectBtn.textContent = "×";
+
+        const container = document.createElement("div");
+        container.style.cssText = "display: flex; align-items: center; gap: 5px;";
+        container.appendChild(select);
+        container.appendChild(removeSelectBtn);
+
+        executorList.insertBefore(container, addExecutorBtn);
 
         select.addEventListener("change", (e) => {
+            e.stopPropagation();
             const selectedExecutor = e.target.value;
             if (selectedExecutor) {
                 task.executors.push(selectedExecutor);
@@ -796,21 +817,33 @@ function openEditModal(task) {
                 span.className = "executor-item";
                 span.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px;";
                 span.innerHTML = `
-                    ${selectedExecutor}
-                    <button class="edit-executor" data-executor="${selectedExecutor}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
-                    <button class="remove-executor" data-executor="${selectedExecutor}" style="border: none; background: none; cursor: pointer;">×</button>
-                `;
+                ${selectedExecutor}
+                <button class="edit-executor" data-executor="${selectedExecutor}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
+                <button class="remove-executor" data-executor="${selectedExecutor}" style="border: none; background: none; cursor: pointer;">×</button>
+            `;
                 executorList.insertBefore(span, addExecutorBtn);
-                select.remove();
-
+                container.remove();
                 editExecutorHandler(span.querySelector(".edit-executor"));
                 removeExecutorHandler(span.querySelector(".remove-executor"));
+            }
+        });
+
+        removeSelectBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            container.remove();
+            if (!task.executors.length) {
+                const noExecutorsSpan = document.createElement("span");
+                noExecutorsSpan.className = "executor-item";
+                noExecutorsSpan.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px;";
+                noExecutorsSpan.textContent = "Не назначены";
+                executorList.insertBefore(noExecutorsSpan, addExecutorBtn);
             }
         });
     });
 
     // Обработчики для комментариев
-    modal.querySelector("#addComment").addEventListener("click", () => {
+    modal.querySelector("#addComment").addEventListener("click", (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие
         const commentText = modal.querySelector("#newComment").value.trim();
         if (commentText) {
             task.comments.push({
@@ -821,21 +854,24 @@ function openEditModal(task) {
         }
     });
 
-    // Инициализация списка комментариев
     updateCommentList(task, modal);
 
-    // Сохранение
-    modal.querySelector("#saveBtn").addEventListener("click", () => {
-        task.completed = modal.querySelector("#editCompleted").checked;
-        task.accepted = modal.querySelector("#editAccepted").checked ? "Да" : "Нет";
-        task.dateCompleted = modal.querySelector("#editDateCompleted").value;
+    // Сохранение изменений
+    modal.querySelector("#saveBtn").addEventListener("click", (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие
+        task.status = statusSelect.value;
         applyFilters();
         modal.remove();
     });
 
-    // Закрытие модалки
-    modal.querySelector("#closeBtn").addEventListener("click", () => modal.remove());
-    modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
+    modal.querySelector("#closeBtn").addEventListener("click", (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие
+        modal.remove();
+    });
+    modal.querySelector("#closeModalBtn").addEventListener("click", (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие
+        modal.remove();
+    });
 }
 
 function updateCommentList(task, modal) {
@@ -861,8 +897,6 @@ function updateCommentList(task, modal) {
         });
     });
 }
-
-
 
 document.addEventListener("DOMContentLoaded", createInterface);
 
