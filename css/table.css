@@ -1,0 +1,113 @@
+/* Таблица */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: #fff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    display: block;
+    height: 75vh;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+}
+
+th {
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+tbody {
+    display: block;
+    overflow-y: auto;
+    max-height: calc(75vh - 44px);
+    width: 100%;
+}
+
+tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+td {
+    background-color: #fff;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e6eaee;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 0;
+}
+
+tr:hover td {
+    background-color: #dfe1e3;
+    cursor: pointer;
+}
+
+.editable:hover {
+    background-color: #e9f1ff;
+    cursor: pointer;
+    color: #4a90e2;
+}
+
+.selected {
+    background-color: #e6f3ff;
+    border: 2px solid #4d94ff;
+    color: #333;
+}
+
+td.clicked {
+    background-color: #cce5ff;
+    font-weight: 600;
+}
+
+/* Пагинация */
+.pagination {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.pagination button {
+    padding: 6px 10px;
+    border: 1px solid #d8dde3;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+}
+
+.pagination button:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.pagination button:disabled {
+    background-color: #e6eaee;
+    cursor: not-allowed;
+    color: #999;
+}
+
+.pagination button.active {
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
+    border: none;
+}

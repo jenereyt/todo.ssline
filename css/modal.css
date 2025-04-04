@@ -1,0 +1,619 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    /* Заменяем height: 100% на 100vh для явной высоты */
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
+.modal-contente {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    animation: fadeIn 0.3s ease-in-out;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-contente h2 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+}
+
+.modal-contente h3 {
+    padding-left: 10px;
+    color: #34495e;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.add-executor-section {
+    background-color: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.all-executors-section {
+    padding: 5px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+}
+
+.executors-list {
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f8f9fa;
+    border-radius: 10px;
+    background: #fff;
+    padding-right: 2px;
+    /* Небольшой отступ справа для скроллбара */
+    border: 1px solid #e9ecef;
+    /* Опционально: граница для чёткости */
+}
+
+.executors-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.executors-list::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 20px;
+}
+
+.executors-list::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 20px;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.1);
+    /* Лёгкая тень для глубины */
+}
+
+.executors-list::-webkit-scrollbar-thumb:hover {
+    background-color: #a0aec0;
+    /* Цвет при наведении */
+}
+
+.executor-list-item {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.15s ease;
+}
+
+.executor-list-item:last-child {
+    border-bottom: none;
+}
+
+.executor-list-item:hover {
+    background-color: #f8f9fa;
+}
+
+.executor-name {
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.edit-executor-panel {
+    background-color: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+    border: 1px solid #e9ecef;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Общие стили для модального окна */
+.trello-style-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.trello-modal-content {
+    width: 750px;
+    max-height: 85vh;
+    background: #f4f5f7;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Заголовок */
+.modal-header {
+    position: relative;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dfe1e6;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #172b4d;
+    line-height: 1.2;
+}
+
+.date-set {
+    font-size: 12px;
+    color: #5e6c84;
+    margin-top: 5px;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #5e6c84;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+    color: #172b4d;
+}
+
+/* Тело модалки */
+.modal-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.main-content {
+    flex: 3;
+    padding-right: 15px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #dfe1e6 #f4f5f7;
+}
+
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #dfe1e6;
+    border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #f4f5f7;
+}
+
+/* Боковая панель */
+.sidebar {
+    flex: 1;
+    background: #ebecf0;
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.sidebar h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #5e6c84;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+}
+
+.sidebar-btn {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    background: #fff;
+    border: none;
+    border-radius: 3px;
+    text-align: left;
+    font-size: 14px;
+    color: #172b4d;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sidebar-btn:hover {
+    background: #dfe1e6;
+}
+
+/* Поля в основном контенте */
+.field {
+    margin-bottom: 20px;
+}
+
+.field h3, .field h4 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.field h4 {
+    font-size: 14px;
+}
+
+/* Редактируемые поля (тема, описание) */
+.editable-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.editable-field span {
+    flex: 1;
+    font-size: 14px;
+    color: #172b4d;
+    padding: 6px;
+    background: #fff;
+    border-radius: 3px;
+}
+
+.editable-field input,
+.editable-field textarea {
+    flex: 1;
+    font-size: 14px;
+    padding: 6px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    background: #fff;
+    resize: vertical;
+}
+
+.editable-field button {
+    font-size: 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #5e6c84;
+    transition: color 0.2s;
+}
+
+.editable-field button:hover {
+    color: #172b4d;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Статус */
+.status-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.status-section label {
+    font-size: 14px;
+    color: #5e6c84;
+}
+
+.status-section select {
+    padding: 6px;
+    font-size: 14px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    background: #fff;
+    color: #172b4d;
+}
+
+/* Участники */
+.executor-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.executor-item {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    background: #dfe1e6;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.executor-item button {
+    margin-left: 5px;
+    font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #5e6c84;
+    transition: color 0.2s;
+}
+
+.executor-item button:hover {
+    color: #172b4d;
+}
+
+.add-executor-btn {
+    padding: 4px;
+    background: #dfe1e6;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.add-executor-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+/* Вложения */
+.file-list {
+    margin-top: 10px;
+}
+
+.file-item {
+    padding: 6px 0;
+    border-bottom: 1px solid #dfe1e6;
+}
+
+.file-item a {
+    font-size: 14px;
+    color: #0052cc;
+    text-decoration: none;
+}
+
+.file-item a:hover {
+    text-decoration: underline;
+}
+
+.field.files input[type="file"] {
+    margin-top: 10px;
+}
+
+.field.files button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #0052cc;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.field.files button:hover {
+    background: #003d99;
+}
+
+/* Комментарии */
+.comment-item {
+    padding: 10px;
+    background: #fff;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.comment-item small {
+    color: #5e6c84;
+    font-size: 12px;
+}
+
+.comment-item button {
+    font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #5e6c84;
+    transition: color 0.2s;
+}
+
+.comment-item button:hover {
+    color: #172b4d;
+}
+
+.field.comments textarea {
+    width: 100%;
+    min-height: 60px;
+    padding: 6px;
+    margin-top: 10px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    font-size: 14px;
+    background: #fff;
+}
+
+.field.comments button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #0052cc;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.field.comments button:hover {
+    background: #003d99;
+}
+
+/* История */
+.history-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #dfe1e6;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.history-item span {
+    display: block;
+}
+
+.history-item small {
+    color: #5e6c84;
+    font-size: 12px;
+}
+
+/* Подвал */
+.modal-footer {
+    margin-top: 15px;
+    text-align: right;
+}
+
+.modal-footer button {
+    padding: 6px 12px;
+    margin-left: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#saveBtn {
+    background: #0052cc;
+    color: #fff;
+}
+
+#saveBtn:hover {
+    background: #003d99;
+}
+
+#closeBtn {
+    background: #dfe1e6;
+    color: #172b4d;
+}
+
+#closeBtn:hover {
+    background: #d3d6db;
+}
+
+/* Исправление положения кнопки "X" */
+.header-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    /* Возвращаем "X" на место */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-actions select {
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    background: #fff;
+    color: #172b4d;
+}
+
+.close-modal-btn {
+    font-size: 24px;
+    font-weight: bold;
+    color: #5e6c84;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    position: static;
+    /* Убираем absolute, чтобы он был в потоке */
+}
+
+.close-modal-btn:hover {
+    color: #172b4d;
+}
+
+/* Стили для контейнера селекта участников */
+.executor-select-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.executor-select-container select {
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+}
+
+.remove-select-btn,
+.revert-btn {
+    font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #5e6c84;
+    transition: color 0.2s;
+}
+
+.remove-select-btn:hover,
+.revert-btn:hover {
+    color: #172b4d;
+}
+
+.sidebar-btn.active {
+    background: #d0d2d5;
+    /* Подсветка активной кнопки */
+}

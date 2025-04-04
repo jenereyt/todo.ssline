@@ -5,8 +5,8 @@ let tasks = [
         project: "Afrosiyob paranda",
         theme: "Разработка UI",
         description: "Создать интерфейс главной страницы",
-        status: "Выполнено", // Новое поле
-        executors: ["Иван Иванов", "Пётр Сидоров"],
+        status: "Выполнено",
+        executors: ["Рустамов Жонибек", "Храмов Дониш"],
         files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }],
         comments: [
             { text: "Дизайн утверждён заказчиком", date: "2025-03-25" },
@@ -21,37 +21,317 @@ let tasks = [
         theme: "Исправление багов",
         description: "Пофиксить ошибку в авторизации",
         status: "Выполнено",
-        executors: [],
+        executors: ["Сайдуллаев Дамир"],
         files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }, { name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }]
     },
-    { id: 3, dateSet: "2025-03-20", project: "Проект Gamma", theme: "Тестирование API", description: "Проверить все эндпоинты", completed: false, executors: ["Анна Смирнова"], dateCompleted: "", accepted: "Нет" },
-    { id: 4, dateSet: "2025-03-22", project: "Заказчик Delta", theme: "Дизайн логотипа", description: "Разработать новый логотип компании", completed: true, executors: ["Мария Петрова", "Алексей Кузнецов"], dateCompleted: "2025-03-24", accepted: "Да" },
-    { id: 5, dateSet: "2025-03-23", project: "Проект Epsilon", theme: "Оптимизация кода", description: "Ускорить загрузку страницы", completed: false, executors: ["Дмитрий Соколов", "Ольга Николаева"], dateCompleted: "", accepted: "Нет" },
-    { id: 6, dateSet: "2025-03-26", project: "Проект Zeta", theme: "Аналитика", description: "Собрать данные по пользователям", completed: false, executors: ["Сергей Морозов"], dateCompleted: "", accepted: "Нет" },
-    { id: 7, dateSet: "2025-03-27", project: "Заказчик Eta", theme: "Дизайн", description: "Обновить баннеры на сайте", completed: true, executors: ["Екатерина Иванова"], dateCompleted: "2025-03-28", accepted: "Да" },
-    { id: 8, dateSet: "2025-03-28", project: "Проект Theta", theme: "Разработка", description: "Добавить фильтр в таблицу", completed: false, executors: ["Андрей Петров"], dateCompleted: "", accepted: "Нет" },
-    { id: 9, dateSet: "2025-03-29", project: "Заказчик Iota", theme: "Тестирование", description: "Провести нагрузочное тестирование", completed: false, executors: ["Олег Сидоров"], dateCompleted: "", accepted: "Нет" },
-    { id: 10, dateSet: "2025-03-30", project: "Проект Kappa", theme: "Оптимизация", description: "Уменьшить время ответа сервера", completed: true, executors: ["Наталья Козлова"], dateCompleted: "2025-03-31", accepted: "Да" },
-    { id: 11, dateSet: "2025-04-01", project: "Проект Lambda", theme: "Интеграция", description: "Подключить API платежной системы", completed: false, executors: ["Владимир Соколов"], dateCompleted: "", accepted: "Нет" },
-    { id: 12, dateSet: "2025-04-02", project: "Заказчик Mu", theme: "Дизайн", description: "Создать макет мобильного приложения", completed: true, executors: ["Елена Васильева"], dateCompleted: "2025-04-03", accepted: "Да" },
-    { id: 13, dateSet: "2025-04-03", project: "Проект Nu", theme: "Разработка", description: "Реализовать авторизацию через OAuth", completed: false, executors: ["Игорь Николаев"], dateCompleted: "", accepted: "Нет" },
-    { id: 14, dateSet: "2025-04-04", project: "Заказчик Xi", theme: "Тестирование", description: "Проверить совместимость с iOS", completed: false, executors: ["Татьяна Морозова"], dateCompleted: "", accepted: "Нет" },
-    { id: 15, dateSet: "2025-04-05", project: "Проект Omicron", theme: "Оптимизация", description: "Сжать изображения на сайте", completed: true, executors: ["Павел Кузнецов"], dateCompleted: "2025-04-06", accepted: "Да" },
-    { id: 16, dateSet: "2025-04-06", project: "Заказчик Pi", theme: "Аналитика", description: "Настроить Google Analytics", completed: false, executors: ["Юлия Соколова"], dateCompleted: "", accepted: "Нет" },
-    { id: 17, dateSet: "2025-04-07", project: "Проект Rho", theme: "Разработка", description: "Добавить форму обратной связи", completed: true, executors: ["Максим Иванов"], dateCompleted: "2025-04-08", accepted: "Да" },
-    { id: 18, dateSet: "2025-04-08", project: "Заказчик Sigma", theme: "Дизайн", description: "Обновить цветовую схему", completed: false, executors: ["Алина Петрова"], dateCompleted: "", accepted: "Нет" },
-    { id: 19, dateSet: "2025-04-09", project: "Проект Tau", theme: "Тестирование", description: "Проверить кроссбраузерность", completed: false, executors: ["Константин Сидоров"], dateCompleted: "", accepted: "Нет" },
-    { id: 20, dateSet: "2025-04-10", project: "Заказчик Upsilon", theme: "Интеграция", description: "Подключить CRM систему", completed: true, executors: ["Оксана Морозова"], dateCompleted: "2025-04-11", accepted: "Да" },
-    { id: 21, dateSet: "2025-04-11", project: "Проект Phi", theme: "Разработка", description: "Создать админ-панель", completed: false, executors: ["Артём Кузнецов"], dateCompleted: "", accepted: "Нет" },
-    { id: 22, dateSet: "2025-04-12", project: "Заказчик Chi", theme: "Оптимизация", description: "Ускорить загрузку видео", completed: false, executors: ["Евгений Соколов"], dateCompleted: "", accepted: "Нет" },
-    { id: 23, dateSet: "2025-04-13", project: "Проект Psi", theme: "Дизайн", description: "Разработать иконки для меню", completed: true, executors: ["Светлана Иванова"], dateCompleted: "2025-04-14", accepted: "Да" },
-    { id: 24, dateSet: "2025-04-14", project: "Заказчик Omega", theme: "Тестирование", description: "Проверить работу чата", completed: false, executors: ["Денис Петров"], dateCompleted: "", accepted: "Нет" },
-    { id: 25, dateSet: "2025-04-15", project: "Проект Alpha-2", theme: "Разработка", description: "Добавить поиск по сайту", completed: true, executors: ["Иван Иванов"], dateCompleted: "2025-04-16", accepted: "Да" },
-    { id: 26, dateSet: "2025-04-16", project: "Заказчик Beta-2", theme: "Аналитика", description: "Проанализировать конверсии", completed: false, executors: ["Анна Смирнова"], dateCompleted: "", accepted: "Нет" },
-    { id: 27, dateSet: "2025-04-17", project: "Проект Gamma-2", theme: "Интеграция", description: "Подключить уведомления", completed: false, executors: ["Пётр Сидоров"], dateCompleted: "", accepted: "Нет" },
-    { id: 28, dateSet: "2025-04-18", project: "Заказчик Delta-2", theme: "Дизайн", description: "Создать промо-страницу", completed: true, executors: ["Мария Петрова"], dateCompleted: "2025-04-19", accepted: "Да" },
-    { id: 29, dateSet: "2025-04-19", project: "Проект Epsilon-2", theme: "Оптимизация", description: "Улучшить SEO", completed: false, executors: ["Дмитрий Соколов"], dateCompleted: "", accepted: "Нет" },
-    { id: 30, dateSet: "2025-04-20", project: "Заказчик Zeta-2", theme: "Тестирование", description: "Проверить адаптивность", completed: true, executors: ["Ольга Николаева"], dateCompleted: "2025-04-21", accepted: "Да" }
+    {
+        id: 3,
+        dateSet: "2025-03-20",
+        project: "Проект Gamma",
+        theme: "Тестирование API",
+        description: "Проверить все эндпоинты",
+        status: "В процессе",
+        executors: ["Югай Дмитрий"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 4,
+        dateSet: "2025-03-22",
+        project: "Заказчик Delta",
+        theme: "Дизайн логотипа",
+        description: "Разработать новый логотип компании",
+        status: "Выполнено",
+        executors: ["Закиров Фаррух", "Бурханов Азим"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 5,
+        dateSet: "2025-03-23",
+        project: "Проект Epsilon",
+        theme: "Оптимизация кода",
+        description: "Ускорить загрузку страницы",
+        status: "В процессе",
+        executors: ["Нурманов Анвар", "Нарзуллоев Тохир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 6,
+        dateSet: "2025-03-26",
+        project: "Проект Zeta",
+        theme: "Аналитика",
+        description: "Собрать данные по пользователям",
+        status: "В процессе",
+        executors: ["Рустамов Жонибек"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 7,
+        dateSet: "2025-03-27",
+        project: "Заказчик Eta",
+        theme: "Дизайн",
+        description: "Обновить баннеры на сайте",
+        status: "Выполнено",
+        executors: ["Храмов Дониш"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 8,
+        dateSet: "2025-03-28",
+        project: "Проект Theta",
+        theme: "Разработка",
+        description: "Добавить фильтр в таблицу",
+        status: "В процессе",
+        executors: ["Сайдуллаев Дамир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 9,
+        dateSet: "2025-03-29",
+        project: "Заказчик Iota",
+        theme: "Тестирование",
+        description: "Провести нагрузочное тестирование",
+        status: "В процессе",
+        executors: ["Югай Дмитрий"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 10,
+        dateSet: "2025-03-30",
+        project: "Проект Kappa",
+        theme: "Оптимизация",
+        description: "Уменьшить время ответа сервера",
+        status: "Выполнено",
+        executors: ["Закиров Фаррух"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 11,
+        dateSet: "2025-04-01",
+        project: "Проект Lambda",
+        theme: "Интеграция",
+        description: "Подключить API платежной системы",
+        status: "В процессе",
+        executors: ["Бурханов Азим"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 12,
+        dateSet: "2025-04-02",
+        project: "Заказчик Mu",
+        theme: "Дизайн",
+        description: "Создать макет мобильного приложения",
+        status: "Выполнено",
+        executors: ["Нурманов Анвар"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 13,
+        dateSet: "2025-04-03",
+        project: "Проект Nu",
+        theme: "Разработка",
+        description: "Реализовать авторизацию через OAuth",
+        status: "В процессе",
+        executors: ["Нарзуллоев Тохир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 14,
+        dateSet: "2025-04-04",
+        project: "Заказчик Xi",
+        theme: "Тестирование",
+        description: "Проверить совместимость с iOS",
+        status: "В процессе",
+        executors: ["Рустамов Жонибек"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 15,
+        dateSet: "2025-04-05",
+        project: "Проект Omicron",
+        theme: "Оптимизация",
+        description: "Сжать изображения на сайте",
+        status: "Выполнено",
+        executors: ["Храмов Дониш"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 16,
+        dateSet: "2025-04-06",
+        project: "Заказчик Pi",
+        theme: "Аналитика",
+        description: "Настроить Google Analytics",
+        status: "В процессе",
+        executors: ["Сайдуллаев Дамир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 17,
+        dateSet: "2025-04-07",
+        project: "Проект Rho",
+        theme: "Разработка",
+        description: "Добавить форму обратной связи",
+        status: "Выполнено",
+        executors: ["Югай Дмитрий"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 18,
+        dateSet: "2025-04-08",
+        project: "Заказчик Sigma",
+        theme: "Дизайн",
+        description: "Обновить цветовую схему",
+        status: "В процессе",
+        executors: ["Закиров Фаррух"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 19,
+        dateSet: "2025-04-09",
+        project: "Проект Tau",
+        theme: "Тестирование",
+        description: "Проверить кроссбраузерность",
+        status: "В процессе",
+        executors: ["Бурханов Азим"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 20,
+        dateSet: "2025-04-10",
+        project: "Заказчик Upsilon",
+        theme: "Интеграция",
+        description: "Подключить CRM систему",
+        status: "Выполнено",
+        executors: ["Нурманов Анвар"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 21,
+        dateSet: "2025-04-11",
+        project: "Проект Phi",
+        theme: "Разработка",
+        description: "Создать админ-панель",
+        status: "В процессе",
+        executors: ["Нарзуллоев Тохир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 22,
+        dateSet: "2025-04-12",
+        project: "Заказчик Chi",
+        theme: "Оптимизация",
+        description: "Ускорить загрузку видео",
+        status: "В процессе",
+        executors: ["Рустамов Жонибек"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 23,
+        dateSet: "2025-04-13",
+        project: "Проект Psi",
+        theme: "Дизайн",
+        description: "Разработать иконки для меню",
+        status: "Выполнено",
+        executors: ["Храмов Дониш"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 24,
+        dateSet: "2025-04-14",
+        project: "Заказчик Omega",
+        theme: "Тестирование",
+        description: "Проверить работу чата",
+        status: "В процессе",
+        executors: ["Сайдуллаев Дамир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 25,
+        dateSet: "2025-04-15",
+        project: "Проект Alpha-2",
+        theme: "Разработка",
+        description: "Добавить поиск по сайту",
+        status: "Выполнено",
+        executors: ["Югай Дмитрий"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 26,
+        dateSet: "2025-04-16",
+        project: "Заказчик Beta-2",
+        theme: "Аналитика",
+        description: "Проанализировать конверсии",
+        status: "В процессе",
+        executors: ["Закиров Фаррух"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 27,
+        dateSet: "2025-04-17",
+        project: "Проект Gamma-2",
+        theme: "Интеграция",
+        description: "Подключить уведомления",
+        status: "В процессе",
+        executors: ["Бурханов Азим"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 28,
+        dateSet: "2025-04-18",
+        project: "Заказчик Delta-2",
+        theme: "Дизайн",
+        description: "Создать промо-страницу",
+        status: "Выполнено",
+        executors: ["Нурманов Анвар"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 29,
+        dateSet: "2025-04-19",
+        project: "Проект Epsilon-2",
+        theme: "Оптимизация",
+        description: "Улучшить SEO",
+        status: "В процессе",
+        executors: ["Нарзуллоев Тохир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 30,
+        dateSet: "2025-04-20",
+        project: "Заказчик Zeta-2",
+        theme: "Тестирование",
+        description: "Проверить адаптивность",
+        status: "Выполнено",
+        executors: ["Рустамов Жонибек"],
+        files: [],
+        comments: []
+    }
 ];
 // Объект для хранения фильтров и состояния сортировки
 let filters = {};
@@ -99,8 +379,16 @@ function createInterface() {
     `;
     createTable(tasks);
 
+    // Установка даты начала текущего месяца
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const formattedFirstDay = firstDayOfMonth.toISOString().split("T")[0]; // Формат YYYY-MM-DD
+    const dateFrom = document.getElementById("dateFrom");
+    dateFrom.value = formattedFirstDay; // Устанавливаем значение по умолчанию
+    filters.dateFrom = formattedFirstDay; // Обновляем фильтр
+    applyFilters(); // Применяем фильтры сразу после установки даты
+
     // Автоматическое применение фильтров по дате
-    let dateFrom = document.getElementById("dateFrom");
     let dateTo = document.getElementById("dateTo");
     [dateFrom, dateTo].forEach(input => {
         input.addEventListener("change", () => {
@@ -120,12 +408,13 @@ function createInterface() {
     // Сброс всех фильтров
     document.getElementById("resetFiltersBtn").addEventListener("click", () => {
         filters = {};
-        document.getElementById("dateFrom").value = "";
+        document.getElementById("dateFrom").value = formattedFirstDay; // Восстанавливаем начало месяца
         document.getElementById("dateTo").value = "";
         document.getElementById("executorFilter").value = "";
         document.getElementById("searchInput").value = "";
         sortState = { field: null, ascending: true };
         currentPage = 1;
+        filters.dateFrom = formattedFirstDay; // Устанавливаем фильтр снова
         createTable(tasks);
     });
 
@@ -577,87 +866,64 @@ function renderPagination(taskList, totalPages) {
 
 function openEditModal(task) {
     const modal = document.createElement("div");
-    modal.className = "modal";
+    modal.className = "modal trello-style-modal";
 
     if (!task.comments) task.comments = [];
     if (!task.files) task.files = [];
+    if (!task.history) task.history = [];
 
     const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
 
+    if (!task.history.length) {
+        task.history.push({
+            action: "Задача создана",
+            date: task.dateSet,
+            user: "Система"
+        });
+    }
+
     modal.innerHTML = `
-        <div class="modal-content full-task-modal">
-            <button class="close-modal-btn" id="closeModalBtn">×</button>
+        <div class="modal-content trello-modal-content">
             <div class="modal-header">
-                <h2>Задача #${task.id}</h2>
-                <span>От: ${task.dateSet}</span>
-                <span>Проект: ${task.project}</span>
-                <div class="header-details">
-                    <div class="status-toggle">
-                        <select id="statusSelect">
-                            ${statuses.map(status => `
-                                <option value="${status}" ${task.status === status ? 'selected' : ''}>${status}</option>
-                            `).join('')}
-                        </select>
-                        <button id="openExtraModalBtn"">История</button>
-                    </div>
-                </div>
-            </div>
-            <div class="task-details">
-                <div class="field theme">
-                    <label>Тема:</label>
-                    <div class="editable-field">
-                        <span id="themeDisplay">${task.theme}</span>
-                        <input type="text" id="editTheme" value="${task.theme}" class="hidden">
-                        <button class="edit-btn" data-field="theme">✏️</button>
-                    </div>
-                </div>
-                <div class="field">
-                    <label>Описание:</label>
-                    <div class="editable-field">
-                        <span id="descriptionDisplay">${task.description}</span>
-                        <textarea id="editDescription" class="hidden">${task.description}</textarea>
-                        <button class="edit-btn" data-field="description">✏️</button>
-                    </div>
-                </div>
-                <div class="field">
-                    <label>Исполнители:</label>
-                    <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
-                        ${task.executors.length ? task.executors.map(ex => `
-                            <span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">
-                                ${ex}
-                                <button class="edit-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
-                                <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
-                            </span>
-                        `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
-                        <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;">+</button>
-                    </div>
-                </div>
-                <div class="field comments">
-                    <label>Комментарии:</label>
-                    <div id="commentList">
-                        ${task.comments.map((comment, index) => `
-                            <div class="comment-item">
-                                ${comment.text} 
-                                <small>(${comment.date})</small>
-                                <button class="remove-comment" data-index="${index}">×</button>
-                            </div>
+                <h2>${task.project}</h2>
+                <span class="date-set">Дата постановки: ${task.dateSet}</span>
+                <div class="header-actions">
+                    <select id="statusSelect">
+                        ${statuses.map(status => `
+                            <option value="${status}" ${task.status === status ? 'selected' : ''}>${status}</option>
                         `).join('')}
-                    </div>
-                    <textarea id="newComment" placeholder="Новый комментарий"></textarea>
-                    <button id="addComment">Добавить комментарий</button>
-                </div>
-                <div class="field files">
-                    <label>Прикрепленные файлы:</label>
-                    <div id="fileList">
-                        ${task.files.length ? task.files.map(file => `
-                            <div class="file-item">
-                                <a href="${file.url}" target="_blank">${file.name}</a>
-                            </div>
-                        `).join('') : 'Нет файлов'}
-                    </div>
+                    </select>
+                    <button class="close-modal-btn" id="closeModalBtn">×</button>
                 </div>
             </div>
-            <div class="modal-buttons">
+            <div class="modal-body">
+                <div class="main-content" id="mainContent">
+                    <div class="field theme">
+                        <h3>Тема</h3>
+                        <div class="editable-field">
+                            <span id="themeDisplay">${task.theme}</span>
+                            <input type="text" id="editTheme" value="${task.theme}" class="hidden">
+                            <button class="edit-btn" data-field="theme">✏️</button>
+                        </div>
+                    </div>
+                    <div class="field description">
+                        <h4>Описание</h4>
+                        <div class="editable-field">
+                            <span id="descriptionDisplay">${task.description}</span>
+                            <textarea id="editDescription" class="hidden">${task.description}</textarea>
+                            <button class="edit-btn" data-field="description">✏️</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar">
+                    <h3>Добавить в карточку</h3>
+                    <button class="sidebar-btn" data-section="executors">Участники</button>
+                    <button class="sidebar-btn" data-section="files">Вложения</button>
+                    <button class="sidebar-btn" data-section="comments">Комментарии</button>
+                    <button class="sidebar-btn" data-section="history">История</button>
+                </div>
+            </div>
+            <div class="modal-footer">
                 <button id="saveBtn">Сохранить</button>
                 <button id="closeBtn">Закрыть</button>
             </div>
@@ -665,216 +931,404 @@ function openEditModal(task) {
     `;
     document.body.appendChild(modal);
 
-    // Обновление статуса при выборе
+    const mainContent = modal.querySelector("#mainContent");
     const statusSelect = modal.querySelector("#statusSelect");
+
+    // Обновление статуса с записью в историю
+    let previousStatus = task.status;
     statusSelect.addEventListener("change", () => {
-        task.status = statusSelect.value;
-    });
-
-    // Кнопка для будущей модалки
-    modal.querySelector("#openExtraModalBtn").addEventListener("click", (e) => {
-        e.stopPropagation(); // Предотвращаем всплытие
-        alert("Здесь будет открываться новая модалка в будущем!");
-    });
-
-    // Закрытие по клику вне модалки
-    modal.addEventListener("click", function (event) {
-        if (!modal.querySelector(".modal-content").contains(event.target)) {
-            modal.remove();
+        if (task.status !== statusSelect.value) {
+            task.history.push({
+                action: `Статус изменён с "${previousStatus}" на "${statusSelect.value}"`,
+                date: new Date().toLocaleDateString(),
+                user: "Текущий пользователь"
+            });
+            previousStatus = statusSelect.value;
+            task.status = statusSelect.value;
         }
     });
 
-    // Редактирование темы и описания
+    // Привязка редактирования темы и описания
     modal.querySelectorAll(".edit-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // Предотвращаем всплытие
+            e.stopPropagation();
             const field = btn.dataset.field;
             const display = modal.querySelector(`#${field}Display`);
             const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
-
             display.classList.toggle("hidden");
             input.classList.toggle("hidden");
             btn.textContent = display.classList.contains("hidden") ? "💾" : "✏️";
-
-            if (!display.classList.contains("hidden")) {
+            if (!display.classList.contains("hidden") && task[field] !== input.value) {
+                task.history.push({
+                    action: `${field === "theme" ? "Тема" : "Описание"} изменено на "${input.value}"`,
+                    date: new Date().toLocaleDateString(),
+                    user: "Текущий пользователь"
+                });
                 task[field] = input.value;
                 display.textContent = task[field];
             }
         });
     });
 
-    // Удаление исполнителей с исправлением бага
-    const removeExecutorHandler = (btn) => {
+    // Обработчики для кнопок в боковой панели (переключение: добавить/убрать)
+    modal.querySelectorAll(".sidebar-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // Предотвращаем всплытие до modal
-            const executor = btn.dataset.executor;
-            task.executors = task.executors.filter(ex => ex !== executor);
-            btn.parentElement.remove();
-            if (!task.executors.length) {
-                const executorList = modal.querySelector("#executorList");
-                const noExecutorsSpan = document.createElement("span");
-                noExecutorsSpan.className = "executor-item";
-                noExecutorsSpan.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px;";
-                noExecutorsSpan.textContent = "Не назначены";
-                executorList.insertBefore(noExecutorsSpan, executorList.querySelector(".add-executor-btn"));
-            }
-        });
-    };
-    modal.querySelectorAll(".remove-executor").forEach(removeExecutorHandler);
-
-    // Редактирование исполнителей
-    const editExecutorHandler = (btn) => {
-        btn.addEventListener("click", (e) => {
-            e.stopPropagation(); // Предотвращаем всплытие
-            const oldExecutor = btn.dataset.executor;
-            const executorItem = btn.parentElement;
-            const originalContent = executorItem.innerHTML;
-
-            const select = document.createElement("select");
-            select.className = "executor-select";
-            select.innerHTML = `
-                <option value="">Выберите...</option>
-                ${getAllExecutors().filter(ex => !task.executors.includes(ex) || ex === oldExecutor).map(exec => `
-                    <option value="${exec}" ${exec === oldExecutor ? 'selected' : ''}>${exec}</option>
-                `).join('')}
-            `;
-
-            const cancelBtn = document.createElement("button");
-            cancelBtn.textContent = "⟲";
-            cancelBtn.style.cssText = "border: none; background: #4a90e2; cursor: pointer; margin-left: 5px;";
-            cancelBtn.title = "Отменить";
-
-            executorItem.innerHTML = '';
-            executorItem.appendChild(select);
-            executorItem.appendChild(cancelBtn);
-
-            select.addEventListener("change", (e) => {
-                e.stopPropagation(); // Предотвращаем всплытие
-                const newExecutor = e.target.value;
-                if (newExecutor && newExecutor !== oldExecutor) {
-                    const index = task.executors.indexOf(oldExecutor);
-                    if (index !== -1) {
-                        task.executors[index] = newExecutor;
-                    }
-                    executorItem.innerHTML = `
-                        ${newExecutor}
-                        <button class="edit-executor" data-executor="${newExecutor}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
-                        <button class="remove-executor" data-executor="${newExecutor}" style="border: none; background: none; cursor: pointer;">×</button>
-                    `;
-                    editExecutorHandler(executorItem.querySelector(".edit-executor"));
-                    removeExecutorHandler(executorItem.querySelector(".remove-executor"));
-                }
-            });
-
-            cancelBtn.addEventListener("click", (e) => {
-                e.stopPropagation(); // Предотвращаем всплытие
-                executorItem.innerHTML = originalContent;
-                editExecutorHandler(executorItem.querySelector(".edit-executor"));
-                removeExecutorHandler(executorItem.querySelector(".remove-executor"));
-            });
-        });
-    };
-    modal.querySelectorAll(".edit-executor").forEach(editExecutorHandler);
-
-    const addExecutorBtn = modal.querySelector(".add-executor-btn");
-    addExecutorBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const executorList = modal.querySelector("#executorList");
-        const existingSelect = executorList.querySelector("select");
-        if (existingSelect) return;
-
-        const noExecutorsSpan = executorList.querySelector("span.executor-item");
-        if (noExecutorsSpan && noExecutorsSpan.textContent === "Не назначены") {
-            noExecutorsSpan.remove();
-        }
-
-        const select = document.createElement("select");
-        select.className = "executor-select";
-        select.innerHTML = `
-        <option value="">Выберите...</option>
-        ${getAllExecutors()
-                .filter(ex => !task.executors.includes(ex)) // Фильтруем уже назначенных
-                .sort((a, b) => a.localeCompare(b)) // Сортируем в алфавитном порядке
-                .map(exec => `
-                <option value="${exec}">${exec}</option>
-            `).join('')}
-    `;
-
-        const removeSelectBtn = document.createElement("button");
-        removeSelectBtn.textContent = "×";
-
-        const container = document.createElement("div");
-        container.style.cssText = "display: flex; align-items: center; gap: 5px;";
-        container.appendChild(select);
-        container.appendChild(removeSelectBtn);
-
-        executorList.insertBefore(container, addExecutorBtn);
-
-        select.addEventListener("change", (e) => {
             e.stopPropagation();
-            const selectedExecutor = e.target.value;
-            if (selectedExecutor) {
-                task.executors.push(selectedExecutor);
-                const span = document.createElement("span");
-                span.className = "executor-item";
-                span.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px;";
-                span.innerHTML = `
-                ${selectedExecutor}
-                <button class="edit-executor" data-executor="${selectedExecutor}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
-                <button class="remove-executor" data-executor="${selectedExecutor}" style="border: none; background: none; cursor: pointer;">×</button>
-            `;
-                executorList.insertBefore(span, addExecutorBtn);
-                container.remove();
-                editExecutorHandler(span.querySelector(".edit-executor"));
-                removeExecutorHandler(span.querySelector(".remove-executor"));
-            }
-        });
-
-        removeSelectBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            container.remove();
-            if (!task.executors.length) {
-                const noExecutorsSpan = document.createElement("span");
-                noExecutorsSpan.className = "executor-item";
-                noExecutorsSpan.style.cssText = "padding: 2px 5px; background: #f0f0f0; border-radius: 3px;";
-                noExecutorsSpan.textContent = "Не назначены";
-                executorList.insertBefore(noExecutorsSpan, addExecutorBtn);
+            const section = btn.dataset.section;
+            const existingSection = mainContent.querySelector(`.field.${section}`);
+            if (existingSection) {
+                removeSection(section, modal); // Убираем секцию, если она уже есть
+                btn.classList.remove("active"); // Убираем активное состояние
+            } else {
+                addSection(section, task, modal); // Добавляем секцию, если её нет
+                btn.classList.add("active"); // Отмечаем кнопку как активную
             }
         });
     });
 
-    // Обработчики для комментариев
-    modal.querySelector("#addComment").addEventListener("click", (e) => {
-        e.stopPropagation(); // Предотвращаем всплытие
-        const commentText = modal.querySelector("#newComment").value.trim();
-        if (commentText) {
-            task.comments.push({
-                text: commentText,
-                date: new Date().toLocaleDateString()
-            });
-            updateCommentList(task, modal);
+    // Закрытие модалки
+    modal.addEventListener("click", (e) => {
+        if (!modal.querySelector(".modal-content").contains(e.target)) {
+            modal.remove();
         }
     });
-
-    updateCommentList(task, modal);
+    modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
+    modal.querySelector("#closeBtn").addEventListener("click", () => modal.remove());
 
     // Сохранение изменений
-    modal.querySelector("#saveBtn").addEventListener("click", (e) => {
-        e.stopPropagation(); // Предотвращаем всплытие
+    modal.querySelector("#saveBtn").addEventListener("click", () => {
         task.status = statusSelect.value;
         applyFilters();
         modal.remove();
     });
-
-    modal.querySelector("#closeBtn").addEventListener("click", (e) => {
-        e.stopPropagation(); // Предотвращаем всплытие
-        modal.remove();
-    });
-    modal.querySelector("#closeModalBtn").addEventListener("click", (e) => {
-        e.stopPropagation(); // Предотвращаем всплытие
-        modal.remove();
-    });
 }
+
+// Функция для добавления секции
+function addSection(section, task, modal) {
+    const mainContent = modal.querySelector("#mainContent");
+    const sectionDiv = document.createElement("div");
+    sectionDiv.className = `field ${section}`;
+
+    switch (section) {
+        case "executors":
+            sectionDiv.innerHTML = `
+                <h3>Участники</h3>
+                <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
+                    ${task.executors.length ? task.executors.map(ex => `
+                        <span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">
+                            ${ex}
+                            <button class="edit-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
+                            <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
+                        </span>
+                    `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
+                    <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;"><img class="imagin" src="./plus.svg" alt=""></button>
+                </div>
+            `;
+            break;
+        case "files":
+            sectionDiv.innerHTML = `
+                <h3>Вложения</h3>
+                <div id="fileList">
+                    ${task.files.length ? task.files.map(file => `
+                        <div class="file-item">
+                            <a href="${file.url}" target="_blank">${file.name}</a>
+                        </div>
+                    `).join('') : 'Нет файлов'}
+                </div>
+            `;
+            break;
+        case "comments":
+            sectionDiv.innerHTML = `
+                <h3>Комментарии</h3>
+                <div id="commentList">
+                    ${task.comments.map((comment, index) => `
+                        <div class="comment-item">
+                            ${comment.text} <small>(${comment.date})</small>
+                            <button class="remove-comment" data-index="${index}">×</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <textarea id="newComment" placeholder="Напишите комментарий..."></textarea>
+                <button id="addComment">Добавить</button>
+            `;
+            break;
+        case "history":
+            sectionDiv.innerHTML = `
+                <h3>История</h3>
+                <div id="historyList">
+                    ${task.history.length ? task.history.map(entry => `
+                        <div class="history-item">
+                            <span>${entry.action}</span>
+                            <small>(${entry.date} - ${entry.user})</small>
+                        </div>
+                    `).join('') : 'Нет записей'}
+                </div>
+            `;
+            break;
+    }
+
+    mainContent.appendChild(sectionDiv);
+    bindEventListeners(section, task, modal);
+}
+
+// Функция для удаления секции
+function removeSection(section, modal) {
+    const mainContent = modal.querySelector("#mainContent");
+    const sectionDiv = mainContent.querySelector(`.field.${section}`);
+    if (sectionDiv) {
+        sectionDiv.remove();
+    }
+}
+
+// Функция для привязки обработчиков событий
+function bindEventListeners(section, task, modal) {
+    const mainContent = modal.querySelector("#mainContent");
+
+    if (section === "executors") {
+        const executorList = mainContent.querySelector("#executorList");
+        if (!executorList) return;
+
+        executorList.querySelectorAll(".remove-executor").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const executor = btn.dataset.executor;
+                task.executors = task.executors.filter(ex => ex !== executor);
+                task.history.push({
+                    action: `Участник "${executor}" удалён`,
+                    date: new Date().toLocaleDateString(),
+                    user: "Текущий пользователь"
+                });
+                addSection("executors", task, modal); // Перерисовываем секцию
+            });
+        });
+
+        executorList.querySelectorAll(".edit-executor").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const oldExecutor = btn.dataset.executor;
+                const executorItem = btn.parentElement;
+                const originalContent = executorItem.innerHTML;
+
+                const select = document.createElement("select");
+                select.innerHTML = `
+                    <option value="">Выберите...</option>
+                    ${getAllExecutors().filter(ex => !task.executors.includes(ex) || ex === oldExecutor).map(ex => `
+                        <option value="${ex}" ${ex === oldExecutor ? 'selected' : ''}>${ex}</option>
+                    `).join('')}
+                `;
+                const revertBtn = document.createElement("button");
+                revertBtn.textContent = "⟲";
+                revertBtn.className = "revert-btn";
+
+                executorItem.innerHTML = '';
+                executorItem.appendChild(select);
+                executorItem.appendChild(revertBtn);
+
+                select.addEventListener("change", () => {
+                    const newExecutor = select.value;
+                    if (newExecutor && newExecutor !== oldExecutor) {
+                        const index = task.executors.indexOf(oldExecutor);
+                        if (index !== -1) {
+                            task.executors[index] = newExecutor;
+                            task.history.push({
+                                action: `Участник изменён с "${oldExecutor}" на "${newExecutor}"`,
+                                date: new Date().toLocaleDateString(),
+                                user: "Текущий пользователь"
+                            });
+                        }
+                        addSection("executors", task, modal);
+                    }
+                });
+
+                revertBtn.addEventListener("click", () => {
+                    executorItem.innerHTML = originalContent;
+                    bindEventListeners("executors", task, modal); // Перепривязываем события
+                });
+            });
+        });
+
+        const addBtn = executorList.querySelector(".add-executor-btn");
+        if (addBtn) {
+            addBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const existingSelect = executorList.querySelector("select");
+                if (existingSelect) return;
+
+                const select = document.createElement("select");
+                select.innerHTML = `
+                    <option value="">Выберите...</option>
+                    ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(ex => `
+                        <option value="${ex}">${ex}</option>
+                    `).join('')}
+                `;
+                const removeBtn = document.createElement("button");
+                removeBtn.textContent = "×";
+                removeBtn.className = "remove-select-btn";
+
+                const container = document.createElement("div");
+                container.className = "executor-select-container";
+                container.appendChild(select);
+                container.appendChild(removeBtn);
+
+                executorList.insertBefore(container, addBtn);
+
+                select.addEventListener("change", () => {
+                    const newExecutor = select.value;
+                    if (newExecutor) {
+                        task.executors.push(newExecutor);
+                        task.history.push({
+                            action: `Добавлен участник "${newExecutor}"`,
+                            date: new Date().toLocaleDateString(),
+                            user: "Текущий пользователь"
+                        });
+                        addSection("executors", task, modal);
+                    }
+                });
+
+                removeBtn.addEventListener("click", () => {
+                    container.remove();
+                });
+            });
+        }
+    }
+
+    if (section === "comments") {
+        const commentList = mainContent.querySelector("#commentList");
+        const addCommentBtn = mainContent.querySelector("#addComment");
+        if (addCommentBtn) {
+            addCommentBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const commentText = mainContent.querySelector("#newComment").value.trim();
+                if (commentText) {
+                    task.comments.push({
+                        text: commentText,
+                        date: new Date().toLocaleDateString()
+                    });
+                    task.history.push({
+                        action: `Добавлен комментарий: "${commentText}"`,
+                        date: new Date().toLocaleDateString(),
+                        user: "Текущий пользователь"
+                    });
+                    addSection("comments", task, modal);
+                }
+            });
+        }
+
+        if (commentList) {
+            commentList.querySelectorAll(".remove-comment").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const index = parseInt(btn.dataset.index);
+                    const removedComment = task.comments[index];
+                    task.comments.splice(index, 1);
+                    task.history.push({
+                        action: `Удалён комментарий: "${removedComment.text}"`,
+                        date: new Date().toLocaleDateString(),
+                        user: "Текущий пользователь"
+                    });
+                    addSection("comments", task, modal);
+                });
+            });
+        }
+    }
+}
+
+// Функция для обновления основного контента
+function updateMainContent(section, task, modal, hide = false) {
+    const mainContent = modal.querySelector("#mainContent");
+    let contentHTML = `
+        <div class="field theme">
+            <h3>Тема</h3>
+            <div class="editable-field">
+                <span id="themeDisplay">${task.theme}</span>
+                <input type="text" id="editTheme" value="${task.theme}" class="hidden">
+                <button class="edit-btn" data-field="theme">✏️</button>
+            </div>
+        </div>
+        <div class="field description">
+            <h4>Описание</h4>
+            <div class="editable-field">
+                <span id="descriptionDisplay">${task.description}</span>
+                <textarea id="editDescription" class="hidden">${task.description}</textarea>
+                <button class="edit-btn" data-field="description">✏️</button>
+            </div>
+        </div>
+    `;
+
+    if (!hide) {
+        switch (section) {
+            case "executors":
+                contentHTML += `
+                    <div class="field executors">
+                        <h3>Участники</h3>
+                        <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
+                            ${task.executors.length ? task.executors.map(ex => `
+                                <span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">
+                                    ${ex}
+                                    <button class="edit-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
+                                    <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
+                                </span>
+                            `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
+                            <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;"><img class="imagin" src="./plus.svg" alt=""></button>
+                        </div>
+                    </div>
+                `;
+                break;
+            case "files":
+                contentHTML += `
+                    <div class="field files">
+                        <h3>Вложения</h3>
+                        <div id="fileList">
+                            ${task.files.length ? task.files.map(file => `
+                                <div class="file-item">
+                                    <a href="${file.url}" target="_blank">${file.name}</a>
+                                </div>
+                            `).join('') : 'Нет файлов'}
+                        </div>
+                    </div>
+                `;
+                break;
+            case "comments":
+                contentHTML += `
+                    <div class="field comments">
+                        <h3>Комментарии</h3>
+                        <div id="commentList">
+                            ${task.comments.map((comment, index) => `
+                                <div class="comment-item">
+                                    ${comment.text} <small>(${comment.date})</small>
+                                    <button class="remove-comment" data-index="${index}">×</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <textarea id="newComment" placeholder="Напишите коммента Xкомментарий..."></textarea>
+                        <button id="addComment">Добавить</button>
+                    </div>
+                `;
+                break;
+            case "history":
+                contentHTML += `
+                    <div class="field history">
+                        <h3>История</h3>
+                        <div id="historyList">
+                            ${task.history.length ? task.history.map(entry => `
+                                <div class="history-item">
+                                    <span>${entry.action}</span>
+                                    <small>(${entry.date} - ${entry.user})</small>
+                                </div>
+                            `).join('') : 'Нет записей'}
+                        </div>
+                    </div>
+                `;
+                break;
+        }
+    }
+
+    mainContent.innerHTML = contentHTML;
+
+    // Привязка обработчиков событий
+    bindEventListeners(section, task, modal);
+}
+
 
 function updateCommentList(task, modal) {
     const commentList = modal.querySelector("#commentList");
@@ -900,6 +1354,21 @@ function updateCommentList(task, modal) {
     });
 }
 
+const textarea = document.querySelector('.task-details textarea');
+
+function autoResize() {
+    textarea.style.height = 'auto'; // Сбрасываем высоту
+    textarea.style.height = `${textarea.scrollHeight}px`; // Устанавливаем высоту под содержимое
+    textarea.addEventListener('input', autoResize);
+}
+
+// Слушаем ввод текста
+
+// Вызываем при загрузке, если есть начальный текст
+window.addEventListener('load', autoResize);
+
+
+// Вызываем функцию при загрузке, если уже есть текст
+window.addEventListener('load', autoResize);
 document.addEventListener("DOMContentLoaded", createInterface);
 sort()
-
