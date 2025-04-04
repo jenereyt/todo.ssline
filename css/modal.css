@@ -1,4 +1,4 @@
-.modal {
+.modale {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,6 +13,20 @@
     animation: fadeIn 0.3s ease-out;
 }
 
+/* General modal overlay */
+.modale {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
 @keyframes slideUp {
     from {
         transform: translateY(50px);
@@ -25,44 +39,104 @@
     }
 }
 
-
+/* Modal content */
 .modal-contente {
     width: 100%;
     max-width: 600px;
     background: white;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    padding: 24px;
-    animation: fadeIn 0.3s ease-in-out;
+    padding: 20px;
+    animation: slideUp 0.3s ease-in-out;
     max-height: 90vh;
     overflow-y: auto;
 }
 
-.modal-contente h2 {
-    margin-top: 0;
+/* Modal header */
+.modale-header {
+    position: relative;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #3498db;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modale-header h2 {
+    margin: 0;
     color: #2c3e50;
     font-size: 22px;
     font-weight: 600;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #3498db;
 }
 
+.close-modal-btn {
+    font-size: 24px;
+    font-weight: bold;
+    color: #5e6c84;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+    color: #172b4d;
+}
+
+/* Section headers */
 .modal-contente h3 {
-    padding-left: 10px;
+    padding-left: 5px;
     color: #34495e;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
+    margin: 0 0 8px;
 }
 
+/* Add executor section - minimized */
 .add-executor-section {
     background-color: #f8f9fa;
-    padding: 16px;
+    padding: 10px;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border: 1px solid #e9ecef;
 }
 
+.input-with-clear {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+#newGlobalExecutor {
+    flex: 1;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    max-width: 70%;
+}
+
+#newGlobalExecutor:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+#saveGlobalExecutor.action-btn {
+    padding: 6px 10px;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#saveGlobalExecutor.action-btn:hover {
+    background: #2980b9;
+}
+
+/* All executors section */
 .all-executors-section {
     padding: 5px;
     background-color: white;
@@ -72,16 +146,17 @@
 }
 
 .executors-list {
-    max-height: 300px;
+    max-height: 400px;
+    /* Increased to reduce scrolling */
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f8f9fa;
     border-radius: 10px;
     background: #fff;
-    padding-right: 2px;
-    /* Небольшой отступ справа для скроллбара */
-    border: 1px solid #e9ecef;
-    /* Опционально: граница для чёткости */
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .executors-list::-webkit-scrollbar {
@@ -97,26 +172,24 @@
     background-color: #cbd5e0;
     border-radius: 20px;
     box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.1);
-    /* Лёгкая тень для глубины */
 }
 
 .executors-list::-webkit-scrollbar-thumb:hover {
     background-color: #a0aec0;
-    /* Цвет при наведении */
 }
 
 .executor-list-item {
-
+    flex: 1 1 calc(50% - 10px);
+    /* Two items per row */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    border-bottom: 1px solid #e9ecef;
+    padding: 8px 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    background: #fff;
     transition: background-color 0.15s ease;
-}
-
-.executor-list-item:last-child {
-    border-bottom: none;
+    box-sizing: border-box;
 }
 
 .executor-list-item:hover {
@@ -126,13 +199,38 @@
 .executor-name {
     font-size: 14px;
     color: #2c3e50;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+.executor-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.edit-executor-btn, .delete-executor-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 5px;
+}
+
+.edit-executor-btn:hover {
+    color: #3498db;
+}
+
+.delete-executor-btn:hover {
+    color: #e74c3c;
+}
+
+/* Edit executor panel */
 .edit-executor-panel {
     background-color: #f8f9fa;
-    padding: 16px;
+    padding: 12px;
     border-radius: 8px;
-    margin: 16px 0;
+    margin: 12px 0;
     border: 1px solid #e9ecef;
     animation: slideDown 0.2s ease-out;
 }
@@ -147,6 +245,59 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.edit-executor-panel.hidden {
+    display: none;
+}
+
+#editExecutorInput {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+#editExecutorInput:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+/* Modal buttons (for edit panel) */
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.modal-buttons button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#saveEditExecutor {
+    background: #2ecc71;
+    color: #fff;
+}
+
+#saveEditExecutor:hover {
+    background: #27ae60;
+}
+
+#cancelEditExecutor {
+    background: #95a5a6;
+    color: #fff;
+}
+
+#cancelEditExecutor:hover {
+    background: #7f8c8d;
 }
 
 /* Общие стили для модального окна */
@@ -281,9 +432,8 @@
 }
 
 /* Базовые стили для секций */
-/* Базовые стили для секций */
 .field {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     opacity: 1;
     /* Начальная непрозрачность */
     height: auto;
@@ -432,7 +582,6 @@
     height: 16px;
 }
 
-/* Вложения */
 .file-list {
     margin-top: 10px;
 }
@@ -471,7 +620,6 @@
     background: #003d99;
 }
 
-/* Комментарии */
 .comment-item {
     max-width: 100%;
     padding: 10px;
@@ -533,7 +681,6 @@
     background: #003d99;
 }
 
-/* История */
 .history-item {
     padding: 10px 0;
     border-bottom: 1px solid #dfe1e6;
@@ -550,7 +697,6 @@
     font-size: 12px;
 }
 
-/* Подвал */
 .modal-footer {
     margin-top: 15px;
     text-align: right;
@@ -584,7 +730,6 @@
     background: #d3d6db;
 }
 
-/* Исправление положения кнопки "X" */
 .header-actions {
     position: absolute;
     top: 10px;
@@ -620,7 +765,6 @@
     color: #172b4d;
 }
 
-/* Стили для контейнера селекта участников */
 .executor-select-container {
     display: flex;
     align-items: center;

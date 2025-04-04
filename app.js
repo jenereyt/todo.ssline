@@ -333,6 +333,7 @@ let tasks = [
         comments: []
     }
 ];
+
 // Объект для хранения фильтров и состояния сортировки
 let filters = {};
 let sortState = { field: null, ascending: true };
@@ -498,20 +499,22 @@ function applyFilters() {
 
 function openGlobalExecutorModal() {
     const modal = document.createElement("div");
-    modal.className = "modal";
+    modal.className = "modale";
 
-    // Get all executors
     const allExecutors = getAllExecutors();
 
     modal.innerHTML = `
         <div class="modal-contente">
-            <h2>Управление исполнителями</h2>
+            <div class="modale-header">
+                <h2>Управление исполнителями</h2>
+                <button class="close-modal-btn" id="closeModalBtn">×</button>
+            </div>
             
             <!-- Секция добавления нового исполнителя -->
             <div class="add-executor-section">
                 <h3>Добавить нового исполнителя</h3>
                 <div class="input-with-clear">
-                    <input type="text" id="newGlobalExecutor" placeholder="Введите имя исполнителя">
+                    <input type="text" id="newGlobalExecutor" placeholder="Имя исполнителя">
                     <button id="saveGlobalExecutor" class="action-btn">Добавить</button>
                 </div>
                 <div class="suggestions" id="globalExecutorSuggestions"></div>
@@ -543,14 +546,22 @@ function openGlobalExecutorModal() {
                     <button id="cancelEditExecutor">Отмена</button>
                 </div>
             </div>
-            
-            <div class="modal-buttons">
-                <button id="closeGlobalModal">Закрыть</button>
-            </div>
         </div>
     `;
 
     document.body.appendChild(modal);
+
+    // Close modal on overlay click
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+
+    // Close modal with "X" button
+    modal.querySelector("#closeModalBtn").addEventListener("click", () => {
+        modal.remove();
+    });
 
     // Обработчик добавления нового исполнителя
     const input = modal.querySelector("#newGlobalExecutor");
@@ -579,7 +590,6 @@ function openGlobalExecutorModal() {
     modal.querySelector("#saveGlobalExecutor").addEventListener("click", () => {
         const newExecutor = input.value.trim();
         if (newExecutor && !allExecutors.includes(newExecutor)) {
-            // Добавляем фиктивную задачу, чтобы исполнитель попал в пул
             tasks.push({
                 id: tasks.length + 1,
                 dateSet: new Date().toISOString().split("T")[0],
@@ -593,8 +603,6 @@ function openGlobalExecutorModal() {
                 comments: [],
                 files: []
             });
-
-            // Обновляем список исполнителей в модальном окне
             refreshExecutorsList(modal);
             input.value = "";
         }
@@ -619,7 +627,6 @@ function openGlobalExecutorModal() {
         btn.addEventListener("click", (e) => {
             const executor = e.target.dataset.executor;
             if (confirm(`Вы уверены, что хотите удалить исполнителя "${executor}"?`)) {
-                // Удаляем исполнителя из всех задач
                 tasks.forEach(task => {
                     task.executors = task.executors.filter(ex => ex !== executor);
                 });
@@ -634,11 +641,9 @@ function openGlobalExecutorModal() {
         const originalName = modal.querySelector("#originalExecutorName").value;
 
         if (newName && newName !== originalName && !allExecutors.includes(newName)) {
-            // Заменяем имя исполнителя во всех задачах
             tasks.forEach(task => {
                 task.executors = task.executors.map(ex => ex === originalName ? newName : ex);
             });
-
             modal.querySelector("#editExecutorPanel").classList.add("hidden");
             refreshExecutorsList(modal);
         }
@@ -648,9 +653,6 @@ function openGlobalExecutorModal() {
     modal.querySelector("#cancelEditExecutor").addEventListener("click", () => {
         modal.querySelector("#editExecutorPanel").classList.add("hidden");
     });
-
-    // Закрытие модального окна
-    modal.querySelector("#closeGlobalModal").addEventListener("click", () => modal.remove());
 }
 
 function refreshExecutorsList(modal) {
@@ -870,6 +872,8 @@ function openEditModal(task) {
 
     if (!task.comments) task.comments = [];
     if (!task.files) task.files = [];
+    if (!task.executors) task.executors = [];
+    if (!task.histories) task.histories = [];
 
     const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
 
@@ -911,6 +915,7 @@ function openEditModal(task) {
                     <button class="sidebar-btn" data-section="executors">Участники</button>
                     <button class="sidebar-btn" data-section="files">Вложения</button>
                     <button class="sidebar-btn" data-section="comments">Комментарии</button>
+                    <button class="sidebar-btn" data-section="histories">Истории</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -923,6 +928,16 @@ function openEditModal(task) {
 
     const mainContent = modal.querySelector("#mainContent");
     const statusSelect = modal.querySelector("#statusSelect");
+
+    // Automatically add executors and files sections and set their buttons as active
+    addSection("executors", task, modal);
+    addSection("files", task, modal);
+
+    // Set the "active" class on the executors and files sidebar buttons
+    const executorsBtn = modal.querySelector('.sidebar-btn[data-section="executors"]');
+    const filesBtn = modal.querySelector('.sidebar-btn[data-section="files"]');
+    executorsBtn.classList.add("active");
+    filesBtn.classList.add("active");
 
     let previousStatus = task.status;
     statusSelect.addEventListener("change", () => {
@@ -1033,6 +1048,18 @@ function addSection(section, task, modal) {
                 <button id="addComment">Добавить</button>
             `;
             break;
+        case "histories":
+            sectionDiv.innerHTML = `
+                <h3>Истории</h3>
+                <div id="historyList" class="read-only">
+                    ${task.histories.length ? task.histories.map((history, index) => `
+                        <div class="history-item" data-index="${index}">
+                            ${history.text} <small>(${history.date})</small>
+                        </div>
+                    `).join('') : 'Нет историй'}
+                </div>
+            `;
+            break;
     }
 
     mainContent.appendChild(sectionDiv);
@@ -1096,6 +1123,18 @@ function updateSection(section, task, modal) {
                 </div>
                 <textarea id="newComment" placeholder="Напишите комментарий..."></textarea>
                 <button id="addComment">Добавить</button>
+            `;
+            break;
+        case "histories":
+            sectionDiv.innerHTML = `
+                <h3>Истории</h3>
+                <div id="historyList" class="read-only">
+                    ${task.histories.length ? task.histories.map((history, index) => `
+                        <div class="history-item" data-index="${index}">
+                            ${history.text} <small>(${history.date})</small>
+                        </div>
+                    `).join('') : 'Нет историй'}
+                </div>
             `;
             break;
     }
@@ -1234,6 +1273,8 @@ function bindEventListeners(section, task, modal) {
             });
         }
     }
+
+    // No event listeners for "histories" since it's read-only
 }
 
 // Функция для обновления основного контента
