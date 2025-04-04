@@ -137,27 +137,6 @@
     cursor: pointer;
 }
 
-#commentList {
-    width: 810px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    overflow: hidden;
-    margin-bottom: 5px;
-}
-
-.comment-item, .file-item {
-    padding: 5px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    max-width: 100%;
-    box-sizing: border-box;
-}
 
 .comment-item:hover, .file-item:hover {
     transform: translateX(2px);

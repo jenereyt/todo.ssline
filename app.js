@@ -870,17 +870,8 @@ function openEditModal(task) {
 
     if (!task.comments) task.comments = [];
     if (!task.files) task.files = [];
-    if (!task.history) task.history = [];
 
     const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
-
-    if (!task.history.length) {
-        task.history.push({
-            action: "Задача создана",
-            date: task.dateSet,
-            user: "Система"
-        });
-    }
 
     modal.innerHTML = `
         <div class="modal-content trello-modal-content">
@@ -920,7 +911,6 @@ function openEditModal(task) {
                     <button class="sidebar-btn" data-section="executors">Участники</button>
                     <button class="sidebar-btn" data-section="files">Вложения</button>
                     <button class="sidebar-btn" data-section="comments">Комментарии</button>
-                    <button class="sidebar-btn" data-section="history">История</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -934,16 +924,10 @@ function openEditModal(task) {
     const mainContent = modal.querySelector("#mainContent");
     const statusSelect = modal.querySelector("#statusSelect");
 
-    // Обновление статуса с записью в историю
+    // Обновление статуса
     let previousStatus = task.status;
     statusSelect.addEventListener("change", () => {
         if (task.status !== statusSelect.value) {
-            task.history.push({
-                action: `Статус изменён с "${previousStatus}" на "${statusSelect.value}"`,
-                date: new Date().toLocaleDateString(),
-                user: "Текущий пользователь"
-            });
-            previousStatus = statusSelect.value;
             task.status = statusSelect.value;
         }
     });
@@ -959,29 +943,24 @@ function openEditModal(task) {
             input.classList.toggle("hidden");
             btn.textContent = display.classList.contains("hidden") ? "💾" : "✏️";
             if (!display.classList.contains("hidden") && task[field] !== input.value) {
-                task.history.push({
-                    action: `${field === "theme" ? "Тема" : "Описание"} изменено на "${input.value}"`,
-                    date: new Date().toLocaleDateString(),
-                    user: "Текущий пользователь"
-                });
                 task[field] = input.value;
                 display.textContent = task[field];
             }
         });
     });
 
-    // Обработчики для кнопок в боковой панели (переключение: добавить/убрать)
+    // Обработчики для кнопок в боковой панели
     modal.querySelectorAll(".sidebar-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
             const section = btn.dataset.section;
             const existingSection = mainContent.querySelector(`.field.${section}`);
             if (existingSection) {
-                removeSection(section, modal); // Убираем секцию, если она уже есть
-                btn.classList.remove("active"); // Убираем активное состояние
+                removeSection(section, modal);
+                btn.classList.remove("active");
             } else {
-                addSection(section, task, modal); // Добавляем секцию, если её нет
-                btn.classList.add("active"); // Отмечаем кнопку как активную
+                addSection(section, task, modal);
+                btn.classList.add("active");
             }
         });
     });
@@ -1042,7 +1021,7 @@ function addSection(section, task, modal) {
                 <h3>Комментарии</h3>
                 <div id="commentList">
                     ${task.comments.map((comment, index) => `
-                        <div class="comment-item">
+                        <div class="comment-item" data-index="${index}">
                             ${comment.text} <small>(${comment.date})</small>
                             <button class="remove-comment" data-index="${index}">×</button>
                         </div>
@@ -1050,19 +1029,6 @@ function addSection(section, task, modal) {
                 </div>
                 <textarea id="newComment" placeholder="Напишите комментарий..."></textarea>
                 <button id="addComment">Добавить</button>
-            `;
-            break;
-        case "history":
-            sectionDiv.innerHTML = `
-                <h3>История</h3>
-                <div id="historyList">
-                    ${task.history.length ? task.history.map(entry => `
-                        <div class="history-item">
-                            <span>${entry.action}</span>
-                            <small>(${entry.date} - ${entry.user})</small>
-                        </div>
-                    `).join('') : 'Нет записей'}
-                </div>
             `;
             break;
     }
@@ -1080,6 +1046,48 @@ function removeSection(section, modal) {
     }
 }
 
+// Функция для обновления секции
+function updateSection(section, task, modal) {
+    const mainContent = modal.querySelector("#mainContent");
+    const sectionDiv = mainContent.querySelector(`.field.${section}`);
+    if (!sectionDiv) return;
+
+    switch (section) {
+        case "executors":
+            sectionDiv.innerHTML = `
+                <h3>Участники</h3>
+                <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
+                    ${task.executors.length ? task.executors.map(ex => `
+                        <span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">
+                            ${ex}
+                            <button class="edit-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
+                            <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
+                        </span>
+                    `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
+                    <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;"><img class="imagin" src="./plus.svg" alt=""></button>
+                </div>
+            `;
+            break;
+        case "comments":
+            sectionDiv.innerHTML = `
+                <h3>Комментарии</h3>
+                <div id="commentList">
+                    ${task.comments.map((comment, index) => `
+                        <div class="comment-item" data-index="${index}">
+                            ${comment.text} <small>(${comment.date})</small>
+                            <button class="remove-comment" data-index="${index}">×</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <textarea id="newComment" placeholder="Напишите комментарий..."></textarea>
+                <button id="addComment">Добавить</button>
+            `;
+            break;
+    }
+
+    bindEventListeners(section, task, modal);
+}
+
 // Функция для привязки обработчиков событий
 function bindEventListeners(section, task, modal) {
     const mainContent = modal.querySelector("#mainContent");
@@ -1093,12 +1101,7 @@ function bindEventListeners(section, task, modal) {
                 e.stopPropagation();
                 const executor = btn.dataset.executor;
                 task.executors = task.executors.filter(ex => ex !== executor);
-                task.history.push({
-                    action: `Участник "${executor}" удалён`,
-                    date: new Date().toLocaleDateString(),
-                    user: "Текущий пользователь"
-                });
-                addSection("executors", task, modal); // Перерисовываем секцию
+                updateSection("executors", task, modal);
             });
         });
 
@@ -1130,17 +1133,13 @@ function bindEventListeners(section, task, modal) {
                         const index = task.executors.indexOf(oldExecutor);
                         if (index !== -1) {
                             task.executors[index] = newExecutor;
-                            task.history.push({
-                                action: `Участник изменён с "${oldExecutor}" на "${newExecutor}"`,
-                                date: new Date().toLocaleDateString(),
-                                user: "Текущий пользователь"
-                            });
                         }
-                        addSection("executors", task, modal);
+                        updateSection("executors", task, modal);
                     }
                 });
 
-                revertBtn.addEventListener("click", () => {
+                revertBtn.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Предотвращаем всплытие события
                     executorItem.innerHTML = originalContent;
                     bindEventListeners("executors", task, modal); // Перепривязываем события
                 });
@@ -1151,7 +1150,7 @@ function bindEventListeners(section, task, modal) {
         if (addBtn) {
             addBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
-                const existingSelect = executorList.querySelector("select");
+                const existingSelect = executorList.querySelector(".executor-select-container");
                 if (existingSelect) return;
 
                 const select = document.createElement("select");
@@ -1176,12 +1175,7 @@ function bindEventListeners(section, task, modal) {
                     const newExecutor = select.value;
                     if (newExecutor) {
                         task.executors.push(newExecutor);
-                        task.history.push({
-                            action: `Добавлен участник "${newExecutor}"`,
-                            date: new Date().toLocaleDateString(),
-                            user: "Текущий пользователь"
-                        });
-                        addSection("executors", task, modal);
+                        updateSection("executors", task, modal);
                     }
                 });
 
@@ -1193,40 +1187,32 @@ function bindEventListeners(section, task, modal) {
     }
 
     if (section === "comments") {
-        const commentList = mainContent.querySelector("#commentList");
-        const addCommentBtn = mainContent.querySelector("#addComment");
+        const commentSection = mainContent.querySelector(".field.comments");
+        if (!commentSection) return;
+
+        const addCommentBtn = commentSection.querySelector("#addComment");
         if (addCommentBtn) {
             addCommentBtn.addEventListener("click", (e) => {
                 e.stopPropagation();
-                const commentText = mainContent.querySelector("#newComment").value.trim();
+                const commentText = commentSection.querySelector("#newComment").value.trim();
                 if (commentText) {
                     task.comments.push({
                         text: commentText,
                         date: new Date().toLocaleDateString()
                     });
-                    task.history.push({
-                        action: `Добавлен комментарий: "${commentText}"`,
-                        date: new Date().toLocaleDateString(),
-                        user: "Текущий пользователь"
-                    });
-                    addSection("comments", task, modal);
+                    updateSection("comments", task, modal);
                 }
             });
         }
 
+        const commentList = commentSection.querySelector("#commentList");
         if (commentList) {
             commentList.querySelectorAll(".remove-comment").forEach(btn => {
                 btn.addEventListener("click", (e) => {
                     e.stopPropagation();
                     const index = parseInt(btn.dataset.index);
-                    const removedComment = task.comments[index];
                     task.comments.splice(index, 1);
-                    task.history.push({
-                        action: `Удалён комментарий: "${removedComment.text}"`,
-                        date: new Date().toLocaleDateString(),
-                        user: "Текущий пользователь"
-                    });
-                    addSection("comments", task, modal);
+                    updateSection("comments", task, modal);
                 });
             });
         }
