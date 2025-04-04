@@ -280,9 +280,36 @@
     background: #dfe1e6;
 }
 
-/* Поля в основном контенте */
+/* Базовые стили для секций */
+/* Базовые стили для секций */
 .field {
     margin-bottom: 20px;
+    opacity: 1;
+    /* Начальная непрозрачность */
+    height: auto;
+    /* Начальная высота */
+    transition: opacity 0.3s ease, height 0.3s ease;
+    /* Плавный переход */
+    overflow: hidden;
+    /* Скрываем содержимое при сжатии */
+    padding: 10px;
+    /* Устанавливаем начальные отступы */
+    box-sizing: border-box;
+    /* Учитываем padding в высоте */
+}
+
+/* Стили для состояния удаления */
+.field.removing {
+    opacity: 0;
+    /* Прозрачность уменьшается до 0 */
+    height: 0 !important;
+    /* Явно задаём конечную высоту */
+    margin-bottom: 0;
+    /* Убираем отступы */
+    padding-top: 0;
+    /* Убираем верхний отступ */
+    padding-bottom: 0;
+    /* Убираем нижний отступ */
 }
 
 .field h3, .field h4 {
@@ -507,122 +534,122 @@
 }
 
 /* История */
-    .history-item {
-        padding: 10px 0;
-        border-bottom: 1px solid #dfe1e6;
-        font-size: 14px;
-        color: #172b4d;
-    }
+.history-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #dfe1e6;
+    font-size: 14px;
+    color: #172b4d;
+}
 
-    .history-item span {
-        display: block;
-    }
+.history-item span {
+    display: block;
+}
 
-    .history-item small {
-        color: #5e6c84;
-        font-size: 12px;
-    }
+.history-item small {
+    color: #5e6c84;
+    font-size: 12px;
+}
 
-    /* Подвал */
-    .modal-footer {
-        margin-top: 15px;
-        text-align: right;
-    }
+/* Подвал */
+.modal-footer {
+    margin-top: 15px;
+    text-align: right;
+}
 
-    .modal-footer button {
-        padding: 6px 12px;
-        margin-left: 10px;
-        font-size: 14px;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
+.modal-footer button {
+    padding: 6px 12px;
+    margin-left: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
 
-    #saveBtn {
-        background: #0052cc;
-        color: #fff;
-    }
+#saveBtn {
+    background: #0052cc;
+    color: #fff;
+}
 
-    #saveBtn:hover {
-        background: #003d99;
-    }
+#saveBtn:hover {
+    background: #003d99;
+}
 
-    #closeBtn {
-        background: #dfe1e6;
-        color: #172b4d;
-    }
+#closeBtn {
+    background: #dfe1e6;
+    color: #172b4d;
+}
 
-    #closeBtn:hover {
-        background: #d3d6db;
-    }
+#closeBtn:hover {
+    background: #d3d6db;
+}
 
-    /* Исправление положения кнопки "X" */
-    .header-actions {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        /* Возвращаем "X" на место */
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+/* Исправление положения кнопки "X" */
+.header-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    /* Возвращаем "X" на место */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-    .header-actions select {
-        padding: 4px;
-        font-size: 14px;
-        border: 1px solid #dfe1e6;
-        border-radius: 3px;
-        background: #fff;
-        color: #172b4d;
-    }
+.header-actions select {
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    background: #fff;
+    color: #172b4d;
+}
 
-    .close-modal-btn {
-        font-size: 24px;
-        font-weight: bold;
-        color: #5e6c84;
-        background: none;
-        border: none;
-        cursor: pointer;
-        transition: color 0.2s;
-        position: static;
-        /* Убираем absolute, чтобы он был в потоке */
-    }
+.close-modal-btn {
+    font-size: 24px;
+    font-weight: bold;
+    color: #5e6c84;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    position: static;
+    /* Убираем absolute, чтобы он был в потоке */
+}
 
-    .close-modal-btn:hover {
-        color: #172b4d;
-    }
+.close-modal-btn:hover {
+    color: #172b4d;
+}
 
-    /* Стили для контейнера селекта участников */
-    .executor-select-container {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+/* Стили для контейнера селекта участников */
+.executor-select-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
-    .executor-select-container select {
-        padding: 4px;
-        font-size: 14px;
-        border: 1px solid #dfe1e6;
-        border-radius: 3px;
-    }
+.executor-select-container select {
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+}
 
-    .remove-select-btn,
-    .revert-btn {
-        font-size: 14px;
-        border: none;
-        background: none;
-        cursor: pointer;
-        color: #5e6c84;
-        transition: color 0.2s;
-    }
+.remove-select-btn,
+.revert-btn {
+    font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #5e6c84;
+    transition: color 0.2s;
+}
 
-    .remove-select-btn:hover,
-    .revert-btn:hover {
-        color: #172b4d;
-    }
+.remove-select-btn:hover,
+.revert-btn:hover {
+    color: #172b4d;
+}
 
-    .sidebar-btn.active {
-        background: #d0d2d5;
-        /* Подсветка активной кнопки */
-    }
+.sidebar-btn.active {
+    background: #d0d2d5;
+    /* Подсветка активной кнопки */
+}
