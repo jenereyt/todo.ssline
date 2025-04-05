@@ -433,7 +433,6 @@
 
 /* Базовые стили для секций */
 .field {
-    margin-bottom: 10px;
     opacity: 1;
     /* Начальная непрозрачность */
     height: auto;
@@ -442,7 +441,7 @@
     /* Плавный переход */
     overflow: hidden;
     /* Скрываем содержимое при сжатии */
-    padding: 10px;
+    padding: 7px;
     /* Устанавливаем начальные отступы */
     box-sizing: border-box;
     /* Учитываем padding в высоте */
@@ -794,6 +793,6 @@
 }
 
 .sidebar-btn.active {
-    background: #d0d2d5;
+    background: #6392da;
     /* Подсветка активной кнопки */
 }
