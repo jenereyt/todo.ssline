@@ -431,34 +431,30 @@
     background: #dfe1e6;
 }
 
-/* Базовые стили для секций */
 .field {
-    opacity: 1;
-    /* Начальная непрозрачность */
-    height: auto;
-    /* Начальная высота */
-    transition: opacity 0.3s ease, height 0.3s ease;
-    /* Плавный переход */
+    opacity: 0;
+    height: 0;
     overflow: hidden;
-    /* Скрываем содержимое при сжатии */
-    padding: 7px;
-    /* Устанавливаем начальные отступы */
+    transition: opacity 0.3s ease, height 0.3s ease;
+    padding: 0;
     box-sizing: border-box;
-    /* Учитываем padding в высоте */
 }
 
-/* Стили для состояния удаления */
+/* Состояние при появлении */
+.field.active {
+    opacity: 1;
+    height: auto;
+    padding: 7px;
+
+}
+
+/* Состояние при удалении (уже есть в вашем коде, но уточним) */
 .field.removing {
     opacity: 0;
-    /* Прозрачность уменьшается до 0 */
     height: 0 !important;
-    /* Явно задаём конечную высоту */
-    margin-bottom: 0;
-    /* Убираем отступы */
     padding-top: 0;
-    /* Убираем верхний отступ */
     padding-bottom: 0;
-    /* Убираем нижний отступ */
+    margin-bottom: 0;
 }
 
 .field h3, .field h4 {
@@ -496,7 +492,6 @@
     border: 1px solid #dfe1e6;
     border-radius: 3px;
     background: #fff;
-    resize: vertical;
 }
 
 .editable-field button {
@@ -548,10 +543,10 @@
 .executor-item {
     display: flex;
     align-items: center;
-    padding: 4px 8px;
+    height: 10px;
     background: #dfe1e6;
     border-radius: 3px;
-    font-size: 14px;
+    font-size: 16px;
     color: #172b4d;
 }
 
@@ -655,7 +650,7 @@
 }
 
 .field.comments textarea {
-    width: 90%;
+    width: 95%;
     min-height: 40px;
     padding: 6px;
     margin-top: 10px;
@@ -663,6 +658,7 @@
     border-radius: 3px;
     font-size: 14px;
     background: #fff;
+    resize: none;
 }
 
 .field.comments button {
@@ -793,6 +789,6 @@
 }
 
 .sidebar-btn.active {
-    background: #6392da;
-    /* Подсветка активной кнопки */
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
 }

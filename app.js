@@ -1002,21 +1002,25 @@ function openEditModal(task) {
 
 function addSection(section, task, modal) {
     const mainContent = modal.querySelector("#mainContent");
+    const existingSection = mainContent.querySelector(`.field.${section}`);
+    if (existingSection) return; // Если секция уже есть, ничего не делаем
+
     const sectionDiv = document.createElement("div");
     sectionDiv.className = `field ${section}`;
 
+    // Заполняем содержимое секции
     switch (section) {
         case "executors":
             sectionDiv.innerHTML = `
                 <h3>Участники</h3>
                 <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
                     ${task.executors.length ? task.executors.map(ex => `
-                        <span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">
+                        <span class="executor-item" style=" background: #f0f0f0; border-radius: 3px;">
                             ${ex}
                             <button class="edit-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
                             <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
                         </span>
-                    `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
+                    `).join('') : '<span class="executor-item" style="background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
                     <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;"><img class="imagin" src="./plus.svg" alt=""></button>
                 </div>
             `;
@@ -1063,30 +1067,39 @@ function addSection(section, task, modal) {
     }
 
     mainContent.appendChild(sectionDiv);
+
+    // Анимация появления
+    requestAnimationFrame(() => {
+        const height = sectionDiv.scrollHeight; // Получаем полную высоту содержимого
+        sectionDiv.style.height = "0px"; // Устанавливаем начальную высоту
+        sectionDiv.classList.add("active"); // Добавляем класс для видимости
+        requestAnimationFrame(() => {
+            sectionDiv.style.height = `${height}px`; // Устанавливаем конечную высоту
+            setTimeout(() => {
+                sectionDiv.style.height = "auto"; // Переключаем на auto после анимации
+            }, 300); // Длительность анимации соответствует transition
+        });
+    });
+
     bindEventListeners(section, task, modal);
 }
 
 function removeSection(section, modal) {
     const mainContent = modal.querySelector("#mainContent");
     const sectionDiv = mainContent.querySelector(`.field.${section}`);
-    if (sectionDiv) {
-        const currentHeight = sectionDiv.offsetHeight + 'px';
-        sectionDiv.style.height = currentHeight;
+    if (!sectionDiv) return;
 
-        sectionDiv.classList.add("removing");
-
-        requestAnimationFrame(() => {
-            sectionDiv.style.height = '0';
-            sectionDiv.style.opacity = '0';
-        });
-
+    // Анимация исчезновения
+    const currentHeight = sectionDiv.scrollHeight;
+    sectionDiv.style.height = `${currentHeight}px`; // Устанавливаем текущую высоту явно
+    sectionDiv.classList.remove("active"); // Убираем класс active
+    requestAnimationFrame(() => {
+        sectionDiv.style.height = "0px"; // Сжимаем до 0
         setTimeout(() => {
-            sectionDiv.remove();
+            sectionDiv.remove(); // Удаляем элемент после анимации
             console.log(`Section "${section}" removed after animation`);
-        }, 300);
-    } else {
-        console.log(`Section "${section}" not found`);
-    }
+        }, 300); // Длительность анимации
+    });
 }
 
 function updateSection(section, task, modal) {
@@ -1100,12 +1113,12 @@ function updateSection(section, task, modal) {
                 <h3>Участники</h3>
                 <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
                     ${task.executors.length ? task.executors.map(ex => `
-                        <span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">
+                        <span class="executor-item" style=" background: #f0f0f0; border-radius: 3px;">
                             ${ex}
                             <button class="edit-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
                             <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
                         </span>
-                    `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
+                    `).join('') : '<span class="executor-item" style=" background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
                     <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;"><img class="imagin" src="./plus.svg" alt=""></button>
                 </div>
             `;
@@ -1307,12 +1320,12 @@ function updateMainContent(section, task, modal, hide = false) {
                         <h3>Участники</h3>
                         <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
                             ${task.executors.length ? task.executors.map(ex => `
-                                <span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">
+                                <span class="executor-item" style="background: #f0f0f0; border-radius: 3px;">
                                     ${ex}
                                     <button class="edit-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer; margin-left: 5px;">✏️</button>
                                     <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
                                 </span>
-                            `).join('') : '<span class="executor-item" style="padding: 2px 5px; background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
+                            `).join('') : '<span class="executor-item" style=" background: #f0f0f0; border-radius: 3px;">Не назначены</span>'}
                             <button class="add-executor-btn" style="border: none; cursor: pointer; font-size: 16px;"><img class="imagin" src="./plus.svg" alt=""></button>
                         </div>
                     </div>

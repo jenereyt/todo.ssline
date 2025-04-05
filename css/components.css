@@ -99,21 +99,6 @@
     align-items: center;
 }
 
-.executor-item {
-    display: flex;
-    align-items: center;
-    background: #f0f0f0;
-    padding: 5px 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-}
-
-.executor-item:hover {
-    transform: translateX(2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
 .remove-executor {
     margin-left: 5px;
     background: none;
@@ -129,7 +114,7 @@
 }
 
 .executor-list select {
-    padding: 8px;
+    padding: 7px;
     border: 1px solid #d8dde3;
     border-radius: 6px;
     font-size: 14px;
