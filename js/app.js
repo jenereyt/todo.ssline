@@ -1,0 +1,884 @@
+export let tasks = [
+    {
+        id: 1,
+        dateSet: "2025-03-25",
+        project: "Afrosiyob paranda",
+        theme: "Разработка UI",
+        description: "Создать интерфейс главной страницы",
+        status: "Выполнено",
+        executors: ["Рустамов Жонибек", "Храмов Дониш"],
+        files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }],
+        comments: [
+            { text: "Дизайн утверждён заказчиком", date: "2025-03-25" },
+            { text: "Добавлены новые шрифты", date: "2025-03-26" },
+            { text: "Исправлены отступы на мобильной версии", date: "2025-03-26" }
+        ]
+    },
+    {
+        id: 2,
+        dateSet: "2025-03-24",
+        project: "Заказчик Beta",
+        theme: "Исправление багов",
+        description: "Пофиксить ошибку в авторизации",
+        status: "Выполнено",
+        executors: ["Сайдуллаев Дамир"],
+        files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }, { name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }]
+    },
+    {
+        id: 3,
+        dateSet: "2025-03-20",
+        project: "Проект Gamma",
+        theme: "Тестирование API",
+        description: "Проверить все эндпоинты",
+        status: "В процессе",
+        executors: ["Югай Дмитрий"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 4,
+        dateSet: "2025-03-22",
+        project: "Заказчик Delta",
+        theme: "Дизайн логотипа",
+        description: "Разработать новый логотип компании",
+        status: "Выполнено",
+        executors: ["Закиров Фаррух", "Бурханов Азим"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 5,
+        dateSet: "2025-03-23",
+        project: "Проект Epsilon",
+        theme: "Оптимизация кода",
+        description: "Ускорить загрузку страницы",
+        status: "В процессе",
+        executors: ["Нурманов Анвар", "Нарзуллоев Тохир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 6,
+        dateSet: "2025-03-26",
+        project: "Проект Zeta",
+        theme: "Аналитика",
+        description: "Собрать данные по пользователям",
+        status: "В процессе",
+        executors: ["Рустамов Жонибек"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 7,
+        dateSet: "2025-03-27",
+        project: "Заказчик Eta",
+        theme: "Дизайн",
+        description: "Обновить баннеры на сайте",
+        status: "Выполнено",
+        executors: ["Храмов Дониш"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 8,
+        dateSet: "2025-03-28",
+        project: "Проект Theta",
+        theme: "Разработка",
+        description: "Добавить фильтр в таблицу",
+        status: "В процессе",
+        executors: ["Сайдуллаев Дамир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 9,
+        dateSet: "2025-03-29",
+        project: "Заказчик Iota",
+        theme: "Тестирование",
+        description: "Провести нагрузочное тестирование",
+        status: "В процессе",
+        executors: ["Югай Дмитрий"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 10,
+        dateSet: "2025-03-30",
+        project: "Проект Kappa",
+        theme: "Оптимизация",
+        description: "Уменьшить время ответа сервера",
+        status: "Выполнено",
+        executors: ["Закиров Фаррух"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 11,
+        dateSet: "2025-04-01",
+        project: "Проект Lambda",
+        theme: "Интеграция",
+        description: "Подключить API платежной системы",
+        status: "В процессе",
+        executors: ["Бурханов Азим"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 12,
+        dateSet: "2025-04-02",
+        project: "Заказчик Mu",
+        theme: "Дизайн",
+        description: "Создать макет мобильного приложения",
+        status: "Выполнено",
+        executors: ["Нурманов Анвар"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 13,
+        dateSet: "2025-04-03",
+        project: "Проект Nu",
+        theme: "Разработка",
+        description: "Реализовать авторизацию через OAuth",
+        status: "В процессе",
+        executors: ["Нарзуллоев Тохир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 14,
+        dateSet: "2025-04-04",
+        project: "Заказчик Xi",
+        theme: "Тестирование",
+        description: "Проверить совместимость с iOS",
+        status: "В процессе",
+        executors: ["Рустамов Жонибек"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 15,
+        dateSet: "2025-04-05",
+        project: "Проект Omicron",
+        theme: "Оптимизация",
+        description: "Сжать изображения на сайте",
+        status: "Выполнено",
+        executors: ["Храмов Дониш"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 16,
+        dateSet: "2025-04-06",
+        project: "Заказчик Pi",
+        theme: "Аналитика",
+        description: "Настроить Google Analytics",
+        status: "В процессе",
+        executors: ["Сайдуллаев Дамир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 17,
+        dateSet: "2025-04-07",
+        project: "Проект Rho",
+        theme: "Разработка",
+        description: "Добавить форму обратной связи",
+        status: "Выполнено",
+        executors: ["Югай Дмитрий"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 18,
+        dateSet: "2025-04-08",
+        project: "Заказчик Sigma",
+        theme: "Дизайн",
+        description: "Обновить цветовую схему",
+        status: "В процессе",
+        executors: ["Закиров Фаррух"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 19,
+        dateSet: "2025-04-09",
+        project: "Проект Tau",
+        theme: "Тестирование",
+        description: "Проверить кроссбраузерность",
+        status: "В процессе",
+        executors: ["Бурханов Азим"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 20,
+        dateSet: "2025-04-10",
+        project: "Заказчик Upsilon",
+        theme: "Интеграция",
+        description: "Подключить CRM систему",
+        status: "Выполнено",
+        executors: ["Нурманов Анвар"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 21,
+        dateSet: "2025-04-11",
+        project: "Проект Phi",
+        theme: "Разработка",
+        description: "Создать админ-панель",
+        status: "В процессе",
+        executors: ["Нарзуллоев Тохир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 22,
+        dateSet: "2025-04-12",
+        project: "Заказчик Chi",
+        theme: "Оптимизация",
+        description: "Ускорить загрузку видео",
+        status: "В процессе",
+        executors: ["Рустамов Жонибек"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 23,
+        dateSet: "2025-04-13",
+        project: "Проект Psi",
+        theme: "Дизайн",
+        description: "Разработать иконки для меню",
+        status: "Выполнено",
+        executors: ["Храмов Дониш"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 24,
+        dateSet: "2025-04-14",
+        project: "Заказчик Omega",
+        theme: "Тестирование",
+        description: "Проверить работу чата",
+        status: "В процессе",
+        executors: ["Сайдуллаев Дамир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 25,
+        dateSet: "2025-04-15",
+        project: "Проект Alpha-2",
+        theme: "Разработка",
+        description: "Добавить поиск по сайту",
+        status: "Выполнено",
+        executors: ["Югай Дмитрий"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 26,
+        dateSet: "2025-04-16",
+        project: "Заказчик Beta-2",
+        theme: "Аналитика",
+        description: "Проанализировать конверсии",
+        status: "В процессе",
+        executors: ["Закиров Фаррух"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 27,
+        dateSet: "2025-04-17",
+        project: "Проект Gamma-2",
+        theme: "Интеграция",
+        description: "Подключить уведомления",
+        status: "В процессе",
+        executors: ["Бурханов Азим"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 28,
+        dateSet: "2025-04-18",
+        project: "Заказчик Delta-2",
+        theme: "Дизайн",
+        description: "Создать промо-страницу",
+        status: "Выполнено",
+        executors: ["Нурманов Анвар"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 29,
+        dateSet: "2025-04-19",
+        project: "Проект Epsilon-2",
+        theme: "Оптимизация",
+        description: "Улучшить SEO",
+        status: "В процессе",
+        executors: ["Нарзуллоев Тохир"],
+        files: [],
+        comments: []
+    },
+    {
+        id: 30,
+        dateSet: "2025-04-20",
+        project: "Заказчик Zeta-2",
+        theme: "Тестирование",
+        description: "Проверить адаптивность",
+        status: "Выполнено",
+        executors: ["Рустамов Жонибек"],
+        files: [],
+        comments: []
+    }
+];
+export let filters = {};
+export let sortState = { field: null, ascending: true };
+export let allProjects = [...new Set(tasks.map(task => task.project))];
+export let currentPage = 1;
+export let tasksPerPage = 20;
+
+export function getAllExecutors() {
+    // Собираем уникальных исполнителей из всех задач
+    const executors = new Set();
+    tasks.forEach(task => {
+        task.executors.forEach(executor => {
+            executors.add(executor);
+        });
+    });
+    return Array.from(executors).sort();
+}
+import { openGlobalExecutorModal, refreshExecutorsList } from './executorsModal.js';
+
+function createInterface() {
+    let appDiv = document.getElementById("app");
+    appDiv.innerHTML = `
+        <div class="controls">
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Диапазон дат:</label>
+                    <div class="date-range">
+                        <input type="date" id="dateFrom" placeholder="С">
+                        <input type="date" id="dateTo" placeholder="По">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Исполнитель:</label>
+                    <div class="input-with-clear">
+                        <input type="text" id="executorFilter" placeholder="Введите исполнителя...">
+                        <button class="clear-btn" id="clearExecutor">×</button>
+                    </div>
+                    <div id="executorSuggestions" class="suggestions hidden"></div>
+                </div>
+                <button id="resetFiltersBtn">Сбросить все</button>
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Поиск по таблице...">
+                <button id="searchBtn">🔍</button>
+                <button id="addGlobalExecutorBtn">Исполнители</button>
+            </div>
+        </div>
+    `;
+    createTable(tasks);
+
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const formattedFirstDay = firstDayOfMonth.toISOString().split("T")[0];
+    const dateFrom = document.getElementById("dateFrom");
+    dateFrom.value = formattedFirstDay;
+    filters.dateFrom = formattedFirstDay;
+    applyFilters();
+
+    let dateTo = document.getElementById("dateTo");
+    [dateFrom, dateTo].forEach(input => {
+        input.addEventListener("change", () => {
+            filters.dateFrom = dateFrom.value;
+            filters.dateTo = dateTo.value;
+            applyFilters();
+        });
+    });
+
+    document.getElementById("clearExecutor").addEventListener("click", () => {
+        document.getElementById("executorFilter").value = "";
+        filters.executors = "";
+        applyFilters();
+    });
+
+    document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+        filters = {};
+        document.getElementById("dateFrom").value = formattedFirstDay;
+        document.getElementById("dateTo").value = "";
+        document.getElementById("executorFilter").value = "";
+        document.getElementById("searchInput").value = "";
+        sortState = { field: null, ascending: true };
+        currentPage = 1;
+        filters.dateFrom = formattedFirstDay;
+        createTable(tasks);
+    });
+
+    document.getElementById("searchBtn").addEventListener("click", () => {
+        let searchTerm = document.getElementById("searchInput").value.toLowerCase();
+        let filteredTasks = tasks.filter(task =>
+            task.id.toString().includes(searchTerm) ||
+            task.dateSet.toLowerCase().includes(searchTerm) ||
+            task.project.toLowerCase().includes(searchTerm) ||
+            task.theme.toLowerCase().includes(searchTerm) ||
+            task.description.toLowerCase().includes(searchTerm) ||
+            task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
+            task.status.toLowerCase().includes(searchTerm)
+        );
+        currentPage = 1;
+        createTable(filteredTasks);
+    });
+    document.getElementById("searchInput").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") document.getElementById("searchBtn").click();
+    });
+
+    const executorInput = document.getElementById("executorFilter");
+    const executorSuggestions = document.getElementById("executorSuggestions");
+    executorInput.addEventListener("input", (e) => {
+        const value = e.target.value.toLowerCase();
+        executorSuggestions.innerHTML = "";
+        if (value) {
+            executorSuggestions.classList.remove("hidden");
+            const allExecutors = getAllExecutors();
+            const matches = allExecutors.filter(ex => ex.toLowerCase().includes(value));
+            matches.forEach(match => {
+                const div = document.createElement("div");
+                div.textContent = match;
+                div.className = "suggestion-item";
+                div.style.cursor = "pointer";
+                div.addEventListener("click", () => {
+                    executorInput.value = match;
+                    filters.executors = match;
+                    executorSuggestions.classList.add("hidden");
+                    applyFilters();
+                });
+                executorSuggestions.appendChild(div);
+            });
+        } else {
+            executorSuggestions.classList.add("hidden");
+            filters.executors = "";
+            applyFilters();
+        }
+    });
+
+    document.getElementById("addGlobalExecutorBtn").addEventListener("click", () => {
+        openGlobalExecutorModal();
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!executorInput.contains(e.target) && !executorSuggestions.contains(e.target)) {
+            executorSuggestions.classList.add("hidden");
+        }
+    });
+}
+
+function applyFilters() {
+    filters.executors = document.getElementById("executorFilter").value;
+
+    let filteredTasks = tasks.filter(task => {
+        return (
+            (!filters.executors || task.executors.some(ex => ex.toLowerCase().includes(filters.executors.toLowerCase()))) &&
+            (!filters.dateFrom || task.dateSet >= filters.dateFrom) &&
+            (!filters.dateTo || task.dateSet <= filters.dateTo)
+        );
+    });
+    sortTasks(filteredTasks);
+    currentPage = 1;
+    createTable(filteredTasks);
+}
+
+function sortTasks(taskList) {
+    if (!sortState.field) return;
+
+    taskList.sort((a, b) => {
+        let valA = a[sortState.field];
+        let valB = b[sortState.field];
+
+        if (sortState.field === "dateSet") {
+            valA = valA || "9999-12-31";
+            valB = valB || "9999-12-31";
+            return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else if (sortState.field === "id") {
+            return sortState.ascending ? valA - valB : valB - valA;
+        } else if (sortState.field === "executors") {
+            valA = valA.length ? valA.join(", ") : "";
+            valB = valB.length ? valB.join(", ") : "";
+            return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else if (sortState.field === "status") {
+            valA = valA || "Не указан";
+            valB = valB || "Не указан";
+            return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else {
+            return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+    });
+}
+
+function createTable(taskList) {
+    const appDiv = document.getElementById("app");
+    const existingTable = appDiv.querySelector("table");
+    const existingPagination = appDiv.querySelector(".pagination");
+    if (existingTable) existingTable.remove();
+    if (existingPagination) existingPagination.remove();
+
+    const totalPages = Math.ceil(taskList.length / tasksPerPage);
+    const startIndex = (currentPage - 1) * tasksPerPage;
+    const endIndex = startIndex + tasksPerPage;
+    const paginatedTasks = taskList.slice(startIndex, endIndex);
+
+    const table = document.createElement("table");
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th data-sort="id">№</th>
+                <th data-sort="dateSet">Дата постановки</th>
+                <th data-sort="project">Проект/Заказчик</th>
+                <th data-sort="theme">Тема</th>
+                <th data-sort="description">Описание</th>
+                <th data-sort="executors">Исполнители</th>
+                <th data-sort="status">Статус</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector("tbody");
+    paginatedTasks.forEach(task => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${task.id}</td>
+            <td>${task.dateSet}</td>
+            <td>${task.project}</td>
+            <td>${task.theme}</td>
+            <td>${task.description}</td>
+            <td>${task.executors.length ? task.executors.join(", ") : "Не назначены"}</td>
+            <td>${task.status || "Не указан"}</td>
+        `;
+        row.addEventListener("click", () => openEditModal(task));
+        tbody.appendChild(row);
+    });
+
+    table.querySelectorAll("th[data-sort]").forEach(th => {
+        th.addEventListener("click", () => {
+            const field = th.dataset.sort;
+            table.querySelectorAll("th").forEach(header => header.innerHTML = header.innerHTML.replace(" ↑", "").replace(" ↓", ""));
+            if (sortState.field === field) {
+                sortState.ascending = !sortState.ascending;
+            } else {
+                sortState.field = field;
+                sortState.ascending = true;
+            }
+            th.innerHTML += sortState.ascending ? " ↑" : " ↓";
+            applyFilters();
+        });
+    });
+
+    appDiv.appendChild(table);
+    renderPagination(taskList, totalPages);
+}
+
+function renderPagination(taskList, totalPages) {
+    const paginationDiv = document.createElement("div");
+    paginationDiv.className = "pagination";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "Назад";
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            createTable(taskList);
+        }
+    });
+    paginationDiv.appendChild(prevBtn);
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageBtn = document.createElement("button");
+        pageBtn.textContent = i;
+        pageBtn.classList.toggle("active", i === currentPage);
+        pageBtn.addEventListener("click", () => {
+            currentPage = i;
+            createTable(taskList);
+        });
+        paginationDiv.appendChild(pageBtn);
+    }
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Вперед";
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener("click", () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            createTable(taskList);
+        }
+    });
+    paginationDiv.appendChild(nextBtn);
+
+    const appDiv = document.getElementById("app");
+    appDiv.appendChild(paginationDiv);
+}
+
+function openEditModal(task) {
+    const modal = document.createElement("div");
+    modal.className = "modal trello-style-modal";
+
+    // Убедимся, что необходимые поля инициализированы
+    task.comments = task.comments || [];
+    task.files = task.files || [];
+    task.executors = task.executors || [];
+    task.history = task.history || [];
+
+    const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
+
+    modal.innerHTML = `
+        <div class="modal-content trello-modal-content">
+            <div class="modal-header">
+                <h2>${task.project || "Без проекта"}</h2>
+                <span class="date-set">Дата постановки: ${task.dateSet || "Не указана"}</span>
+                <div class="header-actions">
+                    <select id="statusSelect">
+                        ${statuses.map(status => `
+                            <option value="${status}" ${task.status === status ? 'selected' : ''}>${status}</option>
+                        `).join('')}
+                    </select>
+                    <button class="close-modal-btn" id="closeModalBtn">×</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="static-sections">
+                    <div class="section">
+                        <h3>Тема</h3>
+                        <div class="editable-field">
+                            <span id="themeDisplay">${task.theme || "Нет темы"}</span>
+                            <input type="text" id="editTheme" value="${task.theme || ""}" class="hidden">
+                            <button class="edit-btn" data-field="theme">✏️</button>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>Описание</h3>
+                        <div class="editable-field">
+                            <span id="descriptionDisplay">${task.description || "Нет описания"}</span>
+                            <textarea id="editDescription" class="hidden">${task.description || ""}</textarea>
+                            <button class="edit-btn" data-field="description">✏️</button>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>Исполнители</h3>
+                        <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
+                            ${task.executors.length ? task.executors.map(ex => `
+                                <span class="executor-item" style="background: #f0f0f0; border-radius: 3px; padding: 2px 5px;">
+                                    ${ex}
+                                    <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
+                                </span>
+                            `).join("") : '<span>Не назначены</span>'}
+                            <select id="addExecutorSelect">
+                                <option value="">Добавить исполнителя</option>
+                                ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(ex => `
+                                    <option value="${ex}">${ex}</option>
+                                `).join("")}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>Вложения</h3>
+                        <div id="fileList">
+                            ${task.files.length ? task.files.map(file => `
+                                <div class="file-item">
+                                    <a href="${file.url}" target="_blank">${file.name}</a>
+                                </div>
+                            `).join("") : "Нет файлов"}
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>Комментарии</h3>
+                        <div id="commentList">
+                            ${task.comments.length ? task.comments.map((comment, index) => `
+                                <div class="comment-item" data-index="${index}">
+                                    ${comment.text} <small>(${comment.date})</small>
+                                    <button class="remove-comment" data-index="${index}">×</button>
+                                </div>
+                            `).join("") : "Нет комментариев"}
+                        </div>
+                        <textarea id="newComment" placeholder="Напишите комментарий..."></textarea>
+                        <button id="addComment">Добавить</button>
+                    </div>
+                    <div class="section">
+                        <h3>История</h3>
+                        <div id="historyList">
+                            ${task.history.length ? task.history.map((entry) => `
+                                <div class="history-item">
+                                    <span class="history-date">${entry.date}</span>
+                                    <span class="history-change">${entry.change}</span>
+                                    <span class="history-user">${entry.user}</span>
+                                </div>
+                            `).join("") : "Нет истории изменений"}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveBtn">Сохранить</button>
+                <button id="closeBtn">Закрыть</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Обработчики событий для редактирования темы и описания
+    ["theme", "description"].forEach(field => {
+        const editBtn = modal.querySelector(`.edit-btn[data-field="${field}"]`);
+        if (editBtn) {
+            editBtn.addEventListener("click", () => {
+                const display = modal.querySelector(`#${field}Display`);
+                const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
+                display.classList.toggle("hidden");
+                input.classList.toggle("hidden");
+                editBtn.textContent = display.classList.contains("hidden") ? "💾" : "✏️";
+                if (!display.classList.contains("hidden")) {
+                    task[field] = input.value;
+                    display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
+                }
+            });
+        }
+    });
+
+    // Обработчики для исполнителей
+    const executorList = modal.querySelector("#executorList");
+    executorList.querySelectorAll(".remove-executor").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const executor = btn.dataset.executor;
+            task.executors = task.executors.filter(ex => ex !== executor);
+            openEditModal(task); // Переоткрываем модалку для обновления
+        });
+    });
+
+    const addExecutorSelect = modal.querySelector("#addExecutorSelect");
+    if (addExecutorSelect) {
+        addExecutorSelect.addEventListener("change", () => {
+            const newExecutor = addExecutorSelect.value;
+            if (newExecutor && !task.executors.includes(newExecutor)) {
+                task.executors.push(newExecutor);
+                openEditModal(task); // Переоткрываем модалку для обновления
+            }
+            addExecutorSelect.value = "";
+        });
+    }
+
+    // Обработчики для комментариев
+    const addCommentBtn = modal.querySelector("#addComment");
+    if (addCommentBtn) {
+        addCommentBtn.addEventListener("click", () => {
+            const commentText = modal.querySelector("#newComment").value.trim();
+            if (commentText) {
+                task.comments.push({
+                    text: commentText,
+                    date: new Date().toLocaleDateString()
+                });
+                openEditModal(task); // Переоткрываем модалку для обновления
+            }
+        });
+    }
+
+    modal.querySelectorAll(".remove-comment").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const index = parseInt(btn.dataset.index);
+            task.comments.splice(index, 1);
+            openEditModal(task); // Переоткрываем модалку для обновления
+        });
+    });
+
+    // Кнопки закрытия и сохранения
+    modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
+    modal.querySelector("#closeBtn").addEventListener("click", () => modal.remove());
+    modal.querySelector("#saveBtn").addEventListener("click", () => {
+        const newStatus = modal.querySelector("#statusSelect").value;
+        if (task.status !== newStatus) {
+            task.history.push({
+                date: new Date().toLocaleDateString(),
+                change: `Статус изменен с "${task.status}" на "${newStatus}"`,
+                user: "Текущий пользователь"
+            });
+            task.status = newStatus;
+        }
+        applyFilters();
+        modal.remove();
+    });
+
+    modal.addEventListener("click", (e) => {
+        if (!modal.querySelector(".modal-content").contains(e.target)) modal.remove();
+    });
+}
+
+function bindEventListeners(section, task, modal) {
+    const content = modal.querySelector(`.accordion-header[data-section="${section}"]`).nextElementSibling;
+
+    if (section === "theme" || section === "description") {
+        const editBtn = content.querySelector(`.edit-btn[data-field="${section}"]`);
+        if (editBtn) {
+            editBtn.addEventListener("click", () => {
+                const display = content.querySelector(`#${section}Display`);
+                const input = content.querySelector(`#edit${section.charAt(0).toUpperCase() + section.slice(1)}`);
+                display.classList.toggle("hidden");
+                input.classList.toggle("hidden");
+                editBtn.textContent = display.classList.contains("hidden") ? "💾" : "✏️";
+                if (!display.classList.contains("hidden")) {
+                    task[section] = input.value;
+                    display.textContent = task[section] || `Нет ${section === "theme" ? "темы" : "описания"}`;
+                }
+            });
+        }
+    }
+
+    if (section === "executors") {
+        const executorList = content.querySelector("#executorList");
+        executorList.querySelectorAll(".remove-executor").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const executor = btn.dataset.executor;
+                task.executors = task.executors.filter(ex => ex !== executor);
+                addSection("executors", task, modal);
+            });
+        });
+
+        const addExecutorSelect = content.querySelector("#addExecutorSelect");
+        if (addExecutorSelect) {
+            addExecutorSelect.addEventListener("change", () => {
+                const newExecutor = addExecutorSelect.value;
+                if (newExecutor && !task.executors.includes(newExecutor)) {
+                    task.executors.push(newExecutor);
+                    addSection("executors", task, modal);
+                }
+                addExecutorSelect.value = "";
+            });
+        }
+    }
+
+    if (section === "comments") {
+        const addCommentBtn = content.querySelector("#addComment");
+        if (addCommentBtn) {
+            addCommentBtn.addEventListener("click", () => {
+                const commentText = content.querySelector("#newComment").value.trim();
+                if (commentText) {
+                    task.comments.push({
+                        text: commentText,
+                        date: new Date().toLocaleDateString()
+                    });
+                    addSection("comments", task, modal);
+                }
+            });
+        }
+
+        content.querySelectorAll(".remove-comment").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const index = parseInt(btn.dataset.index);
+                task.comments.splice(index, 1);
+                addSection("comments", task, modal);
+            });
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", createInterface);

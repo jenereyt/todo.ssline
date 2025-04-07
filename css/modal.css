@@ -1,3 +1,347 @@
+/* Общие стили для модального окна */
+.trello-style-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.trello-modal-content {
+    width: 950px;
+    max-height: 85vh;
+    background: #f4f5f7;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Заголовок */
+.modal-header {
+    position: relative;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dfe1e6;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #172b4d;
+    line-height: 1.2;
+}
+
+.date-set {
+    font-size: 12px;
+    color: #5e6c84;
+    margin-top: 5px;
+}
+
+.header-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-actions select {
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    background: #fff;
+    color: #172b4d;
+}
+
+.close-modal-btn {
+    font-size: 24px;
+    font-weight: bold;
+    color: #5e6c84;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+    color: #172b4d;
+}
+
+/* Тело модалки */
+.modal-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.static-sections {
+    width: 100%;
+    max-height: 60vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #dfe1e6 #f4f5f7;
+}
+
+.static-sections::-webkit-scrollbar {
+    width: 8px;
+}
+
+.static-sections::-webkit-scrollbar-thumb {
+    background: #dfe1e6;
+    border-radius: 4px;
+}
+
+.static-sections::-webkit-scrollbar-track {
+    background: #f4f5f7;
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+.section h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #172b4d;
+}
+
+/* Редактируемые поля (тема, описание) */
+.editable-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.editable-field span {
+    flex: 1;
+    font-size: 14px;
+    color: #172b4d;
+    padding: 6px;
+    background: #fff;
+    border-radius: 3px;
+}
+
+.editable-field input,
+.editable-field textarea {
+    flex: 1;
+    font-size: 14px;
+    padding: 6px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    background: #fff;
+}
+
+.editable-field button {
+    font-size: 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #5e6c84;
+    transition: color 0.2s;
+}
+
+.editable-field button:hover {
+    color: #172b4d;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Исполнители */
+.executor-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.executor-item {
+    display: flex;
+    align-items: center;
+    background: #dfe1e6;
+    border-radius: 3px;
+    padding: 2px 5px;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.executor-item button {
+    margin-left: 5px;
+    font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #5e6c84;
+    transition: color 0.2s;
+}
+
+.executor-item button:hover {
+    color: #172b4d;
+}
+
+.add-executor-btn {
+    padding: 4px;
+    background: #dfe1e6;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.add-executor-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+#addExecutorSelect {
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    background: #fff;
+    color: #172b4d;
+}
+
+/* Вложения */
+.file-list {
+    margin-top: 10px;
+}
+
+.file-item {
+    padding: 6px 0;
+    border-bottom: 1px solid #dfe1e6;
+}
+
+.file-item a {
+    font-size: 14px;
+    color: #0052cc;
+    text-decoration: none;
+}
+
+.file-item a:hover {
+    text-decoration: underline;
+}
+
+/* Комментарии */
+.comment-item {
+    padding: 10px;
+    background: #fff;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    overflow-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+}
+
+.comment-item small {
+    color: #5e6c84;
+    font-size: 12px;
+}
+
+.comment-item button {
+    font-size: 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #5e6c84;
+    transition: color 0.2s;
+}
+
+.comment-item button:hover {
+    color: #172b4d;
+}
+
+#newComment {
+    width: 95%;
+    min-height: 40px;
+    padding: 6px;
+    margin-top: 10px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    font-size: 14px;
+    background: #fff;
+    resize: none;
+}
+
+#addComment {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #0052cc;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#addComment:hover {
+    background: #003d99;
+}
+
+/* История */
+.history-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #dfe1e6;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.history-item span {
+    display: block;
+}
+
+/* Футер */
+.modal-footer {
+    margin-top: 15px;
+    text-align: right;
+}
+
+.modal-footer button {
+    padding: 6px 12px;
+    margin-left: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#saveBtn {
+    background: #0052cc;
+    color: #fff;
+}
+
+#saveBtn:hover {
+    background: #003d99;
+}
+
+#closeBtn {
+    background: #dfe1e6;
+    color: #172b4d;
+}
+
+#closeBtn:hover {
+    background: #d3d6db;
+}
+
+
+
+
+
 .modale {
     position: fixed;
     top: 0;
@@ -13,33 +357,6 @@
     animation: fadeIn 0.3s ease-out;
 }
 
-/* General modal overlay */
-.modale {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(50px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Modal content */
 .modal-contente {
     width: 100%;
     max-width: 600px;
@@ -49,7 +366,7 @@
     padding: 20px;
     animation: slideUp 0.3s ease-in-out;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 /* Modal header */
@@ -67,20 +384,6 @@
     color: #2c3e50;
     font-size: 22px;
     font-weight: 600;
-}
-
-.close-modal-btn {
-    font-size: 24px;
-    font-weight: bold;
-    color: #5e6c84;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.close-modal-btn:hover {
-    color: #172b4d;
 }
 
 /* Section headers */
@@ -264,531 +567,4 @@
     outline: none;
     border-color: #3498db;
     box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
-}
-
-/* Modal buttons (for edit panel) */
-.modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.modal-buttons button {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-#saveEditExecutor {
-    background: #2ecc71;
-    color: #fff;
-}
-
-#saveEditExecutor:hover {
-    background: #27ae60;
-}
-
-#cancelEditExecutor {
-    background: #95a5a6;
-    color: #fff;
-}
-
-#cancelEditExecutor:hover {
-    background: #7f8c8d;
-}
-
-/* Общие стили для модального окна */
-.trello-style-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.trello-modal-content {
-    width: 950px;
-    max-height: 85vh;
-    background: #f4f5f7;
-    border-radius: 8px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-/* Заголовок */
-.modal-header {
-    position: relative;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #dfe1e6;
-}
-
-.modal-header h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-    color: #172b4d;
-    line-height: 1.2;
-}
-
-.date-set {
-    font-size: 12px;
-    color: #5e6c84;
-    margin-top: 5px;
-}
-
-.close-modal-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #5e6c84;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.close-modal-btn:hover {
-    color: #172b4d;
-}
-
-/* Тело модалки */
-.modal-body {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    margin-top: 15px;
-}
-
-.main-content {
-    flex: 3;
-    padding-right: 15px;
-    max-height: 60vh;
-    /* Ограничиваем высоту */
-    overflow-y: auto;
-    /* Добавляем прокрутку */
-    scrollbar-width: thin;
-    scrollbar-color: #dfe1e6 #f4f5f7;
-}
-
-.main-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.main-content::-webkit-scrollbar-thumb {
-    background: #dfe1e6;
-    border-radius: 4px;
-}
-
-.main-content::-webkit-scrollbar-track {
-    background: #f4f5f7;
-}
-
-/* Боковая панель */
-.sidebar {
-    flex: 1;
-    background: #ebecf0;
-    padding: 10px;
-    border-radius: 3px;
-}
-
-.sidebar h3 {
-    font-size: 12px;
-    font-weight: 600;
-    color: #5e6c84;
-    margin: 0 0 10px;
-    text-transform: uppercase;
-}
-
-.sidebar-btn {
-    display: block;
-    width: 100%;
-    padding: 8px 10px;
-    margin-bottom: 6px;
-    background: #fff;
-    border: none;
-    border-radius: 3px;
-    text-align: left;
-    font-size: 14px;
-    color: #172b4d;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.sidebar-btn:hover {
-    background: #dfe1e6;
-}
-
-.field {
-    opacity: 0;
-    height: 0;
-    overflow: hidden;
-    transition: opacity 0.3s ease, height 0.3s ease;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Состояние при появлении */
-.field.active {
-    opacity: 1;
-    height: auto;
-    padding: 7px;
-
-}
-
-/* Состояние при удалении (уже есть в вашем коде, но уточним) */
-.field.removing {
-    opacity: 0;
-    height: 0 !important;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-bottom: 0;
-}
-
-.field h3, .field h4 {
-    margin: 0 0 8px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #172b4d;
-}
-
-.field h4 {
-    font-size: 14px;
-}
-
-/* Редактируемые поля (тема, описание) */
-.editable-field {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.editable-field span {
-    flex: 1;
-    font-size: 14px;
-    color: #172b4d;
-    padding: 6px;
-    background: #fff;
-    border-radius: 3px;
-}
-
-.editable-field input,
-.editable-field textarea {
-    flex: 1;
-    font-size: 14px;
-    padding: 6px;
-    border: 1px solid #dfe1e6;
-    border-radius: 3px;
-    background: #fff;
-}
-
-.editable-field button {
-    font-size: 16px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: #5e6c84;
-    transition: color 0.2s;
-}
-
-.editable-field button:hover {
-    color: #172b4d;
-}
-
-.hidden {
-    display: none;
-}
-
-/* Статус */
-.status-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.status-section label {
-    font-size: 14px;
-    color: #5e6c84;
-}
-
-.status-section select {
-    padding: 6px;
-    font-size: 14px;
-    border: 1px solid #dfe1e6;
-    border-radius: 3px;
-    background: #fff;
-    color: #172b4d;
-}
-
-/* Участники */
-.executor-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.executor-item {
-    display: flex;
-    align-items: center;
-    height: 10px;
-    background: #dfe1e6;
-    border-radius: 3px;
-    font-size: 16px;
-    color: #172b4d;
-}
-
-.executor-item button {
-    margin-left: 5px;
-    font-size: 14px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: #5e6c84;
-    transition: color 0.2s;
-}
-
-.executor-item button:hover {
-    color: #172b4d;
-}
-
-.add-executor-btn {
-    padding: 4px;
-    background: #dfe1e6;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-.add-executor-btn img {
-    width: 16px;
-    height: 16px;
-}
-
-.file-list {
-    margin-top: 10px;
-}
-
-.file-item {
-    padding: 6px 0;
-    border-bottom: 1px solid #dfe1e6;
-}
-
-.file-item a {
-    font-size: 14px;
-    color: #0052cc;
-    text-decoration: none;
-}
-
-.file-item a:hover {
-    text-decoration: underline;
-}
-
-.field.files input[type="file"] {
-    margin-top: 10px;
-}
-
-.field.files button {
-    margin-top: 10px;
-    padding: 6px 12px;
-    background: #0052cc;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.field.files button:hover {
-    background: #003d99;
-}
-
-.comment-item {
-    max-width: 100%;
-    padding: 10px;
-    background: #fff;
-    border-radius: 3px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    overflow-wrap: break-word;
-    /* Перенос слов */
-    word-break: break-all;
-    /* Разбиваем длинные слова */
-    white-space: normal;
-}
-
-.comment-item small {
-    color: #5e6c84;
-    font-size: 12px;
-}
-
-.comment-item button {
-    font-size: 14px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: #5e6c84;
-    transition: color 0.2s;
-}
-
-.comment-item button:hover {
-    color: #172b4d;
-}
-
-.field.comments textarea {
-    width: 95%;
-    min-height: 40px;
-    padding: 6px;
-    margin-top: 10px;
-    border: 1px solid #dfe1e6;
-    border-radius: 3px;
-    font-size: 14px;
-    background: #fff;
-    resize: none;
-}
-
-.field.comments button {
-    margin-top: 10px;
-    padding: 6px 12px;
-    background: #0052cc;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.field.comments button:hover {
-    background: #003d99;
-}
-
-.history-item {
-    padding: 10px 0;
-    border-bottom: 1px solid #dfe1e6;
-    font-size: 14px;
-    color: #172b4d;
-}
-
-.history-item span {
-    display: block;
-}
-
-.history-item small {
-    color: #5e6c84;
-    font-size: 12px;
-}
-
-.modal-footer {
-    margin-top: 15px;
-    text-align: right;
-}
-
-.modal-footer button {
-    padding: 6px 12px;
-    margin-left: 10px;
-    font-size: 14px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-#saveBtn {
-    background: #0052cc;
-    color: #fff;
-}
-
-#saveBtn:hover {
-    background: #003d99;
-}
-
-#closeBtn {
-    background: #dfe1e6;
-    color: #172b4d;
-}
-
-#closeBtn:hover {
-    background: #d3d6db;
-}
-
-.header-actions {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    /* Возвращаем "X" на место */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.header-actions select {
-    padding: 4px;
-    font-size: 14px;
-    border: 1px solid #dfe1e6;
-    border-radius: 3px;
-    background: #fff;
-    color: #172b4d;
-}
-
-.close-modal-btn {
-    font-size: 24px;
-    font-weight: bold;
-    color: #5e6c84;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s;
-    position: static;
-    /* Убираем absolute, чтобы он был в потоке */
-}
-
-.close-modal-btn:hover {
-    color: #172b4d;
-}
-
-.executor-select-container {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.executor-select-container select {
-    padding: 4px;
-    font-size: 14px;
-    border: 1px solid #dfe1e6;
-    border-radius: 3px;
-}
-
-.remove-select-btn,
-.revert-btn {
-    font-size: 14px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: #5e6c84;
-    transition: color 0.2s;
-}
-
-.remove-select-btn:hover,
-.revert-btn:hover {
-    color: #172b4d;
-}
-
-.sidebar-btn.active {
-    background: linear-gradient(135deg, #4a90e2, #357abd);
-    color: white;
 }
