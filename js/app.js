@@ -350,7 +350,7 @@ export function getAllExecutors() {
     });
     return Array.from(executors).sort();
 }
-import { openGlobalExecutorModal, refreshExecutorsList } from './executorsModal.js';
+// import { openGlobalExecutorModal, refreshExecutorsList } from './executorsModal.js';
 import { createTable, createInterface, } from './interface.js'
 
 export function applyFilters() {
@@ -440,7 +440,6 @@ export function openEditModal(task) {
     const modal = document.createElement("div");
     modal.className = "modal trello-style-modal";
 
-    // Убедимся, что необходимые поля инициализированы
     task.comments = task.comments || [];
     task.files = task.files || [];
     task.executors = task.executors || [];
@@ -462,14 +461,19 @@ export function openEditModal(task) {
                     <button class="close-modal-btn" id="closeModalBtn">×</button>
                 </div>
             </div>
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="info">Информация о задаче</button>
+                <button class="tab-btn" data-tab="extras">Дополнения к задаче</button>
+                <button class="tab-btn" data-tab="history">История</button>
+            </div>
             <div class="modal-body">
-                <div class="static-sections">
+                <div class="tab-content" id="infoTab">
                     <div class="section">
                         <h3>Тема</h3>
                         <div class="editable-field">
                             <span id="themeDisplay">${task.theme || "Нет темы"}</span>
                             <input type="text" id="editTheme" value="${task.theme || ""}" class="hidden">
-                            <button class="edit-btn" data-field="theme">✏️</button>
+                            <button class="edit-btn" data-field="theme"><img src="./image/pencil.svg"></button>
                         </div>
                     </div>
                     <div class="section">
@@ -477,24 +481,7 @@ export function openEditModal(task) {
                         <div class="editable-field">
                             <span id="descriptionDisplay">${task.description || "Нет описания"}</span>
                             <textarea id="editDescription" class="hidden">${task.description || ""}</textarea>
-                            <button class="edit-btn" data-field="description">✏️</button>
-                        </div>
-                    </div>
-                    <div class="section">
-                        <h3>Исполнители</h3>
-                        <div id="executorList" class="executor-list" style="display: flex; align-items: center; gap: 5px;">
-                            ${task.executors.length ? task.executors.map(ex => `
-                                <span class="executor-item" style="background: #f0f0f0; border-radius: 3px; padding: 2px 5px;">
-                                    ${ex}
-                                    <button class="remove-executor" data-executor="${ex}" style="border: none; background: none; cursor: pointer;">×</button>
-                                </span>
-                            `).join("") : '<span>Не назначены</span>'}
-                            <select id="addExecutorSelect">
-                                <option value="">Добавить исполнителя</option>
-                                ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(ex => `
-                                    <option value="${ex}">${ex}</option>
-                                `).join("")}
-                            </select>
+                            <button class="edit-btn" data-field="description"><img src="./image/pencil.svg"></button>
                         </div>
                     </div>
                     <div class="section">
@@ -507,19 +494,20 @@ export function openEditModal(task) {
                             `).join("") : "Нет файлов"}
                         </div>
                     </div>
+                </div>
+                <div class="tab-content hidden" id="extrasTab">
+                    <div class="section">
+                        <h3>Исполнители</h3>
+                        <div id="executorList" class="executor-list"></div>
+                    </div>
                     <div class="section">
                         <h3>Комментарии</h3>
-                        <div id="commentList">
-                            ${task.comments.length ? task.comments.map((comment, index) => `
-                                <div class="comment-item" data-index="${index}">
-                                    ${comment.text} <small>(${comment.date})</small>
-                                    <button class="remove-comment" data-index="${index}">×</button>
-                                </div>
-                            `).join("") : "Нет комментариев"}
-                        </div>
+                        <div id="commentList"></div>
                         <textarea id="newComment" placeholder="Напишите комментарий..."></textarea>
                         <button id="addComment">Добавить</button>
                     </div>
+                </div>
+                <div class="tab-content hidden" id="historyTab">
                     <div class="section">
                         <h3>История</h3>
                         <div id="historyList">
@@ -543,73 +531,203 @@ export function openEditModal(task) {
 
     document.body.appendChild(modal);
 
-    // Обработчики событий для редактирования темы и описания
+    const originalTask = JSON.parse(JSON.stringify(task));
+
+    // Переключение вкладок
+    modal.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            modal.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            modal.querySelectorAll(".tab-content").forEach(content => content.classList.add("hidden"));
+            modal.querySelector(`#${btn.dataset.tab}Tab`).classList.remove("hidden");
+        });
+    });
+
+    // Редактирование темы и описания
     ["theme", "description"].forEach(field => {
         const editBtn = modal.querySelector(`.edit-btn[data-field="${field}"]`);
-        if (editBtn) {
-            editBtn.addEventListener("click", () => {
-                const display = modal.querySelector(`#${field}Display`);
-                const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
-                display.classList.toggle("hidden");
-                input.classList.toggle("hidden");
-                editBtn.textContent = display.classList.contains("hidden") ? "💾" : "✏️";
-                if (!display.classList.contains("hidden")) {
+        const display = modal.querySelector(`#${field}Display`);
+        const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
+
+        if (editBtn && display && input) {
+            editBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isEditing = display.classList.contains("hidden");
+                if (isEditing) {
                     task[field] = input.value;
                     display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
+                    display.classList.remove("hidden");
+                    input.classList.add("hidden");
+                    editBtn.innerHTML = '<img src="./image/pencil.svg">';
+                } else {
+                    display.classList.add("hidden");
+                    input.classList.remove("hidden");
+                    input.focus();
+                    editBtn.innerHTML = '<img src="./image/save.svg">';
                 }
             });
         }
     });
 
-    // Обработчики для исполнителей
+    // Исполнители
     const executorList = modal.querySelector("#executorList");
-    executorList.querySelectorAll(".remove-executor").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const executor = btn.dataset.executor;
-            task.executors = task.executors.filter(ex => ex !== executor);
-            openEditModal(task); // Переоткрываем модалку для обновления
-        });
-    });
 
-    const addExecutorSelect = modal.querySelector("#addExecutorSelect");
-    if (addExecutorSelect) {
-        addExecutorSelect.addEventListener("change", () => {
-            const newExecutor = addExecutorSelect.value;
-            if (newExecutor && !task.executors.includes(newExecutor)) {
-                task.executors.push(newExecutor);
-                openEditModal(task); // Переоткрываем модалку для обновления
+    function updateExecutorList() {
+        executorList.innerHTML = '';
+        task.executors.forEach(ex => {
+            const executorItem = document.createElement("span");
+            executorItem.className = "executor-item";
+            executorItem.innerHTML = `
+                <span class="executor-name">${ex}</span>
+                <button class="edit-executor" data-executor="${ex}"><img src="./image/pencil.svg""></button>
+                <button class="remove-executor" data-executor="${ex}">×</button>
+            `;
+            executorList.appendChild(executorItem);
+        });
+
+        if (!task.executors.length) {
+            const noExecutors = document.createElement("span");
+            noExecutors.textContent = "Не назначены";
+            executorList.appendChild(noExecutors);
+        }
+
+        const addButton = document.createElement("button");
+        addButton.className = "add-executor-btn";
+        addButton.innerHTML = `<img src="./image/plus.svg" style="width: 16px; height: 16px;">`;
+        executorList.appendChild(addButton);
+
+        // Обработчик кнопки добавления
+        addButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (!executorList.querySelector("#addExecutorSelect")) {
+                const selectWrapper = document.createElement("span");
+                selectWrapper.className = "executor-item";
+                selectWrapper.innerHTML = `
+                    <select id="addExecutorSelect">
+                        <option value="">Выберите исполнителя</option>
+                        ${getAllExecutors().filter(ex => !task.executors.includes(ex)).map(ex => `
+                            <option value="${ex}">${ex}</option>
+                        `).join("")}
+                    </select>
+                    <button class="cancel-add-executor">×</button>
+                `;
+                executorList.replaceChild(selectWrapper, addButton);
+
+                const addExecutorSelect = selectWrapper.querySelector("#addExecutorSelect");
+                addExecutorSelect.addEventListener("change", (e) => {
+                    e.stopPropagation();
+                    const newExecutor = addExecutorSelect.value;
+                    if (newExecutor && !task.executors.includes(newExecutor)) {
+                        task.executors.push(newExecutor);
+                        updateExecutorList();
+                    }
+                });
+
+                selectWrapper.querySelector(".cancel-add-executor").addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    executorList.replaceChild(addButton, selectWrapper);
+                });
             }
-            addExecutorSelect.value = "";
+        });
+
+        // Привязка событий для удаления
+        executorList.querySelectorAll(".remove-executor").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const executor = btn.dataset.executor;
+                task.executors = task.executors.filter(ex => ex !== executor);
+                updateExecutorList();
+            });
+        });
+
+        // Привязка событий для редактирования
+        executorList.querySelectorAll(".edit-executor").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const oldExecutor = btn.dataset.executor;
+                const executorItem = btn.parentElement;
+                const executorNameSpan = executorItem.querySelector(".executor-name");
+
+                const select = document.createElement("select");
+                select.innerHTML = `
+                    <option value="">Выберите исполнителя</option>
+                    ${getAllExecutors().filter(ex => !task.executors.includes(ex) || ex === oldExecutor).map(ex => `
+                        <option value="${ex}" ${ex === oldExecutor ? 'selected' : ''}>${ex}</option>
+                    `).join("")}
+                `;
+                executorItem.replaceChild(select, executorNameSpan);
+                select.focus();
+
+                select.addEventListener("change", (e) => {
+                    e.stopPropagation();
+                    const newExecutor = select.value;
+                    if (newExecutor && newExecutor !== oldExecutor && !task.executors.includes(newExecutor)) {
+                        const index = task.executors.indexOf(oldExecutor);
+                        task.executors[index] = newExecutor;
+                    }
+                    updateExecutorList();
+                });
+
+                select.addEventListener("blur", () => {
+                    updateExecutorList();
+                });
+            });
         });
     }
 
-    // Обработчики для комментариев
+    updateExecutorList();
+
+    // Комментарии
+    const commentList = modal.querySelector("#commentList");
+
+    function updateCommentList() {
+        commentList.innerHTML = task.comments.length ? task.comments.map((comment, index) => `
+            <div class="comment-item" data-index="${index}">
+                ${comment.text} <small>(${comment.date})</small>
+                <button class="remove-comment" data-index="${index}">×</button>
+            </div>
+        `).join("") : "Нет комментариев";
+
+        commentList.querySelectorAll(".remove-comment").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const index = parseInt(btn.dataset.index);
+                task.comments.splice(index, 1);
+                updateCommentList();
+            });
+        });
+    }
+
     const addCommentBtn = modal.querySelector("#addComment");
     if (addCommentBtn) {
-        addCommentBtn.addEventListener("click", () => {
+        addCommentBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
             const commentText = modal.querySelector("#newComment").value.trim();
             if (commentText) {
                 task.comments.push({
                     text: commentText,
                     date: new Date().toLocaleDateString()
                 });
-                openEditModal(task); // Переоткрываем модалку для обновления
+                updateCommentList();
+                modal.querySelector("#newComment").value = "";
             }
         });
     }
 
-    modal.querySelectorAll(".remove-comment").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const index = parseInt(btn.dataset.index);
-            task.comments.splice(index, 1);
-            openEditModal(task); // Переоткрываем модалку для обновления
-        });
-    });
+    updateCommentList();
 
-    // Кнопки закрытия и сохранения
-    modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
-    modal.querySelector("#closeBtn").addEventListener("click", () => modal.remove());
-    modal.querySelector("#saveBtn").addEventListener("click", () => {
+    // Закрытие и сохранение
+    const closeModal = () => {
+        Object.assign(task, originalTask);
+        modal.remove();
+    };
+
+    modal.querySelector("#closeModalBtn").addEventListener("click", closeModal);
+    modal.querySelector("#closeBtn").addEventListener("click", closeModal);
+
+    modal.querySelector("#saveBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
         const newStatus = modal.querySelector("#statusSelect").value;
         if (task.status !== newStatus) {
             task.history.push({
@@ -624,7 +742,7 @@ export function openEditModal(task) {
     });
 
     modal.addEventListener("click", (e) => {
-        if (!modal.querySelector(".modal-content").contains(e.target)) modal.remove();
+        if (!modal.querySelector(".modal-content").contains(e.target)) closeModal();
     });
 }
 

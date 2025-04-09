@@ -77,12 +77,87 @@
     color: #172b4d;
 }
 
+
+.modal-tabs {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+}
+
+.tab-btn.active {
+    background: #f0f0f0;
+    color: #000;
+    border-bottom: 2px solid #007bff;
+}
+
+.tab-content {
+    padding: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.section {
+    margin-bottom: 15px;
+}
+
+.section h3 {
+    margin: 0 0 5px 0;
+}
+
+.editable-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.edit-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+.executor-list select {
+    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px;
+}
+
+.comment-item, .history-item {
+    margin: 5px 0;
+}
+
+.modal-footer {
+    padding: 10px;
+    text-align: right;
+}
+
+.edit-executor img {
+    width: 16px;
+    height: 16px;
+}
+
+.executor-list input {
+    padding: 2px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+
 /* Тело модалки */
 .modal-body {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    margin-top: 15px;
+    width: 100%;
+    overflow-y:auto;
 }
 
 .static-sections {
@@ -106,9 +181,6 @@
     background: #f4f5f7;
 }
 
-.section {
-    margin-bottom: 20px;
-}
 
 .section h3 {
     margin: 0 0 8px;
@@ -125,7 +197,7 @@
 }
 
 .editable-field span {
-    flex: 1;
+    width: 90%;
     font-size: 14px;
     color: #172b4d;
     padding: 6px;
@@ -170,7 +242,7 @@
 .executor-item {
     display: flex;
     align-items: center;
-    background: #dfe1e6;
+    /* background: #dfe1e6; */
     border-radius: 3px;
     padding: 2px 5px;
     font-size: 14px;
@@ -179,7 +251,7 @@
 
 .executor-item button {
     margin-left: 5px;
-    font-size: 14px;
+    font-size: 16px;
     border: none;
     background: none;
     cursor: pointer;
@@ -193,7 +265,6 @@
 
 .add-executor-btn {
     padding: 4px;
-    background: #dfe1e6;
     border-radius: 3px;
     cursor: pointer;
 }
@@ -233,6 +304,10 @@
 }
 
 /* Комментарии */
+#commentList{
+    width: 900px;
+}
+
 .comment-item {
     padding: 10px;
     background: #fff;
@@ -266,7 +341,7 @@
 }
 
 #newComment {
-    width: 95%;
+    width: 900px;
     min-height: 40px;
     padding: 6px;
     margin-top: 10px;
@@ -306,7 +381,6 @@
 
 /* Футер */
 .modal-footer {
-    margin-top: 15px;
     text-align: right;
 }
 
@@ -384,6 +458,70 @@
     color: #2c3e50;
     font-size: 22px;
     font-weight: 600;
+}
+
+.accordion-item {
+    margin-bottom: 10px;
+}
+
+.accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.header-wrapper {
+    width: 100%;
+}
+
+.accordion-header h3 {
+    margin: 0 10px 0 0;
+    white-space: nowrap;
+}
+
+.accordion-line {
+    flex-grow: 1;
+    height: 1px;
+    background: #ccc;
+    margin: 5px 0;
+}
+
+.accordion-arrows {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.accordion-arrow {
+    width: 16px;
+    height: 16px;
+}
+
+.accordion-content {
+    padding: 10px;
+    border: 1px solid #eee;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+.edit-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+.executor-list select {
+    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px;
 }
 
 /* Section headers */
