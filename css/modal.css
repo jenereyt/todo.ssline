@@ -14,13 +14,14 @@
 
 .trello-modal-content {
     width: 950px;
-    max-height: 85vh;
+    min-height: 85vh;
     background: #f4f5f7;
     border-radius: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     padding: 20px;
     display: flex;
     flex-direction: column;
+    position: relative;
     overflow: hidden;
 }
 
@@ -37,6 +38,8 @@
     font-weight: 600;
     color: #172b4d;
     line-height: 1.2;
+    flex-shrink: 0;
+    /* Предотвращает сжатие заголовка */
 }
 
 .date-set {
@@ -82,6 +85,8 @@
     display: flex;
     border-bottom: 1px solid #ccc;
     margin-bottom: 10px;
+    flex-shrink: 0;
+    /* Предотвращает сжатие вкладок */
 }
 
 .tab-btn {
@@ -100,7 +105,7 @@
 }
 
 .tab-content {
-    padding: 10px;
+    padding: 10px 0;
 }
 
 .hidden {
@@ -137,10 +142,6 @@
     margin: 5px 0;
 }
 
-.modal-footer {
-    padding: 10px;
-    text-align: right;
-}
 
 .edit-executor img {
     width: 16px;
@@ -156,8 +157,10 @@
 
 /* Тело модалки */
 .modal-body {
+    max-height: calc(85vh - 150px);
     width: 100%;
-    overflow-y:auto;
+    overflow-y: auto;
+    flex-grow: 1;
 }
 
 .static-sections {
@@ -169,12 +172,12 @@
 }
 
 .static-sections::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
 }
 
 .static-sections::-webkit-scrollbar-thumb {
     background: #dfe1e6;
-    border-radius: 4px;
+    border-radius: 2px;
 }
 
 .static-sections::-webkit-scrollbar-track {
@@ -197,12 +200,14 @@
 }
 
 .editable-field span {
-    width: 90%;
+    width: 100%;
     font-size: 14px;
     color: #172b4d;
     padding: 6px;
     background: #fff;
     border-radius: 3px;
+    word-wrap: break-word;
+    word-break: normal;
 }
 
 .editable-field input,
@@ -304,8 +309,8 @@
 }
 
 /* Комментарии */
-#commentList{
-    width: 900px;
+#commentList {
+    width: 933px;
 }
 
 .comment-item {
@@ -341,7 +346,7 @@
 }
 
 #newComment {
-    width: 900px;
+    width: 920PX;
     min-height: 40px;
     padding: 6px;
     margin-top: 10px;
@@ -382,6 +387,12 @@
 /* Футер */
 .modal-footer {
     text-align: right;
+    padding: 10px;
+    text-align: right;
+    border-top: 1px solid #dfe1e6;
+    /* Добавляем границу для визуального разделения */
+    background: #f4f5f7;
+    /* Соответствие фону модального окна */
 }
 
 .modal-footer button {
@@ -554,7 +565,6 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-    max-width: 70%;
 }
 
 #newGlobalExecutor:focus {
@@ -588,7 +598,7 @@
 
 .executors-list {
     max-height: 400px;
-    /* Increased to reduce scrolling */
+
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #cbd5e0 #f8f9fa;
@@ -656,6 +666,13 @@
     font-size: 16px;
     cursor: pointer;
     padding: 2px 5px;
+}
+
+#editTheme, #editDescription, #newComment, .edit-executor-input {
+    outline: none;
+    border-radius: 3px;
+    border-color: #3498db;
+    border-width: 1px;
 }
 
 .edit-executor-btn:hover {

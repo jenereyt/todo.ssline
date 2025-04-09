@@ -473,7 +473,6 @@ export function openEditModal(task) {
                         <div class="editable-field">
                             <span id="themeDisplay">${task.theme || "Нет темы"}</span>
                             <input type="text" id="editTheme" value="${task.theme || ""}" class="hidden">
-                            <button class="edit-btn" data-field="theme"><img src="./image/pencil.svg"></button>
                         </div>
                     </div>
                     <div class="section">
@@ -481,7 +480,6 @@ export function openEditModal(task) {
                         <div class="editable-field">
                             <span id="descriptionDisplay">${task.description || "Нет описания"}</span>
                             <textarea id="editDescription" class="hidden">${task.description || ""}</textarea>
-                            <button class="edit-btn" data-field="description"><img src="./image/pencil.svg"></button>
                         </div>
                     </div>
                     <div class="section">
@@ -544,28 +542,33 @@ export function openEditModal(task) {
         });
     });
 
-    // Редактирование темы и описания
+    // Редактирование темы и описания по двойному клику
     ["theme", "description"].forEach(field => {
-        const editBtn = modal.querySelector(`.edit-btn[data-field="${field}"]`);
         const display = modal.querySelector(`#${field}Display`);
         const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
 
-        if (editBtn && display && input) {
-            editBtn.addEventListener("click", (e) => {
+        if (display && input) {
+            display.addEventListener("dblclick", (e) => {
                 e.stopPropagation();
-                const isEditing = display.classList.contains("hidden");
-                if (isEditing) {
+                display.classList.add("hidden");
+                input.classList.remove("hidden");
+                input.focus();
+            });
+
+            input.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault(); // Предотвращаем перенос строки в textarea
                     task[field] = input.value;
                     display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
                     display.classList.remove("hidden");
                     input.classList.add("hidden");
-                    editBtn.innerHTML = '<img src="./image/pencil.svg">';
-                } else {
-                    display.classList.add("hidden");
-                    input.classList.remove("hidden");
-                    input.focus();
-                    editBtn.innerHTML = '<img src="./image/save.svg">';
                 }
+            });
+
+            input.addEventListener("blur", () => {
+                input.value = task[field] || ""; // Отмена изменений
+                display.classList.remove("hidden");
+                input.classList.add("hidden");
             });
         }
     });
@@ -580,7 +583,7 @@ export function openEditModal(task) {
             executorItem.className = "executor-item";
             executorItem.innerHTML = `
                 <span class="executor-name">${ex}</span>
-                <button class="edit-executor" data-executor="${ex}"><img src="./image/pencil.svg""></button>
+                <button class="edit-executor" data-executor="${ex}"><img src="./image/pencil.svg"></button>
                 <button class="remove-executor" data-executor="${ex}">×</button>
             `;
             executorList.appendChild(executorItem);
@@ -684,8 +687,11 @@ export function openEditModal(task) {
     function updateCommentList() {
         commentList.innerHTML = task.comments.length ? task.comments.map((comment, index) => `
             <div class="comment-item" data-index="${index}">
-                ${comment.text} <small>(${comment.date})</small>
+            ${comment.text} 
+            <div>
+                <small>(${comment.date})</small>
                 <button class="remove-comment" data-index="${index}">×</button>
+            </div>
             </div>
         `).join("") : "Нет комментариев";
 
