@@ -1,4 +1,3 @@
-/* Общие стили для модального окна */
 .trello-style-modal {
     position: fixed;
     top: 0;
@@ -18,14 +17,13 @@
     background: #f4f5f7;
     border-radius: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
 }
 
-/* Заголовок */
 .modal-header {
     position: relative;
     padding-bottom: 10px;
@@ -80,13 +78,11 @@
     color: #172b4d;
 }
 
-
 .modal-tabs {
     display: flex;
     border-bottom: 1px solid #ccc;
     margin-bottom: 10px;
     flex-shrink: 0;
-    /* Предотвращает сжатие вкладок */
 }
 
 .tab-btn {
@@ -104,26 +100,12 @@
     border-bottom: 2px solid #007bff;
 }
 
-.tab-content {
-    padding: 10px 0;
-}
-
 .hidden {
     display: none;
 }
 
 .section {
-    margin-bottom: 15px;
-}
-
-.section h3 {
-    margin: 0 0 5px 0;
-}
-
-.editable-field {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    margin-bottom: 5px;
 }
 
 .edit-btn img {
@@ -142,7 +124,6 @@
     margin: 5px 0;
 }
 
-
 .edit-executor img {
     width: 16px;
     height: 16px;
@@ -154,10 +135,8 @@
     border-radius: 3px;
 }
 
-
-/* Тело модалки */
 .modal-body {
-    max-height: calc(85vh - 150px);
+    max-height: calc(85vh - 100px);
     width: 100%;
     overflow-y: auto;
     flex-grow: 1;
@@ -184,7 +163,6 @@
     background: #f4f5f7;
 }
 
-
 .section h3 {
     margin: 0 0 8px;
     font-size: 16px;
@@ -192,7 +170,6 @@
     color: #172b4d;
 }
 
-/* Редактируемые поля (тема, описание) */
 .editable-field {
     display: flex;
     align-items: center;
@@ -213,6 +190,7 @@
 .editable-field input,
 .editable-field textarea {
     flex: 1;
+    resize: none;
     font-size: 14px;
     padding: 6px;
     border: 1px solid #dfe1e6;
@@ -237,7 +215,6 @@
     display: none;
 }
 
-/* Исполнители */
 .executor-list {
     display: flex;
     flex-wrap: wrap;
@@ -288,14 +265,12 @@
     color: #172b4d;
 }
 
-/* Вложения */
 .file-list {
     margin-top: 10px;
 }
 
 .file-item {
     padding: 6px 0;
-    border-bottom: 1px solid #dfe1e6;
 }
 
 .file-item a {
@@ -308,9 +283,14 @@
     text-decoration: underline;
 }
 
-/* Комментарии */
-#commentList {
-    width: 933px;
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-label {
+    color: #666
 }
 
 .comment-item {
@@ -346,19 +326,45 @@
 }
 
 #newComment {
-    width: 920PX;
+    width: 100%;
     min-height: 40px;
     padding: 6px;
-    margin-top: 10px;
     border: 1px solid #dfe1e6;
     border-radius: 3px;
     font-size: 14px;
-    background: #fff;
+    background: transparent;
+    /* Прозрачный фон для видимости overlay */
     resize: none;
+    position: relative;
+    z-index: 2;
+    /* Над overlay */
+}
+
+.comment-wrapper {
+    position: relative;
+    width: 915px;
+    /* Соответствует ширине textarea */
+}
+
+.last-comment-overlay {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    font-size: 14px;
+    color: #5e6c84;
+    /* Цвет как у плейсхолдера */
+    pointer-events: none;
+    /* Не мешает вводу */
+    z-index: 1;
+    /* Под textarea */
+    white-space: pre-wrap;
+    /* Учитываем переносы текста */
+    max-width: 100%;
+    overflow: hidden;
 }
 
 #addComment {
-    margin-top: 10px;
+    margin-top: 2px;
     padding: 6px 12px;
     background: #0052cc;
     color: #fff;
@@ -372,7 +378,6 @@
     background: #003d99;
 }
 
-/* История */
 .history-item {
     padding: 10px 0;
     border-bottom: 1px solid #dfe1e6;
@@ -384,7 +389,6 @@
     display: block;
 }
 
-/* Футер */
 .modal-footer {
     text-align: right;
     padding: 10px;
@@ -454,7 +458,6 @@
     overflow-y: hidden;
 }
 
-/* Modal header */
 .modale-header {
     position: relative;
     padding-bottom: 10px;
@@ -535,7 +538,6 @@
     padding: 2px;
 }
 
-/* Section headers */
 .modal-contente h3 {
     padding-left: 5px;
     color: #34495e;
@@ -544,7 +546,6 @@
     margin: 0 0 8px;
 }
 
-/* Add executor section - minimized */
 .add-executor-section {
     background-color: #f8f9fa;
     padding: 10px;
@@ -587,7 +588,6 @@
     background: #2980b9;
 }
 
-/* All executors section */
 .all-executors-section {
     padding: 5px;
     background-color: white;
@@ -683,7 +683,6 @@
     color: #e74c3c;
 }
 
-/* Edit executor panel */
 .edit-executor-panel {
     background-color: #f8f9fa;
     padding: 12px;

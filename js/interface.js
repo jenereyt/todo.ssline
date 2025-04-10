@@ -1,5 +1,5 @@
 // В interface.js
-import { openGlobalExecutorModal, refreshExecutorsList } from './executorsModal.js';
+import { openGlobalExecutorModal } from './executorsModal.js';
 import { tasks, getAllExecutors, filters, sortState, allProjects, openEditModal, bindEventListeners, applyFilters, paginationState } from './app.js'; // Обновленный импорт
 
 export function createTable(taskList) {
@@ -24,6 +24,7 @@ export function createTable(taskList) {
                 <th data-sort="theme">Тема</th>
                 <th data-sort="description">Описание</th>
                 <th data-sort="executors">Исполнители</th>
+                <th data-sort="deadline">Дедлайн</th>
                 <th data-sort="status">Статус</th>
             </tr>
         </thead>
@@ -35,11 +36,12 @@ export function createTable(taskList) {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${task.id}</td>
-            <td>${task.dateSet}</td>
-            <td>${task.project}</td>
-            <td>${task.theme}</td>
-            <td>${task.description}</td>
+            <td>${task.dateSet || "Не указана"}</td>
+            <td>${task.project || "Без проекта"}</td>
+            <td>${task.theme || "Нет темы"}</td>
+            <td>${task.description || "Нет описания"}</td>
             <td>${task.executors.length ? task.executors.join(", ") : "Не назначены"}</td>
+            <td>${task.deadline || "Не указан"}</td>
             <td>${task.status || "Не указан"}</td>
         `;
         row.addEventListener("click", () => openEditModal(task));
@@ -67,30 +69,38 @@ export function createTable(taskList) {
 export function createInterface() {
     let appDiv = document.getElementById("app");
     appDiv.innerHTML = `
-        <div class="controls">
+       <div class="controls">
             <div class="filters">
-                <div class="filter-group">
-                    <label>Диапазон дат:</label>
+            <div class="filter-group">
+                    <label>Дата постановки</label>
                     <div class="date-range">
-                        <input type="date" id="dateFrom" placeholder="С">
-                        <input type="date" id="dateTo" placeholder="По">
+                        <input type="date" id="dateFrom">
+                        <input type="date" id="dateTo">
                     </div>
                 </div>
                 <div class="filter-group">
-                    <label>Исполнитель:</label>
+                    <label for="executorFilter">Исполнитель</label>
                     <div class="input-with-clear">
-                        <input type="text" id="executorFilter" placeholder="Введите исполнителя...">
-                        <button class="clear-btn" id="clearExecutor">×</button>
+                        <input type="text" id="executorFilter" placeholder="Введите имя исполнителя">
+                        <button class="clear-btn hidden" id="clearExecutor">×</button>
                     </div>
-                    <div id="executorSuggestions" class="suggestions hidden"></div>
+                    <div class="suggestions hidden" id="executorSuggestions"></div>
                 </div>
-                <button id="resetFiltersBtn">Сбросить все</button>
-            </div>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Поиск по таблице...">
-                <button id="searchBtn">🔍</button>
-                <button id="addGlobalExecutorBtn">Исполнители</button>
-            </div>
+                <div class="filter-group">
+                    <label for="projectFilter">Проект</label>
+                    <div class="input-with-clear">
+                        <input type="text" id="projectFilter" placeholder="Введите проект">
+                        <button class="clear-btn hidden" id="clearProject">×</button>
+                    </div>
+                    <div class="suggestions hidden" id="projectSuggestions"></div>
+                </div>
+                <button id="resetFiltersBtn"><img src="./image/trash.svg" alt="Сбросить"></button>
+                </div>
+                <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Поиск по задачам...">
+                <button id="searchBtn"><img src="./image/search.svg" alt="Поиск" width="16" height="16"></button>
+                </div>
+                <button id="addGlobalExecutorBtn">Добавить исполнителя</button>
         </div>
     `;
     createTable(tasks);
@@ -118,11 +128,18 @@ export function createInterface() {
         applyFilters();
     });
 
+    document.getElementById("clearProject").addEventListener("click", () => {
+        document.getElementById("projectFilter").value = "";
+        filters.project = "";
+        applyFilters();
+    });
+
     document.getElementById("resetFiltersBtn").addEventListener("click", () => {
-        Object.keys(filters).forEach(key => delete filters[key]);  // Очистка всех свойств
+        Object.keys(filters).forEach(key => delete filters[key]);
         document.getElementById("dateFrom").value = formattedFirstDay;
         document.getElementById("dateTo").value = "";
         document.getElementById("executorFilter").value = "";
+        document.getElementById("projectFilter").value = "";
         document.getElementById("searchInput").value = "";
         sortState.field = null;
         sortState.ascending = true;
@@ -142,9 +159,10 @@ export function createInterface() {
             task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
             task.status.toLowerCase().includes(searchTerm)
         );
-        currentPage = 1;
+        paginationState.currentPage = 1;
         createTable(filteredTasks);
     });
+
     document.getElementById("searchInput").addEventListener("keypress", (e) => {
         if (e.key === "Enter") document.getElementById("searchBtn").click();
     });
@@ -178,6 +196,34 @@ export function createInterface() {
         }
     });
 
+    const projectInput = document.getElementById("projectFilter");
+    const projectSuggestions = document.getElementById("projectSuggestions");
+    projectInput.addEventListener("input", (e) => {
+        const value = e.target.value.toLowerCase();
+        projectSuggestions.innerHTML = "";
+        if (value) {
+            projectSuggestions.classList.remove("hidden");
+            const matches = allProjects.filter(p => p.toLowerCase().includes(value));
+            matches.forEach(match => {
+                const div = document.createElement("div");
+                div.textContent = match;
+                div.className = "suggestion-item";
+                div.style.cursor = "pointer";
+                div.addEventListener("click", () => {
+                    projectInput.value = match;
+                    filters.project = match;
+                    projectSuggestions.classList.add("hidden");
+                    applyFilters();
+                });
+                projectSuggestions.appendChild(div);
+            });
+        } else {
+            projectSuggestions.classList.add("hidden");
+            filters.project = "";
+            applyFilters();
+        }
+    });
+
     document.getElementById("addGlobalExecutorBtn").addEventListener("click", () => {
         openGlobalExecutorModal();
     });
@@ -185,6 +231,9 @@ export function createInterface() {
     document.addEventListener("click", (e) => {
         if (!executorInput.contains(e.target) && !executorSuggestions.contains(e.target)) {
             executorSuggestions.classList.add("hidden");
+        }
+        if (!projectInput.contains(e.target) && !projectSuggestions.contains(e.target)) {
+            projectSuggestions.classList.add("hidden");
         }
     });
 }

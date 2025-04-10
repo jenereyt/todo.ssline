@@ -12,7 +12,8 @@ export let tasks = [
             { text: "Дизайн утверждён заказчиком", date: "2025-03-25" },
             { text: "Добавлены новые шрифты", date: "2025-03-26" },
             { text: "Исправлены отступы на мобильной версии", date: "2025-03-26" }
-        ]
+        ],
+        deadline: "2025-04-05"
     },
     {
         id: 2,
@@ -20,9 +21,13 @@ export let tasks = [
         project: "Заказчик Beta",
         theme: "Исправление багов",
         description: "Пофиксить ошибку в авторизации",
-        status: "Выполнено",
+        status: "Принято заказчиком",
         executors: ["Сайдуллаев Дамир"],
-        files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }, { name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }]
+        files: [
+            { name: "bug_fix_report.pdf", url: "https://example.com/files/bug_fix_report.pdf" },
+            { name: "auth_test.pdf", url: "https://example.com/files/auth_test.pdf" }
+        ],
+        deadline: "2025-04-01"
     },
     {
         id: 3,
@@ -33,7 +38,8 @@ export let tasks = [
         status: "В процессе",
         executors: ["Югай Дмитрий"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-10"
     },
     {
         id: 4,
@@ -41,10 +47,10 @@ export let tasks = [
         project: "Заказчик Delta",
         theme: "Дизайн логотипа",
         description: "Разработать новый логотип компании",
-        status: "Выполнено",
+        status: "Аннулировано",
         executors: ["Закиров Фаррух", "Бурханов Азим"],
         files: [],
-        comments: []
+        deadline: "2025-03-30"
     },
     {
         id: 5,
@@ -52,10 +58,11 @@ export let tasks = [
         project: "Проект Epsilon",
         theme: "Оптимизация кода",
         description: "Ускорить загрузку страницы",
-        status: "В процессе",
+        status: "Возвращен",
         executors: ["Нурманов Анвар", "Нарзуллоев Тохир"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-07"
     },
     {
         id: 6,
@@ -63,10 +70,11 @@ export let tasks = [
         project: "Проект Zeta",
         theme: "Аналитика",
         description: "Собрать данные по пользователям",
-        status: "В процессе",
+        status: "Принято",
         executors: ["Рустамов Жонибек"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-12"
     },
     {
         id: 7,
@@ -77,7 +85,8 @@ export let tasks = [
         status: "Выполнено",
         executors: ["Храмов Дониш"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-03"
     },
     {
         id: 8,
@@ -88,7 +97,8 @@ export let tasks = [
         status: "В процессе",
         executors: ["Сайдуллаев Дамир"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-15"
     },
     {
         id: 9,
@@ -96,10 +106,11 @@ export let tasks = [
         project: "Заказчик Iota",
         theme: "Тестирование",
         description: "Провести нагрузочное тестирование",
-        status: "В процессе",
+        status: "Возвращен",
         executors: ["Югай Дмитрий"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-10"
     },
     {
         id: 10,
@@ -107,10 +118,11 @@ export let tasks = [
         project: "Проект Kappa",
         theme: "Оптимизация",
         description: "Уменьшить время ответа сервера",
-        status: "Выполнено",
+        status: "Принято заказчиком",
         executors: ["Закиров Фаррух"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-08"
     },
     {
         id: 11,
@@ -121,7 +133,8 @@ export let tasks = [
         status: "В процессе",
         executors: ["Бурханов Азим"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-20"
     },
     {
         id: 12,
@@ -132,7 +145,8 @@ export let tasks = [
         status: "Выполнено",
         executors: ["Нурманов Анвар"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-10"
     },
     {
         id: 13,
@@ -140,10 +154,11 @@ export let tasks = [
         project: "Проект Nu",
         theme: "Разработка",
         description: "Реализовать авторизацию через OAuth",
-        status: "В процессе",
+        status: "Принято",
         executors: ["Нарзуллоев Тохир"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-18"
     },
     {
         id: 14,
@@ -151,10 +166,11 @@ export let tasks = [
         project: "Заказчик Xi",
         theme: "Тестирование",
         description: "Проверить совместимость с iOS",
-        status: "В процессе",
+        status: "Аннулировано",
         executors: ["Рустамов Жонибек"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-12"
     },
     {
         id: 15,
@@ -162,10 +178,11 @@ export let tasks = [
         project: "Проект Omicron",
         theme: "Оптимизация",
         description: "Сжать изображения на сайте",
-        status: "Выполнено",
+        status: "Принято заказчиком",
         executors: ["Храмов Дониш"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-15"
     },
     {
         id: 16,
@@ -176,7 +193,8 @@ export let tasks = [
         status: "В процессе",
         executors: ["Сайдуллаев Дамир"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-20"
     },
     {
         id: 17,
@@ -187,7 +205,8 @@ export let tasks = [
         status: "Выполнено",
         executors: ["Югай Дмитрий"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-14"
     },
     {
         id: 18,
@@ -195,10 +214,11 @@ export let tasks = [
         project: "Заказчик Sigma",
         theme: "Дизайн",
         description: "Обновить цветовую схему",
-        status: "В процессе",
+        status: "Возвращен",
         executors: ["Закиров Фаррух"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-18"
     },
     {
         id: 19,
@@ -209,7 +229,8 @@ export let tasks = [
         status: "В процессе",
         executors: ["Бурханов Азим"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-25"
     },
     {
         id: 20,
@@ -217,10 +238,11 @@ export let tasks = [
         project: "Заказчик Upsilon",
         theme: "Интеграция",
         description: "Подключить CRM систему",
-        status: "Выполнено",
+        status: "Принято",
         executors: ["Нурманов Анвар"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-22"
     },
     {
         id: 21,
@@ -228,10 +250,11 @@ export let tasks = [
         project: "Проект Phi",
         theme: "Разработка",
         description: "Создать админ-панель",
-        status: "В процессе",
+        status: "Выполнено",
         executors: ["Нарзуллоев Тохир"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-20"
     },
     {
         id: 22,
@@ -242,7 +265,8 @@ export let tasks = [
         status: "В процессе",
         executors: ["Рустамов Жонибек"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-30"
     },
     {
         id: 23,
@@ -250,10 +274,11 @@ export let tasks = [
         project: "Проект Psi",
         theme: "Дизайн",
         description: "Разработать иконки для меню",
-        status: "Выполнено",
+        status: "Принято заказчиком",
         executors: ["Храмов Дониш"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-20"
     },
     {
         id: 24,
@@ -261,10 +286,11 @@ export let tasks = [
         project: "Заказчик Omega",
         theme: "Тестирование",
         description: "Проверить работу чата",
-        status: "В процессе",
+        status: "Аннулировано",
         executors: ["Сайдуллаев Дамир"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-25"
     },
     {
         id: 25,
@@ -275,7 +301,8 @@ export let tasks = [
         status: "Выполнено",
         executors: ["Югай Дмитрий"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-22"
     },
     {
         id: 26,
@@ -286,7 +313,8 @@ export let tasks = [
         status: "В процессе",
         executors: ["Закиров Фаррух"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-05-01"
     },
     {
         id: 27,
@@ -294,10 +322,11 @@ export let tasks = [
         project: "Проект Gamma-2",
         theme: "Интеграция",
         description: "Подключить уведомления",
-        status: "В процессе",
+        status: "Принято",
         executors: ["Бурханов Азим"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-28"
     },
     {
         id: 28,
@@ -308,7 +337,8 @@ export let tasks = [
         status: "Выполнено",
         executors: ["Нурманов Анвар"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-25"
     },
     {
         id: 29,
@@ -316,10 +346,11 @@ export let tasks = [
         project: "Проект Epsilon-2",
         theme: "Оптимизация",
         description: "Улучшить SEO",
-        status: "В процессе",
+        status: "Возвращен",
         executors: ["Нарзуллоев Тохир"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-05-05"
     },
     {
         id: 30,
@@ -327,10 +358,11 @@ export let tasks = [
         project: "Заказчик Zeta-2",
         theme: "Тестирование",
         description: "Проверить адаптивность",
-        status: "Выполнено",
+        status: "Принято заказчиком",
         executors: ["Рустамов Жонибек"],
         files: [],
-        comments: []
+        comments: [],
+        deadline: "2025-04-30"
     }
 ];
 export let filters = {};
@@ -350,21 +382,25 @@ export function getAllExecutors() {
     });
     return Array.from(executors).sort();
 }
-// import { openGlobalExecutorModal, refreshExecutorsList } from './executorsModal.js';
-import { createTable, createInterface, } from './interface.js'
+import { createTable, createInterface } from './interface.js'
 
 export function applyFilters() {
-    filters.executors = document.getElementById("executorFilter").value;
+    const executorFilter = document.getElementById("executorFilter").value.toLowerCase();
+    const projectFilter = document.getElementById("projectFilter").value.toLowerCase();
+    const dateFrom = document.getElementById("dateFrom").value;
+    const dateTo = document.getElementById("dateTo").value;
 
     let filteredTasks = tasks.filter(task => {
-        return (
-            (!filters.executors || task.executors.some(ex => ex.toLowerCase().includes(filters.executors.toLowerCase()))) &&
-            (!filters.dateFrom || task.dateSet >= filters.dateFrom) &&
-            (!filters.dateTo || task.dateSet <= filters.dateTo)
-        );
+        const matchesExecutors = !executorFilter || task.executors.some(ex => ex.toLowerCase().includes(executorFilter));
+        const matchesProject = !projectFilter || (task.project && task.project.toLowerCase().includes(projectFilter));
+        const matchesDateFrom = !dateFrom || task.dateSet >= dateFrom;
+        const matchesDateTo = !dateTo || task.dateSet <= dateTo;
+
+        return matchesExecutors && matchesProject && matchesDateFrom && matchesDateTo;
     });
+
     sortTasks(filteredTasks);
-    paginationState.currentPage = 1; // Обновлено: используем paginationState
+    paginationState.currentPage = 1;
     createTable(filteredTasks);
 }
 
@@ -375,7 +411,7 @@ export function sortTasks(taskList) {
         let valA = a[sortState.field];
         let valB = b[sortState.field];
 
-        if (sortState.field === "dateSet") {
+        if (sortState.field === "dateSet" || sortState.field === "deadline") {
             valA = valA || "9999-12-31";
             valB = valB || "9999-12-31";
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
@@ -444,8 +480,13 @@ export function openEditModal(task) {
     task.files = task.files || [];
     task.executors = task.executors || [];
     task.history = task.history || [];
+    task.deadline = task.deadline || "";
 
     const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
+
+    // Получаем последний комментарий
+    const lastComment = task.comments.length ? task.comments[task.comments.length - 1] : null;
+    const lastCommentText = lastComment ? lastComment.text : "";
 
     modal.innerHTML = `
         <div class="modal-content trello-modal-content">
@@ -453,6 +494,7 @@ export function openEditModal(task) {
                 <h2>${task.project || "Без проекта"}</h2>
                 <span class="date-set">Дата постановки: ${task.dateSet || "Не указана"}</span>
                 <div class="header-actions">
+                    <span class="status-label">Статус:</span>
                     <select id="statusSelect">
                         ${statuses.map(status => `
                             <option value="${status}" ${task.status === status ? 'selected' : ''}>${status}</option>
@@ -482,6 +524,14 @@ export function openEditModal(task) {
                             <textarea id="editDescription" class="hidden">${task.description || ""}</textarea>
                         </div>
                     </div>
+                    <div class="section comment-section">
+                        <h3>Комментарий</h3>
+                        <div class="comment-wrapper">
+                            <textarea id="newComment" placeholder=""></textarea>
+                            <span id="lastCommentOverlay" class="last-comment-overlay">${lastCommentText || "Нет последнего комментария"}</span>
+                        </div>
+                        <button id="addComment">Добавить</button>
+                    </div>
                     <div class="section">
                         <h3>Вложения</h3>
                         <div id="fileList">
@@ -499,10 +549,11 @@ export function openEditModal(task) {
                         <div id="executorList" class="executor-list"></div>
                     </div>
                     <div class="section">
-                        <h3>Комментарии</h3>
-                        <div id="commentList"></div>
-                        <textarea id="newComment" placeholder="Напишите комментарий..."></textarea>
-                        <button id="addComment">Добавить</button>
+                        <h3>Дедлайн</h3>
+                        <div class="editable-field">
+                            <span id="deadlineDisplay">${task.deadline || "Не указан"}</span>
+                            <input type="date" id="editDeadline" value="${task.deadline || ""}" class="hidden">
+                        </div>
                     </div>
                 </div>
                 <div class="tab-content hidden" id="historyTab">
@@ -542,8 +593,8 @@ export function openEditModal(task) {
         });
     });
 
-    // Редактирование темы и описания по двойному клику
-    ["theme", "description"].forEach(field => {
+    // Редактирование темы, описания и дедлайна
+    ["theme", "description", "deadline"].forEach(field => {
         const display = modal.querySelector(`#${field}Display`);
         const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
 
@@ -555,18 +606,29 @@ export function openEditModal(task) {
                 input.focus();
             });
 
-            input.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault(); // Предотвращаем перенос строки в textarea
+            if (field === "deadline") {
+                input.addEventListener("change", () => {
                     task[field] = input.value;
-                    display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
+                    display.textContent = task[field] || "Не указан";
                     display.classList.remove("hidden");
                     input.classList.add("hidden");
-                }
-            });
+                });
+            } else {
+                input.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        task[field] = input.value;
+                        display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
+                        display.classList.remove("hidden");
+                        input.classList.add("hidden");
+                    }
+                });
+            }
 
             input.addEventListener("blur", () => {
-                input.value = task[field] || ""; // Отмена изменений
+                if (field !== "deadline") {
+                    input.value = task[field] || "";
+                }
                 display.classList.remove("hidden");
                 input.classList.add("hidden");
             });
@@ -575,7 +637,6 @@ export function openEditModal(task) {
 
     // Исполнители
     const executorList = modal.querySelector("#executorList");
-
     function updateExecutorList() {
         executorList.innerHTML = '';
         task.executors.forEach(ex => {
@@ -583,7 +644,6 @@ export function openEditModal(task) {
             executorItem.className = "executor-item";
             executorItem.innerHTML = `
                 <span class="executor-name">${ex}</span>
-                <button class="edit-executor" data-executor="${ex}"><img src="./image/pencil.svg"></button>
                 <button class="remove-executor" data-executor="${ex}">×</button>
             `;
             executorList.appendChild(executorItem);
@@ -600,7 +660,6 @@ export function openEditModal(task) {
         addButton.innerHTML = `<img src="./image/plus.svg" style="width: 16px; height: 16px;">`;
         executorList.appendChild(addButton);
 
-        // Обработчик кнопки добавления
         addButton.addEventListener("click", (e) => {
             e.stopPropagation();
             if (!executorList.querySelector("#addExecutorSelect")) {
@@ -634,7 +693,6 @@ export function openEditModal(task) {
             }
         });
 
-        // Привязка событий для удаления
         executorList.querySelectorAll(".remove-executor").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -644,13 +702,11 @@ export function openEditModal(task) {
             });
         });
 
-        // Привязка событий для редактирования
-        executorList.querySelectorAll(".edit-executor").forEach(btn => {
-            btn.addEventListener("click", (e) => {
+        executorList.querySelectorAll(".executor-name").forEach(span => {
+            span.addEventListener("dblclick", (e) => {
                 e.stopPropagation();
-                const oldExecutor = btn.dataset.executor;
-                const executorItem = btn.parentElement;
-                const executorNameSpan = executorItem.querySelector(".executor-name");
+                const oldExecutor = span.textContent;
+                const executorItem = span.parentElement;
 
                 const select = document.createElement("select");
                 select.innerHTML = `
@@ -659,7 +715,7 @@ export function openEditModal(task) {
                         <option value="${ex}" ${ex === oldExecutor ? 'selected' : ''}>${ex}</option>
                     `).join("")}
                 `;
-                executorItem.replaceChild(select, executorNameSpan);
+                executorItem.replaceChild(select, span);
                 select.focus();
 
                 select.addEventListener("change", (e) => {
@@ -678,50 +734,50 @@ export function openEditModal(task) {
             });
         });
     }
-
     updateExecutorList();
 
     // Комментарии
-    const commentList = modal.querySelector("#commentList");
-
-    function updateCommentList() {
-        commentList.innerHTML = task.comments.length ? task.comments.map((comment, index) => `
-            <div class="comment-item" data-index="${index}">
-            ${comment.text} 
-            <div>
-                <small>(${comment.date})</small>
-                <button class="remove-comment" data-index="${index}">×</button>
-            </div>
-            </div>
-        `).join("") : "Нет комментариев";
-
-        commentList.querySelectorAll(".remove-comment").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const index = parseInt(btn.dataset.index);
-                task.comments.splice(index, 1);
-                updateCommentList();
-            });
-        });
-    }
-
     const addCommentBtn = modal.querySelector("#addComment");
+    const newCommentTextarea = modal.querySelector("#newComment");
+    const lastCommentOverlay = modal.querySelector("#lastCommentOverlay");
+
+    // Прячем overlay, если есть текст в textarea
+    newCommentTextarea.addEventListener("input", () => {
+        lastCommentOverlay.style.display = newCommentTextarea.value.trim() ? "none" : "block";
+    });
+
     if (addCommentBtn) {
         addCommentBtn.addEventListener("click", (e) => {
             e.stopPropagation();
-            const commentText = modal.querySelector("#newComment").value.trim();
+            const commentText = newCommentTextarea.value.trim();
             if (commentText) {
-                task.comments.push({
+                const newComment = {
                     text: commentText,
                     date: new Date().toLocaleDateString()
+                };
+                // Добавляем новый комментарий в массив и сразу в историю
+                task.comments.push(newComment);
+                task.history.push({
+                    date: newComment.date,
+                    change: `Добавлен комментарий: "${newComment.text}"`,
+                    user: "Текущий пользователь"
                 });
-                updateCommentList();
-                modal.querySelector("#newComment").value = "";
+                // Обновляем overlay с новым последним комментарием
+                lastCommentOverlay.textContent = newComment.text;
+                lastCommentOverlay.style.display = "block";
+                newCommentTextarea.value = ""; // Очищаем textarea
+                // Обновляем историю
+                modal.querySelector("#historyList").innerHTML = task.history.length ?
+                    task.history.map((entry) => `
+                        <div class="history-item">
+                            <span class="history-date">${entry.date}</span>
+                            <span class="history-change">${entry.change}</span>
+                            <span class="history-user">${entry.user}</span>
+                        </div>
+                    `).join("") : "Нет истории изменений";
             }
         });
     }
-
-    updateCommentList();
 
     // Закрытие и сохранение
     const closeModal = () => {

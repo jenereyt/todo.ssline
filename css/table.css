@@ -7,8 +7,8 @@ table {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     overflow: hidden;
-    display: block;
-    height: 75vh;
+    display: table;
+    height: calc(100vh - 150px);
 }
 
 thead {
@@ -26,13 +26,59 @@ th {
     letter-spacing: 0.5px;
     padding: 12px 15px;
     text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
 }
+
+th:nth-child(1), td:nth-child(1) {
+    min-width: 40px;
+}
+
+/* № */
+th:nth-child(2), td:nth-child(2) {
+    min-width: 100px;
+}
+
+/* Дата постановки */
+th:nth-child(3), td:nth-child(3) {
+    min-width: 120px;
+}
+
+/* Проект/Заказчик */
+th:nth-child(4), td:nth-child(4) {
+    min-width: 120px;
+}
+
+/* Тема */
+th:nth-child(5), td:nth-child(5) {
+    min-width: 150px;
+}
+
+/* Описание */
+th:nth-child(6), td:nth-child(6) {
+    min-width: 120px;
+}
+
+/* Исполнители */
+th:nth-child(7), td:nth-child(7) {
+    min-width: 100px;
+}
+
+/* Дедлайн */
+th:nth-child(8), td:nth-child(8) {
+    min-width: 100px;
+}
+
+/* Статус */
 
 tbody {
     display: block;
     overflow-y: auto;
-    max-height: calc(75vh - 44px);
+    /* Динамическая высота с учетом thead и других элементов */
+    max-height: calc(100vh - 194px);
+    /* 100vh - (controls ~100px + thead 44px + pagination 50px) */
     width: 100%;
+    overflow-x: hidden;
 }
 
 tr {
@@ -51,7 +97,7 @@ td {
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
-    max-width: 0;
+    vertical-align: top;
 }
 
 tr:hover td {
@@ -74,6 +120,24 @@ tr:hover td {
 td.clicked {
     background-color: #cce5ff;
     font-weight: 600;
+}
+
+th[data-sort] {
+    cursor: pointer;
+}
+
+th[data-sort]::after {
+    content: "";
+    display: inline-block;
+    margin-left: 5px;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+}
+
+th[data-sort] span {
+    font-size: 10px;
+    margin-left: 5px;
 }
 
 /* Пагинация */
@@ -110,4 +174,31 @@ td.clicked {
     background: linear-gradient(135deg, #4a90e2, #357abd);
     color: white;
     border: none;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    th, td {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    tbody {
+        max-height: calc(60vh - 44px);
+    }
+}
+
+@media screen and (max-width: 1150px) {
+    .filter-group input[type="text"] {
+        width: 145px !important;
+    }
+
+    .clear-btn {
+        right: 40px !important;
+    }
 }
