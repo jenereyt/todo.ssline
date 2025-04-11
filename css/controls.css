@@ -70,7 +70,6 @@
     width: 20px;
     height: 20px;
     color: white;
-    /* filter: invert(1); */
 }
 
 #resetFiltersBtn, #addGlobalExecutorBtn {
@@ -105,6 +104,12 @@
     transition: all 0.3s ease;
 }
 
+#searchInput:focus,#editDeadline:focus, #statusSelect:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
 #searchBtn {
     padding: 11px 8px;
     background: linear-gradient(135deg, #4a90e2, #357abd);
@@ -124,7 +129,6 @@
     width: 16px;
     height: 16px;
     filter: invert(1);
-    /* Делаем иконку белой, если она темная */
 }
 
 #searchBtn:hover {
@@ -132,7 +136,6 @@
     transform: translateY(-1px);
 }
 
-/* Рекомендации */
 .suggestions {
     position: absolute;
     top: 20px;

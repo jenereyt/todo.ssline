@@ -1,9 +1,9 @@
-import { tasks, getAllExecutors } from './app.js';
+
+import { executors, getAllExecutors, addExecutor, deleteExecutor, renameExecutor } from './app.js';
 
 export function openGlobalExecutorModal() {
     const modal = document.createElement("div");
     modal.className = "modale";
-    const allExecutors = getAllExecutors();
 
     modal.innerHTML = `
         <div class="modal-contente">
@@ -20,61 +20,17 @@ export function openGlobalExecutorModal() {
             </div>
             <div class="all-executors-section">
                 <h3>Список исполнителей</h3>
-                <div class="executors-list" id="allExecutorsList">
-                    ${allExecutors.map(executor => `
-                        <div class="executor-list-item" data-executor="${executor}">
-                            <span class="executor-name">${executor}</span>
-                            <div class="executor-actions">
-                                <button class="delete-executor-btn" data-executor="${executor}">
-                                    <img src="./image/trash.svg" alt="Удалить" width="16" height="16" />
-                                </button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
+                <div class="executors-list" id="allExecutorsList"></div>
             </div>
         </div>
     `;
 
     document.body.appendChild(modal);
 
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) modal.remove();
-    });
-
-    modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
-
-    const input = modal.querySelector("#newGlobalExecutor");
-
-    modal.querySelector("#saveGlobalExecutor").addEventListener("click", () => {
-        const newExecutor = input.value.trim();
-        if (newExecutor) {
-            const executorExists = getAllExecutors().includes(newExecutor);
-            if (!executorExists) {
-                tasks.push({
-                    id: tasks.length + 1,
-                    dateSet: new Date().toISOString().split("T")[0],
-                    project: "Без проекта",
-                    theme: "Без темы",
-                    description: "Фиктивная задача для исполнителя",
-                    status: "В процессе",
-                    executors: [newExecutor],
-                    comments: [],
-                    files: []
-                });
-                refreshExecutorsList(modal);
-                input.value = "";
-            } else {
-                alert("Исполнитель с таким именем уже существует!");
-            }
-        }
-    });
-
-    function refreshExecutorsList(modal) {
+    function refreshExecutorsList() {
         const allExecutors = getAllExecutors();
         const listContainer = modal.querySelector("#allExecutorsList");
-
-        listContainer.innerHTML = allExecutors.map(executor => `
+        listContainer.innerHTML = allExecutors.length ? allExecutors.map(executor => `
             <div class="executor-list-item" data-executor="${executor}">
                 <span class="executor-name">${executor}</span>
                 <div class="executor-actions">
@@ -83,69 +39,76 @@ export function openGlobalExecutorModal() {
                     </button>
                 </div>
             </div>
-        `).join('');
+        `).join('') : '<span>Нет исполнителей</span>';
 
-        // Добавляем обработчики для кнопок удаления после обновления списка
         listContainer.querySelectorAll(".delete-executor-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const executor = e.currentTarget.dataset.executor;
-                if (confirm(`Вы уверены, что хотите удалить исполнителя "${executor}"?`)) {
-                    tasks.forEach(task => {
-                        task.executors = task.executors.filter(ex => ex !== executor);
-                    });
-                    refreshExecutorsList(modal); // Обновляем список после удаления
+                if (confirm(`Вы уверены, что хотите удалить исполнителя "${executor}"? Это удалит его из всех задач.`)) {
+                    deleteExecutor(executor);
+                    refreshExecutorsList();
+                    applyFilters(); 
                 }
+            });
+        });
+
+        listContainer.querySelectorAll(".executor-name").forEach(span => {
+            span.addEventListener("dblclick", (e) => {
+                e.stopPropagation();
+                const currentName = span.textContent;
+                const listItem = span.closest(".executor-list-item");
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.className = "edit-executor-input";
+                input.value = currentName;
+                listItem.replaceChild(input, span);
+                input.focus();
+
+                function saveEdit() {
+                    const newName = input.value.trim();
+                    if (newName && newName !== currentName) {
+                        if (renameExecutor(currentName, newName)) {
+                            refreshExecutorsList();
+                            applyFilters();
+                        } else {
+                        }
+                    }
+                    refreshExecutorsList();
+                }
+
+                input.addEventListener("blur", saveEdit, { once: true });
+                input.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") saveEdit();
+                });
             });
         });
     }
 
-    // Обработчик для редактирования имени исполнителя
-    const listContainer = modal.querySelector("#allExecutorsList");
-    listContainer.addEventListener("dblclick", (e) => {
-        const span = e.target.closest(".executor-name");
-        if (!span) return;
+    refreshExecutorsList();
 
-        e.stopPropagation();
-        const currentName = span.textContent;
-        const listItem = span.closest(".executor-list-item");
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.remove();
+    });
 
-        const input = document.createElement("input");
-        input.type = "text";
-        input.className = "edit-executor-input";
-        input.value = currentName;
-        listItem.replaceChild(input, span);
-        input.focus();
+    modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
 
-        input.addEventListener("blur", saveEdit, { once: true });
-        input.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") saveEdit();
-        });
-
-        function saveEdit() {
-            const newName = input.value.trim();
-            if (newName && newName !== currentName) {
-                const exists = getAllExecutors().filter(ex => ex !== currentName).includes(newName);
-                if (!exists) {
-                    tasks.forEach(task => {
-                        task.executors = task.executors.map(ex => ex === currentName ? newName : ex);
-                    });
-                    refreshExecutorsList(modal);
-                } else {
-                    const newSpan = document.createElement("span");
-                    newSpan.className = "executor-name";
-                    newSpan.textContent = currentName;
-                    listItem.replaceChild(newSpan, input);
-                    // alert("Исполнитель с таким именем уже существует!");
-                }
+    const input = modal.querySelector("#newGlobalExecutor");
+    modal.querySelector("#saveGlobalExecutor").addEventListener("click", () => {
+        const newExecutor = input.value.trim();
+        if (newExecutor) {
+            if (addExecutor(newExecutor)) {
+                refreshExecutorsList();
+                input.value = "";
             } else {
-                const newSpan = document.createElement("span");
-                newSpan.className = "executor-name";
-                newSpan.textContent = currentName;
-                listItem.replaceChild(newSpan, input);
+                alert("Исполнитель с таким именем уже существует!");
             }
         }
     });
 
-    // Инициализируем список с обработчиками удаления
-    refreshExecutorsList(modal);
+    input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            modal.querySelector("#saveGlobalExecutor").click();
+        }
+    });
 }

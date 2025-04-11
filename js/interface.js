@@ -1,6 +1,5 @@
-// В interface.js
 import { openGlobalExecutorModal } from './executorsModal.js';
-import { tasks, getAllExecutors, filters, sortState, allProjects, openEditModal, bindEventListeners, applyFilters, paginationState } from './app.js'; // Обновленный импорт
+import { tasks, executors, getAllExecutors, filters, sortState, allProjects, openEditModal, applyFilters, paginationState } from './app.js';
 
 export function createTable(taskList) {
     const appDiv = document.getElementById("app");
@@ -66,12 +65,13 @@ export function createTable(taskList) {
     appDiv.appendChild(table);
     renderPagination(taskList, totalPages);
 }
+
 export function createInterface() {
-    let appDiv = document.getElementById("app");
+    const appDiv = document.getElementById("app");
     appDiv.innerHTML = `
-       <div class="controls">
+        <div class="controls">
             <div class="filters">
-            <div class="filter-group">
+                <div class="filter-group">
                     <label>Дата постановки</label>
                     <div class="date-range">
                         <input type="date" id="dateFrom">
@@ -95,12 +95,12 @@ export function createInterface() {
                     <div class="suggestions hidden" id="projectSuggestions"></div>
                 </div>
                 <button id="resetFiltersBtn"><img src="./image/trash.svg" alt="Сбросить"></button>
-                </div>
-                <div class="search-container">
+            </div>
+            <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Поиск по задачам...">
                 <button id="searchBtn"><img src="./image/search.svg" alt="Поиск" width="16" height="16"></button>
-                </div>
-                <button id="addGlobalExecutorBtn">Добавить исполнителя</button>
+            </div>
+            <button id="addGlobalExecutorBtn">Управление исполнителями</button>
         </div>
     `;
     createTable(tasks);
@@ -113,7 +113,7 @@ export function createInterface() {
     filters.dateFrom = formattedFirstDay;
     applyFilters();
 
-    let dateTo = document.getElementById("dateTo");
+    const dateTo = document.getElementById("dateTo");
     [dateFrom, dateTo].forEach(input => {
         input.addEventListener("change", () => {
             filters.dateFrom = dateFrom.value;
@@ -122,15 +122,19 @@ export function createInterface() {
         });
     });
 
-    document.getElementById("clearExecutor").addEventListener("click", () => {
+    const clearExecutorBtn = document.getElementById("clearExecutor");
+    clearExecutorBtn.addEventListener("click", () => {
         document.getElementById("executorFilter").value = "";
         filters.executors = "";
+        clearExecutorBtn.classList.add("hidden");
         applyFilters();
     });
 
-    document.getElementById("clearProject").addEventListener("click", () => {
+    const clearProjectBtn = document.getElementById("clearProject");
+    clearProjectBtn.addEventListener("click", () => {
         document.getElementById("projectFilter").value = "";
         filters.project = "";
+        clearProjectBtn.classList.add("hidden");
         applyFilters();
     });
 
@@ -141,6 +145,8 @@ export function createInterface() {
         document.getElementById("executorFilter").value = "";
         document.getElementById("projectFilter").value = "";
         document.getElementById("searchInput").value = "";
+        clearExecutorBtn.classList.add("hidden");
+        clearProjectBtn.classList.add("hidden");
         sortState.field = null;
         sortState.ascending = true;
         paginationState.currentPage = 1;
@@ -149,15 +155,15 @@ export function createInterface() {
     });
 
     document.getElementById("searchBtn").addEventListener("click", () => {
-        let searchTerm = document.getElementById("searchInput").value.toLowerCase();
-        let filteredTasks = tasks.filter(task =>
+        const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+        const filteredTasks = tasks.filter(task =>
             task.id.toString().includes(searchTerm) ||
-            task.dateSet.toLowerCase().includes(searchTerm) ||
-            task.project.toLowerCase().includes(searchTerm) ||
-            task.theme.toLowerCase().includes(searchTerm) ||
-            task.description.toLowerCase().includes(searchTerm) ||
+            (task.dateSet || "").toLowerCase().includes(searchTerm) ||
+            (task.project || "").toLowerCase().includes(searchTerm) ||
+            (task.theme || "").toLowerCase().includes(searchTerm) ||
+            (task.description || "").toLowerCase().includes(searchTerm) ||
             task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
-            task.status.toLowerCase().includes(searchTerm)
+            (task.status || "").toLowerCase().includes(searchTerm)
         );
         paginationState.currentPage = 1;
         createTable(filteredTasks);
@@ -172,6 +178,7 @@ export function createInterface() {
     executorInput.addEventListener("input", (e) => {
         const value = e.target.value.toLowerCase();
         executorSuggestions.innerHTML = "";
+        clearExecutorBtn.classList.toggle("hidden", !value);
         if (value) {
             executorSuggestions.classList.remove("hidden");
             const allExecutors = getAllExecutors();
@@ -201,6 +208,7 @@ export function createInterface() {
     projectInput.addEventListener("input", (e) => {
         const value = e.target.value.toLowerCase();
         projectSuggestions.innerHTML = "";
+        clearProjectBtn.classList.toggle("hidden", !value);
         if (value) {
             projectSuggestions.classList.remove("hidden");
             const matches = allProjects.filter(p => p.toLowerCase().includes(value));
@@ -237,6 +245,7 @@ export function createInterface() {
         }
     });
 }
+
 export function renderPagination(taskList, totalPages) {
     const paginationDiv = document.createElement("div");
     paginationDiv.className = "pagination";

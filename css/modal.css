@@ -37,7 +37,6 @@
     color: #172b4d;
     line-height: 1.2;
     flex-shrink: 0;
-    /* Предотвращает сжатие заголовка */
 }
 
 .date-set {
@@ -224,7 +223,6 @@
 .executor-item {
     display: flex;
     align-items: center;
-    /* background: #dfe1e6; */
     border-radius: 3px;
     padding: 2px 5px;
     font-size: 14px;
@@ -333,17 +331,14 @@
     border-radius: 3px;
     font-size: 14px;
     background: transparent;
-    /* Прозрачный фон для видимости overlay */
     resize: none;
     position: relative;
     z-index: 2;
-    /* Над overlay */
 }
 
 .comment-wrapper {
     position: relative;
     width: 915px;
-    /* Соответствует ширине textarea */
 }
 
 .last-comment-overlay {
@@ -352,13 +347,9 @@
     left: 6px;
     font-size: 14px;
     color: #5e6c84;
-    /* Цвет как у плейсхолдера */
     pointer-events: none;
-    /* Не мешает вводу */
     z-index: 1;
-    /* Под textarea */
     white-space: pre-wrap;
-    /* Учитываем переносы текста */
     max-width: 100%;
     overflow: hidden;
 }
@@ -394,9 +385,7 @@
     padding: 10px;
     text-align: right;
     border-top: 1px solid #dfe1e6;
-    /* Добавляем границу для визуального разделения */
     background: #f4f5f7;
-    /* Соответствие фону модального окна */
 }
 
 .modal-footer button {
@@ -437,7 +426,6 @@
     left: 0;
     width: 100%;
     height: 100vh;
-    /* Заменяем height: 100% на 100vh для явной высоты */
     background: rgba(0, 0, 0, 0.75);
     display: flex;
     justify-content: center;
@@ -631,7 +619,6 @@
 
 .executor-list-item {
     flex: 1 1 calc(50% - 10px);
-    /* Two items per row */
     display: flex;
     justify-content: space-between;
     align-items: center;

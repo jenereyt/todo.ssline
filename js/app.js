@@ -365,6 +365,15 @@ export let tasks = [
         deadline: "2025-04-30"
     }
 ];
+export let executors = (() => {
+    const uniqueNames = [...new Set(tasks.flatMap(task => task.executors))];
+    return uniqueNames.map((name, index) => ({
+        id: index + 1,
+        name
+    }));
+})();
+import { createTable, createInterface } from './interface.js'
+
 export let filters = {};
 export let sortState = { field: null, ascending: true };
 export let allProjects = [...new Set(tasks.map(task => task.project))];
@@ -372,23 +381,55 @@ export const paginationState = {
     currentPage: 1,
     tasksPerPage: 20
 };
+
 export function getAllExecutors() {
-    // Собираем уникальных исполнителей из всех задач
-    const executors = new Set();
-    tasks.forEach(task => {
-        task.executors.forEach(executor => {
-            executors.add(executor);
-        });
-    });
-    return Array.from(executors).sort();
+    return executors.map(ex => ex.name).sort();
 }
-import { createTable, createInterface } from './interface.js'
+
+
+export function addExecutor(name) {
+    name = name.trim();
+    if (!name || executors.some(ex => ex.name.toLowerCase() === name.toLowerCase())) {
+        return false;
+    }
+    const newId = executors.length ? Math.max(...executors.map(ex => ex.id)) + 1 : 1;
+    executors.push({ id: newId, name });
+    return true;
+}
+
+export function deleteExecutor(name) {
+    executors = executors.filter(ex => ex.name !== name);
+   
+    tasks.forEach(task => {
+        task.executors = task.executors.filter(ex => ex !== name);
+    });
+}
+
+export function renameExecutor(oldName, newName) {
+    newName = newName.trim();
+    if (
+        !newName ||
+        oldName === newName ||
+        executors.some(ex => ex.name.toLowerCase() === newName.toLowerCase())
+    ) {
+        return false; 
+    }
+    const executor = executors.find(ex => ex.name === oldName);
+    if (executor) {
+        executor.name = newName;
+        tasks.forEach(task => {
+            task.executors = task.executors.map(ex => ex === oldName ? newName : ex);
+        });
+        return true;
+    }
+    return false;
+}
 
 export function applyFilters() {
-    const executorFilter = document.getElementById("executorFilter").value.toLowerCase();
-    const projectFilter = document.getElementById("projectFilter").value.toLowerCase();
-    const dateFrom = document.getElementById("dateFrom").value;
-    const dateTo = document.getElementById("dateTo").value;
+    const executorFilter = document.getElementById("executorFilter")?.value.toLowerCase() || '';
+    const projectFilter = document.getElementById("projectFilter")?.value.toLowerCase() || '';
+    const dateFrom = document.getElementById("dateFrom")?.value || '';
+    const dateTo = document.getElementById("dateTo")?.value || '';
 
     let filteredTasks = tasks.filter(task => {
         const matchesExecutors = !executorFilter || task.executors.some(ex => ex.toLowerCase().includes(executorFilter));
@@ -426,50 +467,11 @@ export function sortTasks(taskList) {
             valB = valB || "Не указан";
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
         } else {
+            valA = valA || "";
+            valB = valB || "";
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
         }
     });
-}
-
-export function renderPagination(taskList, totalPages) {
-    const paginationDiv = document.createElement("div");
-    paginationDiv.className = "pagination";
-
-    const prevBtn = document.createElement("button");
-    prevBtn.textContent = "Назад";
-    prevBtn.disabled = currentPage === 1;
-    prevBtn.addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            createTable(taskList);
-        }
-    });
-    paginationDiv.appendChild(prevBtn);
-
-    for (let i = 1; i <= totalPages; i++) {
-        const pageBtn = document.createElement("button");
-        pageBtn.textContent = i;
-        pageBtn.classList.toggle("active", i === currentPage);
-        pageBtn.addEventListener("click", () => {
-            currentPage = i;
-            createTable(taskList);
-        });
-        paginationDiv.appendChild(pageBtn);
-    }
-
-    const nextBtn = document.createElement("button");
-    nextBtn.textContent = "Вперед";
-    nextBtn.disabled = currentPage === totalPages;
-    nextBtn.addEventListener("click", () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            createTable(taskList);
-        }
-    });
-    paginationDiv.appendChild(nextBtn);
-
-    const appDiv = document.getElementById("app");
-    appDiv.appendChild(paginationDiv);
 }
 
 export function openEditModal(task) {
@@ -483,8 +485,6 @@ export function openEditModal(task) {
     task.deadline = task.deadline || "";
 
     const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
-
-    // Получаем последний комментарий
     const lastComment = task.comments.length ? task.comments[task.comments.length - 1] : null;
     const lastCommentText = lastComment ? lastComment.text : "";
 
@@ -549,7 +549,7 @@ export function openEditModal(task) {
                         <div id="executorList" class="executor-list"></div>
                     </div>
                     <div class="section">
-                        <h3>Дедлайн</h3>
+                        <h3>Срок выполнения</h3>
                         <div class="editable-field">
                             <span id="deadlineDisplay">${task.deadline || "Не указан"}</span>
                             <input type="date" id="editDeadline" value="${task.deadline || ""}" class="hidden">
@@ -582,7 +582,6 @@ export function openEditModal(task) {
 
     const originalTask = JSON.parse(JSON.stringify(task));
 
-    // Переключение вкладок
     modal.querySelectorAll(".tab-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -593,7 +592,6 @@ export function openEditModal(task) {
         });
     });
 
-    // Редактирование темы, описания и дедлайна
     ["theme", "description", "deadline"].forEach(field => {
         const display = modal.querySelector(`#${field}Display`);
         const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
@@ -617,7 +615,7 @@ export function openEditModal(task) {
                 input.addEventListener("keypress", (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
-                        task[field] = input.value;
+                        task[field] = input.value.trim();
                         display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
                         display.classList.remove("hidden");
                         input.classList.add("hidden");
@@ -627,7 +625,8 @@ export function openEditModal(task) {
 
             input.addEventListener("blur", () => {
                 if (field !== "deadline") {
-                    input.value = task[field] || "";
+                    task[field] = input.value.trim();
+                    display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
                 }
                 display.classList.remove("hidden");
                 input.classList.add("hidden");
@@ -635,7 +634,6 @@ export function openEditModal(task) {
         }
     });
 
-    // Исполнители
     const executorList = modal.querySelector("#executorList");
     function updateExecutorList() {
         executorList.innerHTML = '';
@@ -736,12 +734,10 @@ export function openEditModal(task) {
     }
     updateExecutorList();
 
-    // Комментарии
     const addCommentBtn = modal.querySelector("#addComment");
     const newCommentTextarea = modal.querySelector("#newComment");
     const lastCommentOverlay = modal.querySelector("#lastCommentOverlay");
 
-    // Прячем overlay, если есть текст в textarea
     newCommentTextarea.addEventListener("input", () => {
         lastCommentOverlay.style.display = newCommentTextarea.value.trim() ? "none" : "block";
     });
@@ -755,18 +751,15 @@ export function openEditModal(task) {
                     text: commentText,
                     date: new Date().toLocaleDateString()
                 };
-                // Добавляем новый комментарий в массив и сразу в историю
                 task.comments.push(newComment);
                 task.history.push({
                     date: newComment.date,
                     change: `Добавлен комментарий: "${newComment.text}"`,
                     user: "Текущий пользователь"
                 });
-                // Обновляем overlay с новым последним комментарием
                 lastCommentOverlay.textContent = newComment.text;
                 lastCommentOverlay.style.display = "block";
-                newCommentTextarea.value = ""; // Очищаем textarea
-                // Обновляем историю
+                newCommentTextarea.value = "";
                 modal.querySelector("#historyList").innerHTML = task.history.length ?
                     task.history.map((entry) => `
                         <div class="history-item">
@@ -779,7 +772,6 @@ export function openEditModal(task) {
         });
     }
 
-    // Закрытие и сохранение
     const closeModal = () => {
         Object.assign(task, originalTask);
         modal.remove();
@@ -794,11 +786,12 @@ export function openEditModal(task) {
         if (task.status !== newStatus) {
             task.history.push({
                 date: new Date().toLocaleDateString(),
-                change: `Статус изменен с "${task.status}" на "${newStatus}"`,
+                change: `Статус изменён с "${task.status}" на "${newStatus}"`,
                 user: "Текущий пользователь"
             });
             task.status = newStatus;
         }
+        task.executors = task.executors.filter(ex => getAllExecutors().includes(ex));
         applyFilters();
         modal.remove();
     });
@@ -806,74 +799,6 @@ export function openEditModal(task) {
     modal.addEventListener("click", (e) => {
         if (!modal.querySelector(".modal-content").contains(e.target)) closeModal();
     });
-}
-
-export function bindEventListeners(section, task, modal) {
-    const content = modal.querySelector(`.accordion-header[data-section="${section}"]`).nextElementSibling;
-
-    if (section === "theme" || section === "description") {
-        const editBtn = content.querySelector(`.edit-btn[data-field="${section}"]`);
-        if (editBtn) {
-            editBtn.addEventListener("click", () => {
-                const display = content.querySelector(`#${section}Display`);
-                const input = content.querySelector(`#edit${section.charAt(0).toUpperCase() + section.slice(1)}`);
-                display.classList.toggle("hidden");
-                input.classList.toggle("hidden");
-                editBtn.textContent = display.classList.contains("hidden") ? "💾" : "✏️";
-                if (!display.classList.contains("hidden")) {
-                    task[section] = input.value;
-                    display.textContent = task[section] || `Нет ${section === "theme" ? "темы" : "описания"}`;
-                }
-            });
-        }
-    }
-
-    if (section === "executors") {
-        const executorList = content.querySelector("#executorList");
-        executorList.querySelectorAll(".remove-executor").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const executor = btn.dataset.executor;
-                task.executors = task.executors.filter(ex => ex !== executor);
-                addSection("executors", task, modal);
-            });
-        });
-
-        const addExecutorSelect = content.querySelector("#addExecutorSelect");
-        if (addExecutorSelect) {
-            addExecutorSelect.addEventListener("change", () => {
-                const newExecutor = addExecutorSelect.value;
-                if (newExecutor && !task.executors.includes(newExecutor)) {
-                    task.executors.push(newExecutor);
-                    addSection("executors", task, modal);
-                }
-                addExecutorSelect.value = "";
-            });
-        }
-    }
-
-    if (section === "comments") {
-        const addCommentBtn = content.querySelector("#addComment");
-        if (addCommentBtn) {
-            addCommentBtn.addEventListener("click", () => {
-                const commentText = content.querySelector("#newComment").value.trim();
-                if (commentText) {
-                    task.comments.push({
-                        text: commentText,
-                        date: new Date().toLocaleDateString()
-                    });
-                    addSection("comments", task, modal);
-                }
-            });
-        }
-
-        content.querySelectorAll(".remove-comment").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const index = parseInt(btn.dataset.index);
-                task.comments.splice(index, 1);
-                addSection("comments", task, modal);
-            });
-        });
-    }
 }
 
 document.addEventListener("DOMContentLoaded", createInterface);
