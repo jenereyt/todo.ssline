@@ -1,428 +1,153 @@
-export let tasks = [
-    {
-        id: 1,
-        dateSet: "2025-03-25",
-        project: "Afrosiyob paranda",
-        theme: "Разработка UI",
-        description: "Создать интерфейс главной страницы",
-        status: "Выполнено",
-        executors: ["Рустамов Жонибек", "Храмов Дониш"],
-        files: [{ name: "project_alpha_ui_mockup.pdf", url: "https://example.com/files/project_alpha_ui_mockup.pdf" }],
-        comments: [
-            { text: "Дизайн утверждён заказчиком", date: "2025-03-25" },
-            { text: "Добавлены новые шрифты", date: "2025-03-26" },
-            { text: "Исправлены отступы на мобильной версии", date: "2025-03-26" }
-        ],
-        deadline: "2025-04-05"
-    },
-    {
-        id: 2,
-        dateSet: "2025-03-24",
-        project: "Заказчик Beta",
-        theme: "Исправление багов",
-        description: "Пофиксить ошибку в авторизации",
-        status: "Принято заказчиком",
-        executors: ["Сайдуллаев Дамир"],
-        files: [
-            { name: "bug_fix_report.pdf", url: "https://example.com/files/bug_fix_report.pdf" },
-            { name: "auth_test.pdf", url: "https://example.com/files/auth_test.pdf" }
-        ],
-        deadline: "2025-04-01"
-    },
-    {
-        id: 3,
-        dateSet: "2025-03-20",
-        project: "Проект Gamma",
-        theme: "Тестирование API",
-        description: "Проверить все эндпоинты",
-        status: "В процессе",
-        executors: ["Югай Дмитрий"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-10"
-    },
-    {
-        id: 4,
-        dateSet: "2025-03-22",
-        project: "Заказчик Delta",
-        theme: "Дизайн логотипа",
-        description: "Разработать новый логотип компании",
-        status: "Аннулировано",
-        executors: ["Закиров Фаррух", "Бурханов Азим"],
-        files: [],
-        deadline: "2025-03-30"
-    },
-    {
-        id: 5,
-        dateSet: "2025-03-23",
-        project: "Проект Epsilon",
-        theme: "Оптимизация кода",
-        description: "Ускорить загрузку страницы",
-        status: "Возвращен",
-        executors: ["Нурманов Анвар", "Нарзуллоев Тохир"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-07"
-    },
-    {
-        id: 6,
-        dateSet: "2025-03-26",
-        project: "Проект Zeta",
-        theme: "Аналитика",
-        description: "Собрать данные по пользователям",
-        status: "Принято",
-        executors: ["Рустамов Жонибек"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-12"
-    },
-    {
-        id: 7,
-        dateSet: "2025-03-27",
-        project: "Заказчик Eta",
-        theme: "Дизайн",
-        description: "Обновить баннеры на сайте",
-        status: "Выполнено",
-        executors: ["Храмов Дониш"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-03"
-    },
-    {
-        id: 8,
-        dateSet: "2025-03-28",
-        project: "Проект Theta",
-        theme: "Разработка",
-        description: "Добавить фильтр в таблицу",
-        status: "В процессе",
-        executors: ["Сайдуллаев Дамир"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-15"
-    },
-    {
-        id: 9,
-        dateSet: "2025-03-29",
-        project: "Заказчик Iota",
-        theme: "Тестирование",
-        description: "Провести нагрузочное тестирование",
-        status: "Возвращен",
-        executors: ["Югай Дмитрий"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-10"
-    },
-    {
-        id: 10,
-        dateSet: "2025-03-30",
-        project: "Проект Kappa",
-        theme: "Оптимизация",
-        description: "Уменьшить время ответа сервера",
-        status: "Принято заказчиком",
-        executors: ["Закиров Фаррух"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-08"
-    },
-    {
-        id: 11,
-        dateSet: "2025-04-01",
-        project: "Проект Lambda",
-        theme: "Интеграция",
-        description: "Подключить API платежной системы",
-        status: "В процессе",
-        executors: ["Бурханов Азим"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-20"
-    },
-    {
-        id: 12,
-        dateSet: "2025-04-02",
-        project: "Заказчик Mu",
-        theme: "Дизайн",
-        description: "Создать макет мобильного приложения",
-        status: "Выполнено",
-        executors: ["Нурманов Анвар"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-10"
-    },
-    {
-        id: 13,
-        dateSet: "2025-04-03",
-        project: "Проект Nu",
-        theme: "Разработка",
-        description: "Реализовать авторизацию через OAuth",
-        status: "Принято",
-        executors: ["Нарзуллоев Тохир"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-18"
-    },
-    {
-        id: 14,
-        dateSet: "2025-04-04",
-        project: "Заказчик Xi",
-        theme: "Тестирование",
-        description: "Проверить совместимость с iOS",
-        status: "Аннулировано",
-        executors: ["Рустамов Жонибек"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-12"
-    },
-    {
-        id: 15,
-        dateSet: "2025-04-05",
-        project: "Проект Omicron",
-        theme: "Оптимизация",
-        description: "Сжать изображения на сайте",
-        status: "Принято заказчиком",
-        executors: ["Храмов Дониш"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-15"
-    },
-    {
-        id: 16,
-        dateSet: "2025-04-06",
-        project: "Заказчик Pi",
-        theme: "Аналитика",
-        description: "Настроить Google Analytics",
-        status: "В процессе",
-        executors: ["Сайдуллаев Дамир"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-20"
-    },
-    {
-        id: 17,
-        dateSet: "2025-04-07",
-        project: "Проект Rho",
-        theme: "Разработка",
-        description: "Добавить форму обратной связи",
-        status: "Выполнено",
-        executors: ["Югай Дмитрий"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-14"
-    },
-    {
-        id: 18,
-        dateSet: "2025-04-08",
-        project: "Заказчик Sigma",
-        theme: "Дизайн",
-        description: "Обновить цветовую схему",
-        status: "Возвращен",
-        executors: ["Закиров Фаррух"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-18"
-    },
-    {
-        id: 19,
-        dateSet: "2025-04-09",
-        project: "Проект Tau",
-        theme: "Тестирование",
-        description: "Проверить кроссбраузерность",
-        status: "В процессе",
-        executors: ["Бурханов Азим"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-25"
-    },
-    {
-        id: 20,
-        dateSet: "2025-04-10",
-        project: "Заказчик Upsilon",
-        theme: "Интеграция",
-        description: "Подключить CRM систему",
-        status: "Принято",
-        executors: ["Нурманов Анвар"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-22"
-    },
-    {
-        id: 21,
-        dateSet: "2025-04-11",
-        project: "Проект Phi",
-        theme: "Разработка",
-        description: "Создать админ-панель",
-        status: "Выполнено",
-        executors: ["Нарзуллоев Тохир"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-20"
-    },
-    {
-        id: 22,
-        dateSet: "2025-04-12",
-        project: "Заказчик Chi",
-        theme: "Оптимизация",
-        description: "Ускорить загрузку видео",
-        status: "В процессе",
-        executors: ["Рустамов Жонибек"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-30"
-    },
-    {
-        id: 23,
-        dateSet: "2025-04-13",
-        project: "Проект Psi",
-        theme: "Дизайн",
-        description: "Разработать иконки для меню",
-        status: "Принято заказчиком",
-        executors: ["Храмов Дониш"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-20"
-    },
-    {
-        id: 24,
-        dateSet: "2025-04-14",
-        project: "Заказчик Omega",
-        theme: "Тестирование",
-        description: "Проверить работу чата",
-        status: "Аннулировано",
-        executors: ["Сайдуллаев Дамир"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-25"
-    },
-    {
-        id: 25,
-        dateSet: "2025-04-15",
-        project: "Проект Alpha-2",
-        theme: "Разработка",
-        description: "Добавить поиск по сайту",
-        status: "Выполнено",
-        executors: ["Югай Дмитрий"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-22"
-    },
-    {
-        id: 26,
-        dateSet: "2025-04-16",
-        project: "Заказчик Beta-2",
-        theme: "Аналитика",
-        description: "Проанализировать конверсии",
-        status: "В процессе",
-        executors: ["Закиров Фаррух"],
-        files: [],
-        comments: [],
-        deadline: "2025-05-01"
-    },
-    {
-        id: 27,
-        dateSet: "2025-04-17",
-        project: "Проект Gamma-2",
-        theme: "Интеграция",
-        description: "Подключить уведомления",
-        status: "Принято",
-        executors: ["Бурханов Азим"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-28"
-    },
-    {
-        id: 28,
-        dateSet: "2025-04-18",
-        project: "Заказчик Delta-2",
-        theme: "Дизайн",
-        description: "Создать промо-страницу",
-        status: "Выполнено",
-        executors: ["Нурманов Анвар"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-25"
-    },
-    {
-        id: 29,
-        dateSet: "2025-04-19",
-        project: "Проект Epsilon-2",
-        theme: "Оптимизация",
-        description: "Улучшить SEO",
-        status: "Возвращен",
-        executors: ["Нарзуллоев Тохир"],
-        files: [],
-        comments: [],
-        deadline: "2025-05-05"
-    },
-    {
-        id: 30,
-        dateSet: "2025-04-20",
-        project: "Заказчик Zeta-2",
-        theme: "Тестирование",
-        description: "Проверить адаптивность",
-        status: "Принято заказчиком",
-        executors: ["Рустамов Жонибек"],
-        files: [],
-        comments: [],
-        deadline: "2025-04-30"
-    }
-];
-export let executors = (() => {
-    const uniqueNames = [...new Set(tasks.flatMap(task => task.executors))];
-    return uniqueNames.map((name, index) => ({
-        id: index + 1,
-        name
-    }));
-})();
-import { createTable, createInterface } from './interface.js'
+import { createTable, createInterface } from './interface.js';
+import { fetchExecutors } from './executors.js';
+import { fetchExecutorsOnTasks, assignExecutorToTask, removeExecutorFromTask } from './executorsOnTask.js';
+import { createHistory, fetchHistory, updateHistory } from './history.js';
 
+export let tasks = [];
+export let executors = [];
 export let filters = {};
 export let sortState = { field: null, ascending: true };
-export let allProjects = [...new Set(tasks.map(task => task.project))];
+export let allProjects = [];
 export const paginationState = {
     currentPage: 1,
     tasksPerPage: 20
 };
 
-export function getAllExecutors() {
-    return executors.map(ex => ex.name).sort();
+// Функция для преобразования ISO-даты в формат YYYY-MM-DD
+function formatDate(isoDate) {
+    if (!isoDate) return '';
+    return new Date(isoDate).toISOString().split('T')[0];
 }
 
+// Функция для преобразования ISO-даты в формат DD.MM.YYYY для комментариев и истории
+function formatCommentDate(isoDate) {
+    if (!isoDate) return '';
+    const date = new Date(isoDate);
+    return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+}
 
-export function addExecutor(name) {
-    name = name.trim();
-    if (!name || executors.some(ex => ex.name.toLowerCase() === name.toLowerCase())) {
-        return false;
+// Функция для преобразования YYYY-MM-DD в ISO-дату
+function toISODate(localDate) {
+    if (!localDate) return null;
+    return new Date(localDate).toISOString();
+}
+
+async function fetchTasks() {
+    const url = 'http://servtodo.ssline.uz/tasks';
+    console.log('Запрос задач:', url);
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log('Полученные задачи:', data);
+        tasks = data.map(task => ({
+            id: task.id,
+            dateSet: formatDate(task.dateSet),
+            project: task.project,
+            theme: task.theme,
+            description: task.description,
+            status: task.status,
+            deadline: formatDate(task.deadline),
+            executors: [], // Будут заполнены из /executors-on-task
+            files: task.files ? task.files.map(f => ({
+                name: f.name,
+                url: f.url
+            })) : [],
+            comments: task.comments ? task.comments.map(c => ({
+                text: c.text,
+                date: formatCommentDate(c.date)
+            })) : [],
+            history: [] // Будут заполнены из /history
+        }));
+        await syncExecutorsOnTasks();
+        await syncHistory();
+        updateDerivedData();
+        return tasks;
+    } catch (error) {
+        console.error('Ошибка при загрузке задач:', error);
+        alert(`Не удалось загрузить задачи: ${error.message}`);
+        return [];
     }
-    const newId = executors.length ? Math.max(...executors.map(ex => ex.id)) + 1 : 1;
-    executors.push({ id: newId, name });
-    return true;
 }
 
-export function deleteExecutor(name) {
-    executors = executors.filter(ex => ex.name !== name);
-   
+async function syncExecutorsOnTasks() {
+    const relations = await fetchExecutorsOnTasks();
     tasks.forEach(task => {
-        task.executors = task.executors.filter(ex => ex !== name);
+        task.executors = relations
+            .filter(rel => rel.taskId === task.id)
+            .map(rel => rel.executor.name);
     });
 }
 
-export function renameExecutor(oldName, newName) {
-    newName = newName.trim();
-    if (
-        !newName ||
-        oldName === newName ||
-        executors.some(ex => ex.name.toLowerCase() === newName.toLowerCase())
-    ) {
-        return false; 
-    }
-    const executor = executors.find(ex => ex.name === oldName);
-    if (executor) {
-        executor.name = newName;
-        tasks.forEach(task => {
-            task.executors = task.executors.map(ex => ex === oldName ? newName : ex);
+async function syncHistory() {
+    const historyRecords = await fetchHistory();
+    tasks.forEach(task => {
+        task.history = historyRecords
+            .filter(record => record.taskId === task.id)
+            .map(record => ({
+                id: record.id,
+                date: formatCommentDate(record.date),
+                change: record.change,
+                user: record.user
+            }));
+    });
+}
+
+async function updateTask(task) {
+    const url = `http://servtodo.ssline.uz/tasks/${task.id}`;
+    console.log('Обновление задачи:', task.id, url);
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                dateSet: toISODate(task.dateSet),
+                project: task.project,
+                theme: task.theme,
+                description: task.description,
+                status: task.status,
+                deadline: toISODate(task.deadline)
+            })
         });
-        return true;
+        if (!response.ok) {
+            throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+        const updatedTask = await response.json();
+        const taskIndex = tasks.findIndex(t => t.id === task.id);
+        if (taskIndex !== -1) {
+            tasks[taskIndex] = {
+                ...tasks[taskIndex],
+                dateSet: formatDate(updatedTask.dateSet),
+                project: updatedTask.project,
+                theme: updatedTask.theme,
+                description: updatedTask.description,
+                status: updatedTask.status,
+                deadline: formatDate(updatedTask.deadline)
+            };
+        }
+        return updatedTask;
+    } catch (error) {
+        console.error('Ошибка при обновлении задачи:', error);
+        alert('Не удалось сохранить изменения на сервере.');
+        throw error;
     }
-    return false;
+}
+
+function updateDerivedData() {
+    allProjects = [...new Set(tasks.map(task => task.project))];
+}
+
+export function getAllExecutors() {
+    return executors.map(ex => ex.name).sort();
 }
 
 export function applyFilters() {
@@ -561,7 +286,7 @@ export function openEditModal(task) {
                         <h3>История</h3>
                         <div id="historyList">
                             ${task.history.length ? task.history.map((entry) => `
-                                <div class="history-item">
+                                <div class="history-item" data-id="${entry.id}">
                                     <span class="history-date">${entry.date}</span>
                                     <span class="history-change">${entry.change}</span>
                                     <span class="history-user">${entry.user}</span>
@@ -581,6 +306,7 @@ export function openEditModal(task) {
     document.body.appendChild(modal);
 
     const originalTask = JSON.parse(JSON.stringify(task));
+    const originalExecutors = [...task.executors];
 
     modal.querySelectorAll(".tab-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
@@ -597,7 +323,7 @@ export function openEditModal(task) {
         const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
 
         if (display && input) {
-            display.addEventListener("dblclick", (e) => {
+            display.addEventListener("dblclick", async (e) => {
                 e.stopPropagation();
                 display.classList.add("hidden");
                 input.classList.remove("hidden");
@@ -605,37 +331,79 @@ export function openEditModal(task) {
             });
 
             if (field === "deadline") {
-                input.addEventListener("change", () => {
+                input.addEventListener("change", async () => {
+                    const oldValue = task[field];
                     task[field] = input.value;
                     display.textContent = task[field] || "Не указан";
                     display.classList.remove("hidden");
                     input.classList.add("hidden");
+                    if (oldValue !== task[field]) {
+                        try {
+                            await createHistory(
+                                task.id,
+                                `${field === "deadline" ? "Срок выполнения" : field} изменён с "${oldValue || "не указан"}" на "${task[field] || "не указан"}"`,
+                                "Текущий пользователь"
+                            );
+                            await syncHistory();
+                            updateHistoryList();
+                        } catch (error) {
+                            alert(`Не удалось записать изменение в историю: ${error.message}`);
+                        }
+                    }
                 });
             } else {
-                input.addEventListener("keypress", (e) => {
+                input.addEventListener("keypress", async (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
+                        const oldValue = task[field];
                         task[field] = input.value.trim();
                         display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
                         display.classList.remove("hidden");
                         input.classList.add("hidden");
+                        if (oldValue !== task[field]) {
+                            try {
+                                await createHistory(
+                                    task.id,
+                                    `${field === "theme" ? "Тема" : "Описание"} изменено с "${oldValue || "не указано"}" на "${task[field] || "не указано"}"`,
+                                    "Текущий пользователь"
+                                );
+                                await syncHistory();
+                                updateHistoryList();
+                            } catch (error) {
+                                alert(`Не удалось записать изменение в историю: ${error.message}`);
+                            }
+                        }
                     }
                 });
             }
 
-            input.addEventListener("blur", () => {
+            input.addEventListener("blur", async () => {
                 if (field !== "deadline") {
+                    const oldValue = task[field];
                     task[field] = input.value.trim();
                     display.textContent = task[field] || (field === "theme" ? "Нет темы" : "Нет описания");
+                    display.classList.remove("hidden");
+                    input.classList.add("hidden");
+                    if (oldValue !== task[field]) {
+                        try {
+                            await createHistory(
+                                task.id,
+                                `${field === "theme" ? "Тема" : "Описание"} изменено с "${oldValue || "не указано"}" на "${task[field] || "не указано"}"`,
+                                "Текущий пользователь"
+                            );
+                            await syncHistory();
+                            updateHistoryList();
+                        } catch (error) {
+                            alert(`Не удалось записать изменение в историю: ${error.message}`);
+                        }
+                    }
                 }
-                display.classList.remove("hidden");
-                input.classList.add("hidden");
             });
         }
     });
 
     const executorList = modal.querySelector("#executorList");
-    function updateExecutorList() {
+    async function updateExecutorList() {
         executorList.innerHTML = '';
         task.executors.forEach(ex => {
             const executorItem = document.createElement("span");
@@ -658,7 +426,7 @@ export function openEditModal(task) {
         addButton.innerHTML = `<img src="./image/plus.svg" style="width: 16px; height: 16px;">`;
         executorList.appendChild(addButton);
 
-        addButton.addEventListener("click", (e) => {
+        addButton.addEventListener("click", async (e) => {
             e.stopPropagation();
             if (!executorList.querySelector("#addExecutorSelect")) {
                 const selectWrapper = document.createElement("span");
@@ -675,12 +443,31 @@ export function openEditModal(task) {
                 executorList.replaceChild(selectWrapper, addButton);
 
                 const addExecutorSelect = selectWrapper.querySelector("#addExecutorSelect");
-                addExecutorSelect.addEventListener("change", (e) => {
+                addExecutorSelect.addEventListener("change", async (e) => {
                     e.stopPropagation();
-                    const newExecutor = addExecutorSelect.value;
-                    if (newExecutor && !task.executors.includes(newExecutor)) {
-                        task.executors.push(newExecutor);
-                        updateExecutorList();
+                    const executorName = addExecutorSelect.value;
+                    if (executorName && !task.executors.includes(executorName)) {
+                        try {
+                            const executor = executors.find(ex => ex.name === executorName);
+                            if (!executor) throw new Error('Исполнитель не найден');
+                            await assignExecutorToTask(
+                                task.id,
+                                executor.id,
+                                { id: task.id, project: task.project, theme: task.theme },
+                                { id: executor.id, name: executor.name }
+                            );
+                            task.executors.push(executorName);
+                            await createHistory(
+                                task.id,
+                                `Добавлен исполнитель: "${executorName}"`,
+                                "Текущий пользователь"
+                            );
+                            await syncHistory();
+                            updateHistoryList();
+                            await updateExecutorList();
+                        } catch (error) {
+                            alert(`Не удалось добавить исполнителя: ${error.message}`);
+                        }
                     }
                 });
 
@@ -692,38 +479,73 @@ export function openEditModal(task) {
         });
 
         executorList.querySelectorAll(".remove-executor").forEach(btn => {
-            btn.addEventListener("click", (e) => {
+            btn.addEventListener("click", async (e) => {
                 e.stopPropagation();
-                const executor = btn.dataset.executor;
-                task.executors = task.executors.filter(ex => ex !== executor);
-                updateExecutorList();
+                const executorName = btn.dataset.executor;
+                try {
+                    const executor = executors.find(ex => ex.name === executorName);
+                    if (!executor) throw new Error('Исполнитель не найден');
+                    await removeExecutorFromTask(task.id, executor.id);
+                    task.executors = task.executors.filter(ex => ex !== executorName);
+                    await createHistory(
+                        task.id,
+                        `Удалён исполнитель: "${executorName}"`,
+                        "Текущий пользователь"
+                    );
+                    await syncHistory();
+                    updateHistoryList();
+                    await updateExecutorList();
+                } catch (error) {
+                    alert(`Не удалось удалить исполнителя: ${error.message}`);
+                }
             });
         });
 
         executorList.querySelectorAll(".executor-name").forEach(span => {
-            span.addEventListener("dblclick", (e) => {
+            span.addEventListener("dblclick", async (e) => {
                 e.stopPropagation();
-                const oldExecutor = span.textContent;
+                const oldExecutorName = span.textContent;
                 const executorItem = span.parentElement;
 
                 const select = document.createElement("select");
                 select.innerHTML = `
                     <option value="">Выберите исполнителя</option>
-                    ${getAllExecutors().filter(ex => !task.executors.includes(ex) || ex === oldExecutor).map(ex => `
-                        <option value="${ex}" ${ex === oldExecutor ? 'selected' : ''}>${ex}</option>
+                    ${getAllExecutors().filter(ex => !task.executors.includes(ex) || ex === oldExecutorName).map(ex => `
+                        <option value="${ex}" ${ex === oldExecutorName ? 'selected' : ''}>${ex}</option>
                     `).join("")}
                 `;
                 executorItem.replaceChild(select, span);
                 select.focus();
 
-                select.addEventListener("change", (e) => {
+                select.addEventListener("change", async (e) => {
                     e.stopPropagation();
-                    const newExecutor = select.value;
-                    if (newExecutor && newExecutor !== oldExecutor && !task.executors.includes(newExecutor)) {
-                        const index = task.executors.indexOf(oldExecutor);
-                        task.executors[index] = newExecutor;
+                    const newExecutorName = select.value;
+                    if (newExecutorName && newExecutorName !== oldExecutorName && !task.executors.includes(newExecutorName)) {
+                        try {
+                            const oldExecutor = executors.find(ex => ex.name === oldExecutorName);
+                            const newExecutor = executors.find(ex => ex.name === newExecutorName);
+                            if (!oldExecutor || !newExecutor) throw new Error('Исполнитель не найден');
+                            await removeExecutorFromTask(task.id, oldExecutor.id);
+                            await assignExecutorToTask(
+                                task.id,
+                                newExecutor.id,
+                                { id: task.id, project: task.project, theme: task.theme },
+                                { id: newExecutor.id, name: newExecutor.name }
+                            );
+                            const index = task.executors.indexOf(oldExecutorName);
+                            task.executors[index] = newExecutorName;
+                            await createHistory(
+                                task.id,
+                                `Исполнитель изменён с "${oldExecutorName}" на "${newExecutorName}"`,
+                                "Текущий пользователь"
+                            );
+                            await syncHistory();
+                            updateHistoryList();
+                            await updateExecutorList();
+                        } catch (error) {
+                            alert(`Не удалось изменить исполнителя: ${error.message}`);
+                        }
                     }
-                    updateExecutorList();
                 });
 
                 select.addEventListener("blur", () => {
@@ -734,6 +556,69 @@ export function openEditModal(task) {
     }
     updateExecutorList();
 
+    const historyList = modal.querySelector("#historyList");
+    function updateHistoryList() {
+        historyList.innerHTML = task.history.length ? task.history.map((entry) => `
+            <div class="history-item" data-id="${entry.id}">
+                <span class="history-date">${entry.date}</span>
+                <span class="history-change">${entry.change}</span>
+                <span class="history-user">${entry.user}</span>
+            </div>
+        `).join("") : "Нет истории изменений";
+
+        historyList.querySelectorAll(".history-item").forEach(item => {
+            item.addEventListener("dblclick", async (e) => {
+                e.stopPropagation();
+                const id = item.dataset.id;
+                const historyEntry = task.history.find(h => h.id == id);
+                if (!historyEntry) return;
+
+                const changeSpan = item.querySelector(".history-change");
+                const userSpan = item.querySelector(".history-user");
+
+                const changeInput = document.createElement("input");
+                changeInput.type = "text";
+                changeInput.value = historyEntry.change;
+                changeInput.className = "edit-history-input";
+
+                const userInput = document.createElement("input");
+                userInput.type = "text";
+                userInput.value = historyEntry.user;
+                userInput.className = "edit-history-input";
+
+                item.replaceChild(changeInput, changeSpan);
+                item.replaceChild(userInput, userSpan);
+                changeInput.focus();
+
+                async function saveEdit() {
+                    const newChange = changeInput.value.trim();
+                    const newUser = userInput.value.trim();
+                    if (newChange && newUser && (newChange !== historyEntry.change || newUser !== historyEntry.user)) {
+                        try {
+                            await updateHistory(id, task.id, newChange, newUser);
+                            await syncHistory();
+                            updateHistoryList();
+                        } catch (error) {
+                            alert(`Не удалось обновить запись истории: ${error.message}`);
+                        }
+                    } else {
+                        updateHistoryList();
+                    }
+                }
+
+                changeInput.addEventListener("blur", saveEdit, { once: true });
+                userInput.addEventListener("blur", saveEdit, { once: true });
+                changeInput.addEventListener("keypress", async (e) => {
+                    if (e.key === "Enter") await saveEdit();
+                });
+                userInput.addEventListener("keypress", async (e) => {
+                    if (e.key === "Enter") await saveEdit();
+                });
+            });
+        });
+    }
+    updateHistoryList();
+
     const addCommentBtn = modal.querySelector("#addComment");
     const newCommentTextarea = modal.querySelector("#newComment");
     const lastCommentOverlay = modal.querySelector("#lastCommentOverlay");
@@ -743,57 +628,67 @@ export function openEditModal(task) {
     });
 
     if (addCommentBtn) {
-        addCommentBtn.addEventListener("click", (e) => {
+        addCommentBtn.addEventListener("click", async (e) => {
             e.stopPropagation();
             const commentText = newCommentTextarea.value.trim();
             if (commentText) {
                 const newComment = {
                     text: commentText,
-                    date: new Date().toLocaleDateString()
+                    date: formatCommentDate(new Date().toISOString())
                 };
                 task.comments.push(newComment);
-                task.history.push({
-                    date: newComment.date,
-                    change: `Добавлен комментарий: "${newComment.text}"`,
-                    user: "Текущий пользователь"
-                });
-                lastCommentOverlay.textContent = newComment.text;
-                lastCommentOverlay.style.display = "block";
-                newCommentTextarea.value = "";
-                modal.querySelector("#historyList").innerHTML = task.history.length ?
-                    task.history.map((entry) => `
-                        <div class="history-item">
-                            <span class="history-date">${entry.date}</span>
-                            <span class="history-change">${entry.change}</span>
-                            <span class="history-user">${entry.user}</span>
-                        </div>
-                    `).join("") : "Нет истории изменений";
+                try {
+                    await createHistory(
+                        task.id,
+                        `Добавлен комментарий: "${newComment.text}"`,
+                        "Текущий пользователь"
+                    );
+                    await syncHistory();
+                    updateHistoryList();
+                    lastCommentOverlay.textContent = newComment.text;
+                    lastCommentOverlay.style.display = "block";
+                    newCommentTextarea.value = "";
+                } catch (error) {
+                    alert(`Не удалось записать комментарий в историю: ${error.message}`);
+                }
             }
         });
     }
 
     const closeModal = () => {
         Object.assign(task, originalTask);
+        task.executors = [...originalExecutors];
         modal.remove();
     };
 
     modal.querySelector("#closeModalBtn").addEventListener("click", closeModal);
     modal.querySelector("#closeBtn").addEventListener("click", closeModal);
 
-    modal.querySelector("#saveBtn").addEventListener("click", (e) => {
+    modal.querySelector("#saveBtn").addEventListener("click", async (e) => {
         e.stopPropagation();
         const newStatus = modal.querySelector("#statusSelect").value;
         if (task.status !== newStatus) {
-            task.history.push({
-                date: new Date().toLocaleDateString(),
-                change: `Статус изменён с "${task.status}" на "${newStatus}"`,
-                user: "Текущий пользователь"
-            });
-            task.status = newStatus;
+            try {
+                await createHistory(
+                    task.id,
+                    `Статус изменён с "${task.status}" на "${newStatus}"`,
+                    "Текущий пользователь"
+                );
+                task.status = newStatus;
+                await syncHistory();
+                updateHistoryList();
+            } catch (error) {
+                alert(`Не удалось записать изменение статуса в историю: ${error.message}`);
+            }
         }
         task.executors = task.executors.filter(ex => getAllExecutors().includes(ex));
-        applyFilters();
-        modal.remove();
+        try {
+            await updateTask(task);
+            applyFilters();
+            modal.remove();
+        } catch (error) {
+            // Ошибка уже обработана в updateTask
+        }
     });
 
     modal.addEventListener("click", (e) => {
@@ -801,4 +696,8 @@ export function openEditModal(task) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", createInterface);
+document.addEventListener("DOMContentLoaded", async () => {
+    executors = await fetchExecutors();
+    await fetchTasks();
+    createInterface();
+});

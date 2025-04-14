@@ -1,5 +1,7 @@
-
-import { executors, getAllExecutors, addExecutor, deleteExecutor, renameExecutor } from './app.js';
+import { applyFilters, tasks } from './app.js';
+import { fetchExecutors, createExecutor, updateExecutor, deleteExecutor } from './executors.js';
+import { removeExecutorFromTask } from './executorsOnTask.js';
+import { createHistory } from './history.js';
 
 export function openGlobalExecutorModal() {
     const modal = document.createElement("div");
@@ -27,14 +29,14 @@ export function openGlobalExecutorModal() {
 
     document.body.appendChild(modal);
 
-    function refreshExecutorsList() {
-        const allExecutors = getAllExecutors();
+    async function refreshExecutorsList() {
+        const allExecutors = await fetchExecutors();
         const listContainer = modal.querySelector("#allExecutorsList");
         listContainer.innerHTML = allExecutors.length ? allExecutors.map(executor => `
-            <div class="executor-list-item" data-executor="${executor}">
-                <span class="executor-name">${executor}</span>
+            <div class="executor-list-item" data-executor="${executor.name}" data-id="${executor.id}">
+                <span class="executor-name">${executor.name}</span>
                 <div class="executor-actions">
-                    <button class="delete-executor-btn" data-executor="${executor}">
+                    <button class="delete-executor-btn" data-id="${executor.id}">
                         <img src="./image/trash.svg" alt="Удалить" width="16" height="16" />
                     </button>
                 </div>
@@ -42,20 +44,38 @@ export function openGlobalExecutorModal() {
         `).join('') : '<span>Нет исполнителей</span>';
 
         listContainer.querySelectorAll(".delete-executor-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const executor = e.currentTarget.dataset.executor;
-                if (confirm(`Вы уверены, что хотите удалить исполнителя "${executor}"? Это удалит его из всех задач.`)) {
-                    deleteExecutor(executor);
-                    refreshExecutorsList();
-                    applyFilters(); 
+            btn.addEventListener("click", async (e) => {
+                const id = e.currentTarget.dataset.id;
+                const executorName = e.currentTarget.closest('.executor-list-item').dataset.executor;
+                if (confirm(`Вы уверены, что хотите удалить исполнителя "${executorName}"? Это удалит его из всех задач.`)) {
+                    try {
+                        // Удаляем связи с задачами
+                        for (const task of tasks) {
+                            if (task.executors.includes(executorName)) {
+                                await removeExecutorFromTask(task.id, id);
+                                await createHistory(
+                                    task.id,
+                                    `Удалён исполнитель: "${executorName}"`,
+                                    "Текущий пользователь"
+                                );
+                                task.executors = task.executors.filter(ex => ex !== executorName);
+                            }
+                        }
+                        await deleteExecutor(id);
+                        await refreshExecutorsList();
+                        applyFilters();
+                    } catch (error) {
+                        alert(error.message);
+                    }
                 }
             });
         });
 
         listContainer.querySelectorAll(".executor-name").forEach(span => {
-            span.addEventListener("dblclick", (e) => {
+            span.addEventListener("dblclick", async (e) => {
                 e.stopPropagation();
                 const currentName = span.textContent;
+                const id = span.closest('.executor-list-item').dataset.id;
                 const listItem = span.closest(".executor-list-item");
 
                 const input = document.createElement("input");
@@ -65,21 +85,35 @@ export function openGlobalExecutorModal() {
                 listItem.replaceChild(input, span);
                 input.focus();
 
-                function saveEdit() {
+                async function saveEdit() {
                     const newName = input.value.trim();
                     if (newName && newName !== currentName) {
-                        if (renameExecutor(currentName, newName)) {
-                            refreshExecutorsList();
+                        try {
+                            await updateExecutor(id, newName);
+                            // Обновляем задачи локально и добавляем в историю
+                            for (const task of tasks) {
+                                if (task.executors.includes(currentName)) {
+                                    task.executors = task.executors.map(ex => ex === currentName ? newName : ex);
+                                    await createHistory(
+                                        task.id,
+                                        `Исполнитель изменён с "${currentName}" на "${newName}"`,
+                                        "Текущий пользователь"
+                                    );
+                                }
+                            }
+                            await refreshExecutorsList();
                             applyFilters();
-                        } else {
+                        } catch (error) {
+                            alert(error.message);
                         }
+                    } else {
+                        await refreshExecutorsList();
                     }
-                    refreshExecutorsList();
                 }
 
                 input.addEventListener("blur", saveEdit, { once: true });
-                input.addEventListener("keypress", (e) => {
-                    if (e.key === "Enter") saveEdit();
+                input.addEventListener("keypress", async (e) => {
+                    if (e.key === "Enter") await saveEdit();
                 });
             });
         });
@@ -94,19 +128,20 @@ export function openGlobalExecutorModal() {
     modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
 
     const input = modal.querySelector("#newGlobalExecutor");
-    modal.querySelector("#saveGlobalExecutor").addEventListener("click", () => {
+    modal.querySelector("#saveGlobalExecutor").addEventListener("click", async () => {
         const newExecutor = input.value.trim();
         if (newExecutor) {
-            if (addExecutor(newExecutor)) {
-                refreshExecutorsList();
+            try {
+                await createExecutor(newExecutor);
+                await refreshExecutorsList();
                 input.value = "";
-            } else {
-                alert("Исполнитель с таким именем уже существует!");
+            } catch (error) {
+                alert(error.message);
             }
         }
     });
 
-    input.addEventListener("keypress", (e) => {
+    input.addEventListener("keypress", async (e) => {
         if (e.key === "Enter") {
             modal.querySelector("#saveGlobalExecutor").click();
         }
