@@ -1,4 +1,4 @@
-import { applyFilters, tasks } from './app.js';
+import { applyFilters, tasks, executors } from './app.js';
 import { fetchExecutors, createExecutor, updateExecutor, deleteExecutor } from './executors.js';
 import { removeExecutorFromTask } from './executorsOnTask.js';
 import { createHistory } from './history.js';
@@ -22,7 +22,9 @@ export function openGlobalExecutorModal() {
             </div>
             <div class="all-executors-section">
                 <h3>Список исполнителей</h3>
-                <div class="executors-list" id="allExecutorsList"></div>
+                <div class="executors-list" id="allExecutorsList">
+                    <div class="spinner" style="margin: 10px auto;"></div>
+                </div>
             </div>
         </div>
     `;
@@ -30,8 +32,9 @@ export function openGlobalExecutorModal() {
     document.body.appendChild(modal);
 
     async function refreshExecutorsList() {
-        const allExecutors = await fetchExecutors();
         const listContainer = modal.querySelector("#allExecutorsList");
+        // Используем глобальный executors вместо fetchExecutors
+        const allExecutors = executors.length ? executors : await fetchExecutors();
         listContainer.innerHTML = allExecutors.length ? allExecutors.map(executor => `
             <div class="executor-list-item" data-executor="${executor.name}" data-id="${executor.id}">
                 <span class="executor-name">${executor.name}</span>
@@ -62,6 +65,9 @@ export function openGlobalExecutorModal() {
                             }
                         }
                         await deleteExecutor(id);
+                        // Обновляем глобальный массив
+                        executors.length = 0;
+                        executors.push(...(await fetchExecutors()));
                         await refreshExecutorsList();
                         applyFilters();
                     } catch (error) {
@@ -89,6 +95,13 @@ export function openGlobalExecutorModal() {
                     const newName = input.value.trim();
                     if (newName && newName !== currentName) {
                         try {
+                            // Проверяем, нет ли уже такого имени
+                            const existingExecutor = executors.find(ex => ex.name.toLowerCase() === newName.toLowerCase());
+                            if (existingExecutor) {
+                                alert('Исполнитель с таким именем уже существует');
+                                await refreshExecutorsList();
+                                return;
+                            }
                             await updateExecutor(id, newName);
                             // Обновляем задачи локально и добавляем в историю
                             for (const task of tasks) {
@@ -101,6 +114,9 @@ export function openGlobalExecutorModal() {
                                     );
                                 }
                             }
+                            // Обновляем глобальный массив
+                            executors.length = 0;
+                            executors.push(...(await fetchExecutors()));
                             await refreshExecutorsList();
                             applyFilters();
                         } catch (error) {
@@ -132,8 +148,18 @@ export function openGlobalExecutorModal() {
         const newExecutor = input.value.trim();
         if (newExecutor) {
             try {
+                // Проверяем, нет ли уже такого имени
+                const existingExecutor = executors.find(ex => ex.name.toLowerCase() === newExecutor.toLowerCase());
+                if (existingExecutor) {
+                    alert('Исполнитель с таким именем уже существует');
+                    return;
+                }
                 await createExecutor(newExecutor);
+                // Обновляем глобальный массив
+                executors.length = 0;
+                executors.push(...(await fetchExecutors()));
                 await refreshExecutorsList();
+                applyFilters();
                 input.value = "";
             } catch (error) {
                 alert(error.message);

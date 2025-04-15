@@ -43,7 +43,7 @@ export function createTable(taskList) {
             <td>${task.deadline || "Не указан"}</td>
             <td>${task.status || "Не указан"}</td>
         `;
-        row.addEventListener("click", () => openEditModal(task));
+        row.addEventListener("click", () => openEditModal(task.id)); // Исправлено: передаём task.id
         tbody.appendChild(row);
     });
 
