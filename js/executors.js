@@ -1,5 +1,5 @@
 export async function fetchExecutors() {
-    const url = 'http://servtodo.ssline.uz/executors';
+    const url = 'https://servtodo.ssline.uz/executors';
     console.log('Запрос исполнителей:', url);
     try {
         const response = await fetch(url, {
@@ -22,7 +22,7 @@ export async function fetchExecutors() {
 }
 
 export async function createExecutor(name) {
-    const url = 'http://servtodo.ssline.uz/executors';
+    const url = 'https://servtodo.ssline.uz/executors';
     console.log('Создание исполнителя:', name, url);
     try {
         const response = await fetch(url, {
@@ -46,7 +46,7 @@ export async function createExecutor(name) {
 }
 
 export async function updateExecutor(id, name) {
-    const url = `http://servtodo.ssline.uz/executors/${id}`;
+    const url = `https://servtodo.ssline.uz/executors/${id}`;
     console.log('Обновление исполнителя:', id, name, url);
     try {
         const response = await fetch(url, {
@@ -73,7 +73,7 @@ export async function updateExecutor(id, name) {
 }
 
 export async function deleteExecutor(id) {
-    const url = `http://servtodo.ssline.uz/executors/${id}`;
+    const url = `https://servtodo.ssline.uz/executors/${id}`;
     console.log('Удаление исполнителя:', id, url);
     try {
         const response = await fetch(url, {

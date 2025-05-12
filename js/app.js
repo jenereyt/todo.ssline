@@ -94,7 +94,7 @@ function showNotification(message) {
 }
 
 async function fetchTasks() {
-    const url = 'http://servtodo.ssline.uz/tasks';
+    const url = 'https://servtodo.ssline.uz/tasks';
     console.log('Запрос задач:', url);
     try {
         const response = await fetch(url, {
@@ -134,7 +134,7 @@ async function fetchTasks() {
 }
 
 async function fetchFiles() {
-    const url = 'http://servtodo.ssline.uz/files';
+    const url = 'https://servtodo.ssline.uz/files';
     console.log('Запрос файлов:', url);
     try {
         const response = await fetch(url, {
@@ -152,7 +152,7 @@ async function fetchFiles() {
             id: file.id,
             taskId: file.taskId,
             name: file.name,
-            url: `http://servtodo.ssline.uz/files/${file.id}`
+            url: `https://servtodo.ssline.uz/files/${file.id}`
         }));
     } catch (error) {
         console.error('Ошибка при загрузке файлов:', error);
@@ -223,7 +223,7 @@ async function syncHistory() {
 }
 
 async function updateTask(task) {
-    const url = `http://servtodo.ssline.uz/tasks/${task.id}`;
+    const url = `https://servtodo.ssline.uz/tasks/${task.id}`;
     const body = {
         dateSet: toISODate(task.dateSet),
         project: task.project,
