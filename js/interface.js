@@ -67,7 +67,7 @@ export function createTable(taskList) {
 }
 
 export function createInterface() {
-    const appDiv = document.getElementById("app");
+    const appDiv = document.getElementById('app');
     appDiv.innerHTML = `
         <div class="controls">
             <div class="filters">
@@ -105,143 +105,143 @@ export function createInterface() {
     `;
     createTable(tasks);
 
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const formattedFirstDay = firstDayOfMonth.toISOString().split("T")[0];
-    const dateFrom = document.getElementById("dateFrom");
-    dateFrom.value = formattedFirstDay;
-    filters.dateFrom = formattedFirstDay;
+    const dateFrom = document.getElementById('dateFrom');
+    const dateTo = document.getElementById('dateTo');
+    dateFrom.value = '';
+    dateTo.value = '';
+    filters.dateFrom = '';
+    filters.dateTo = '';
     applyFilters();
 
-    const dateTo = document.getElementById("dateTo");
     [dateFrom, dateTo].forEach(input => {
-        input.addEventListener("change", () => {
+        input.addEventListener('change', () => {
             filters.dateFrom = dateFrom.value;
             filters.dateTo = dateTo.value;
             applyFilters();
         });
     });
 
-    const clearExecutorBtn = document.getElementById("clearExecutor");
-    clearExecutorBtn.addEventListener("click", () => {
-        document.getElementById("executorFilter").value = "";
-        filters.executors = "";
-        clearExecutorBtn.classList.add("hidden");
+    // Остальной код остаётся без изменений
+    const clearExecutorBtn = document.getElementById('clearExecutor');
+    clearExecutorBtn.addEventListener('click', () => {
+        document.getElementById('executorFilter').value = '';
+        filters.executors = '';
+        clearExecutorBtn.classList.add('hidden');
         applyFilters();
     });
 
-    const clearProjectBtn = document.getElementById("clearProject");
-    clearProjectBtn.addEventListener("click", () => {
-        document.getElementById("projectFilter").value = "";
-        filters.project = "";
-        clearProjectBtn.classList.add("hidden");
+    const clearProjectBtn = document.getElementById('clearProject');
+    clearProjectBtn.addEventListener('click', () => {
+        document.getElementById('projectFilter').value = '';
+        filters.project = '';
+        clearProjectBtn.classList.add('hidden');
         applyFilters();
     });
 
-    document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+    document.getElementById('resetFiltersBtn').addEventListener('click', () => {
         Object.keys(filters).forEach(key => delete filters[key]);
-        document.getElementById("dateFrom").value = formattedFirstDay;
-        document.getElementById("dateTo").value = "";
-        document.getElementById("executorFilter").value = "";
-        document.getElementById("projectFilter").value = "";
-        document.getElementById("searchInput").value = "";
-        clearExecutorBtn.classList.add("hidden");
-        clearProjectBtn.classList.add("hidden");
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        document.getElementById('executorFilter').value = '';
+        document.getElementById('projectFilter').value = '';
+        document.getElementById('searchInput').value = '';
+        clearExecutorBtn.classList.add('hidden');
+        clearProjectBtn.classList.add('hidden');
         sortState.field = null;
         sortState.ascending = true;
         paginationState.currentPage = 1;
-        filters.dateFrom = formattedFirstDay;
         applyFilters();
     });
 
-    document.getElementById("searchBtn").addEventListener("click", () => {
-        const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-        const filteredTasks = tasks.filter(task =>
-            task.id.toString().includes(searchTerm) ||
-            (task.dateSet || "").toLowerCase().includes(searchTerm) ||
-            (task.project || "").toLowerCase().includes(searchTerm) ||
-            (task.theme || "").toLowerCase().includes(searchTerm) ||
-            (task.description || "").toLowerCase().includes(searchTerm) ||
-            task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
-            (task.status || "").toLowerCase().includes(searchTerm)
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filteredTasks = tasks.filter(
+            task =>
+                task.id.toString().includes(searchTerm) ||
+                (task.dateSet || '').toLowerCase().includes(searchTerm) ||
+                (task.project || '').toLowerCase().includes(searchTerm) ||
+                (task.theme || '').toLowerCase().includes(searchTerm) ||
+                (task.description || '').toLowerCase().includes(searchTerm) ||
+                task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
+                (task.status || '').toLowerCase().includes(searchTerm)
         );
         paginationState.currentPage = 1;
         createTable(filteredTasks);
     });
 
-    document.getElementById("searchInput").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") document.getElementById("searchBtn").click();
+    document.getElementById('searchInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') document.getElementById('searchBtn').click();
     });
 
-    const executorInput = document.getElementById("executorFilter");
-    const executorSuggestions = document.getElementById("executorSuggestions");
-    executorInput.addEventListener("input", (e) => {
+    const executorInput = document.getElementById('executorFilter');
+    const executorSuggestions = document.getElementById('executorSuggestions');
+    executorInput.addEventListener('input', e => {
         const value = e.target.value.toLowerCase();
-        executorSuggestions.innerHTML = "";
-        clearExecutorBtn.classList.toggle("hidden", !value);
+        executorSuggestions.innerHTML = '';
+        clearExecutorBtn.classList.toggle('hidden', !value);
         if (value) {
-            executorSuggestions.classList.remove("hidden");
+            executorSuggestions.classList.remove('hidden');
             const allExecutors = getAllExecutors();
             const matches = allExecutors.filter(ex => ex.toLowerCase().includes(value));
             matches.forEach(match => {
-                const div = document.createElement("div");
+                const div = document.createElement('div');
                 div.textContent = match;
-                div.className = "suggestion-item";
-                div.style.cursor = "pointer";
-                div.addEventListener("click", () => {
+                div.className = 'suggestion-item';
+                div.style.cursor = 'pointer';
+                div.addEventListener('click', () => {
                     executorInput.value = match;
                     filters.executors = match;
-                    executorSuggestions.classList.add("hidden");
+                    executorSuggestions.classList.add('hidden');
                     applyFilters();
                 });
                 executorSuggestions.appendChild(div);
             });
         } else {
-            executorSuggestions.classList.add("hidden");
-            filters.executors = "";
+            executorSuggestions.classList.add('hidden');
+            filters.executors = '';
             applyFilters();
         }
     });
 
-    const projectInput = document.getElementById("projectFilter");
-    const projectSuggestions = document.getElementById("projectSuggestions");
-    projectInput.addEventListener("input", (e) => {
+    const projectInput = document.getElementById('projectFilter');
+    const projectSuggestions = document.getElementById('projectSuggestions');
+    projectInput.addEventListener('input', e => {
         const value = e.target.value.toLowerCase();
-        projectSuggestions.innerHTML = "";
-        clearProjectBtn.classList.toggle("hidden", !value);
+        projectSuggestions.innerHTML = '';
+        clearProjectBtn.classList.toggle('hidden', !value);
         if (value) {
-            projectSuggestions.classList.remove("hidden");
+            projectSuggestions.classList.remove('hidden');
             const matches = allProjects.filter(p => p.toLowerCase().includes(value));
             matches.forEach(match => {
-                const div = document.createElement("div");
+                const div = document.createElement('div');
                 div.textContent = match;
-                div.className = "suggestion-item";
-                div.style.cursor = "pointer";
-                div.addEventListener("click", () => {
+                div.className = 'suggestion-item';
+                div.style.cursor = 'pointer';
+                div.addEventListener('click', () => {
                     projectInput.value = match;
                     filters.project = match;
-                    projectSuggestions.classList.add("hidden");
+                    projectSuggestions.classList.add('hidden');
                     applyFilters();
                 });
                 projectSuggestions.appendChild(div);
             });
         } else {
-            projectSuggestions.classList.add("hidden");
-            filters.project = "";
+            projectSuggestions.classList.add('hidden');
+            filters.project = '';
             applyFilters();
         }
     });
 
-    document.getElementById("addGlobalExecutorBtn").addEventListener("click", () => {
+    document.getElementById('addGlobalExecutorBtn').addEventListener('click', () => {
         openGlobalExecutorModal();
     });
 
-    document.addEventListener("click", (e) => {
+    document.addEventListener('click', e => {
         if (!executorInput.contains(e.target) && !executorSuggestions.contains(e.target)) {
-            executorSuggestions.classList.add("hidden");
+            executorSuggestions.classList.add('hidden');
         }
         if (!projectInput.contains(e.target) && !projectSuggestions.contains(e.target)) {
-            projectSuggestions.classList.add("hidden");
+            projectSuggestions.classList.add('hidden');
         }
     });
 }

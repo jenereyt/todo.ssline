@@ -53,31 +53,6 @@ function showNotification(message) {
         notification.textContent = message;
         document.body.appendChild(notification);
 
-        if (!document.querySelector('#notification-styles')) {
-            const style = document.createElement('style');
-            style.id = 'notification-styles';
-            style.textContent = `
-                .notification {
-                    position: fixed;
-                    bottom: 20px;
-                    right: 20px;
-                    background-color:rgb(158, 255, 231);
-                    color: #333;
-                    padding: 10px 20px;
-                    border-radius: 5px;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                    font-size: 14px;
-                    opacity: 0;
-                    transition: opacity 0.3s ease-in-out;
-                    z-index: 1000;
-                }
-                .notification.show {
-                    opacity: 1;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
         setTimeout(() => {
             notification.classList.add('show');
         }, 100);
