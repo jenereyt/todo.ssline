@@ -1,11 +1,11 @@
 import { openGlobalExecutorModal } from './executorsModal.js';
 import { tasks, executors, getAllExecutors, filters, sortState, allProjects, openEditModal, applyFilters, paginationState } from './app.js';
 
-export function createTable(taskList) {
-    const appDiv = document.getElementById("app");
-    const existingTable = appDiv.querySelector("table");
-    const existingPagination = appDiv.querySelector(".pagination");
-    if (existingTable) existingTable.remove();
+export function createTaskCards(taskList) {
+    const appDiv = document.getElementById('app');
+    const existingContainer = appDiv.querySelector('.task-cards-container');
+    const existingPagination = appDiv.querySelector('.pagination');
+    if (existingContainer) existingContainer.remove();
     if (existingPagination) existingPagination.remove();
 
     const totalPages = Math.ceil(taskList.length / paginationState.tasksPerPage);
@@ -13,56 +13,29 @@ export function createTable(taskList) {
     const endIndex = startIndex + paginationState.tasksPerPage;
     const paginatedTasks = taskList.slice(startIndex, endIndex);
 
-    const table = document.createElement("table");
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th data-sort="id">№</th>
-                <th data-sort="dateSet">Дата постановки</th>
-                <th data-sort="project">Проект/Заказчик</th>
-                <th data-sort="theme">Тема</th>
-                <th data-sort="description">Описание</th>
-                <th data-sort="executors">Исполнители</th>
-                <th data-sort="deadline">Дедлайн</th>
-                <th data-sort="status">Статус</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    `;
+    // Создаём контейнер для карточек
+    const container = document.createElement('div');
+    container.className = 'task-cards-container';
 
-    const tbody = table.querySelector("tbody");
+    // Создаём карточки для каждой задачи
     paginatedTasks.forEach(task => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${task.id}</td>
-            <td>${task.dateSet || "Не указана"}</td>
-            <td>${task.project || "Без проекта"}</td>
-            <td>${task.theme || "Нет темы"}</td>
-            <td>${task.description || "Нет описания"}</td>
-            <td>${task.executors.length ? task.executors.join(", ") : "Не назначены"}</td>
-            <td>${task.deadline || "Не указан"}</td>
-            <td>${task.status || "Не указан"}</td>
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.innerHTML = `
+            <div class="task-field"><strong>№:</strong> ${task.id}</div>
+            <div class="task-field"><strong>Дата постановки:</strong> ${task.dateSet || 'Не указана'}</div>
+            <div class="task-field"><strong>Дедлайн:</strong> ${task.deadline || 'Не указан'}</div>
+            <div class="task-field"><strong>Проект/Заказчик:</strong> ${task.project || 'Без проекта'}</div>
+            <div class="task-field"><strong>Тема:</strong> ${task.theme || 'Нет темы'}</div>
+            <div class="task-field"><strong>Описание:</strong> ${task.description || 'Нет описания'}</div>
+            <div class="task-field"><strong>Исполнители:</strong> ${task.executors.length ? task.executors.join(', ') : 'Не назначены'}</div>
+            <div class="task-field"><strong>Статус:</strong> ${task.status || 'Не указан'}</div>
         `;
-        row.addEventListener("click", () => openEditModal(task.id)); // Исправлено: передаём task.id
-        tbody.appendChild(row);
+        card.addEventListener('click', () => openEditModal(task.id));
+        container.appendChild(card);
     });
 
-    table.querySelectorAll("th[data-sort]").forEach(th => {
-        th.addEventListener("click", () => {
-            const field = th.dataset.sort;
-            table.querySelectorAll("th").forEach(header => header.innerHTML = header.innerHTML.replace(" ↑", "").replace(" ↓", ""));
-            if (sortState.field === field) {
-                sortState.ascending = !sortState.ascending;
-            } else {
-                sortState.field = field;
-                sortState.ascending = true;
-            }
-            th.innerHTML += sortState.ascending ? " ↑" : " ↓";
-            applyFilters();
-        });
-    });
-
-    appDiv.appendChild(table);
+    appDiv.appendChild(container);
     renderPagination(taskList, totalPages);
 }
 
@@ -94,6 +67,22 @@ export function createInterface() {
                     </div>
                     <div class="suggestions hidden" id="projectSuggestions"></div>
                 </div>
+                <div class="filter-group">
+                    <label>Сортировать по:</label>
+                    <div class="sort-controls">
+                        <select id="sortField">
+                            <option value="" ${!sortState.field ? 'selected' : ''}>Без сортировки</option>
+                            <option value="dateSet" ${sortState.field === 'dateSet' ? 'selected' : ''}>Дата постановки</option>
+                            <option value="project" ${sortState.field === 'project' ? 'selected' : ''}>Проект/Заказчик</option>
+                            <option value="deadline" ${sortState.field === 'deadline' ? 'selected' : ''}>Дедлайн</option>
+                            <option value="theme" ${sortState.field === 'theme' ? 'selected' : ''}>Тема</option>
+                            <option value="description" ${sortState.field === 'description' ? 'selected' : ''}>Описание</option>
+                            <option value="executors" ${sortState.field === 'executors' ? 'selected' : ''}>Исполнители</option>
+                            <option value="status" ${sortState.field === 'status' ? 'selected' : ''}>Статус</option>
+                        </select>
+                        <button id="toggleSortDirection">${sortState.ascending ? '↑' : '↓'}</button>
+                    </div>
+                </div>
                 <button id="resetFiltersBtn"><img src="./image/trash.svg" alt="Сбросить"></button>
             </div>
             <div class="search-container">
@@ -103,7 +92,7 @@ export function createInterface() {
             <button id="addGlobalExecutorBtn">Управление исполнителями</button>
         </div>
     `;
-    createTable(tasks);
+    createTaskCards(tasks);
 
     const dateFrom = document.getElementById('dateFrom');
     const dateTo = document.getElementById('dateTo');
@@ -113,6 +102,27 @@ export function createInterface() {
     filters.dateTo = '';
     applyFilters();
 
+    // Обработчики сортировки
+    const sortFieldSelect = document.getElementById('sortField');
+    const toggleSortDirection = document.getElementById('toggleSortDirection');
+
+    if (sortFieldSelect) {
+        sortFieldSelect.addEventListener('change', () => {
+            const field = sortFieldSelect.value || null;
+            sortState.field = field;
+            applyFilters();
+        });
+    }
+
+    if (toggleSortDirection) {
+        toggleSortDirection.addEventListener('click', () => {
+            sortState.ascending = !sortState.ascending;
+            toggleSortDirection.textContent = sortState.ascending ? '↑' : '↓';
+            applyFilters();
+        });
+    }
+
+    // Обработчики фильтров
     [dateFrom, dateTo].forEach(input => {
         input.addEventListener('change', () => {
             filters.dateFrom = dateFrom.value;
@@ -121,7 +131,6 @@ export function createInterface() {
         });
     });
 
-    // Остальной код остаётся без изменений
     const clearExecutorBtn = document.getElementById('clearExecutor');
     clearExecutorBtn.addEventListener('click', () => {
         document.getElementById('executorFilter').value = '';
@@ -149,6 +158,8 @@ export function createInterface() {
         clearProjectBtn.classList.add('hidden');
         sortState.field = null;
         sortState.ascending = true;
+        sortFieldSelect.value = '';
+        toggleSortDirection.textContent = '↑';
         paginationState.currentPage = 1;
         applyFilters();
     });
@@ -159,6 +170,7 @@ export function createInterface() {
             task =>
                 task.id.toString().includes(searchTerm) ||
                 (task.dateSet || '').toLowerCase().includes(searchTerm) ||
+                (task.deadline || '').toLowerCase().includes(searchTerm) ||
                 (task.project || '').toLowerCase().includes(searchTerm) ||
                 (task.theme || '').toLowerCase().includes(searchTerm) ||
                 (task.description || '').toLowerCase().includes(searchTerm) ||
@@ -166,7 +178,7 @@ export function createInterface() {
                 (task.status || '').toLowerCase().includes(searchTerm)
         );
         paginationState.currentPage = 1;
-        createTable(filteredTasks);
+        createTaskCards(filteredTasks);
     });
 
     document.getElementById('searchInput').addEventListener('keypress', e => {
@@ -245,44 +257,44 @@ export function createInterface() {
         }
     });
 }
-//l
-export function renderPagination(taskList, totalPages) {
-    const paginationDiv = document.createElement("div");
-    paginationDiv.className = "pagination";
 
-    const prevBtn = document.createElement("button");
-    prevBtn.textContent = "Назад";
+export function renderPagination(taskList, totalPages) {
+    const paginationDiv = document.createElement('div');
+    paginationDiv.className = 'pagination';
+
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Назад';
     prevBtn.disabled = paginationState.currentPage === 1;
-    prevBtn.addEventListener("click", () => {
+    prevBtn.addEventListener('click', () => {
         if (paginationState.currentPage > 1) {
             paginationState.currentPage--;
-            createTable(taskList);
+            createTaskCards(taskList);
         }
     });
     paginationDiv.appendChild(prevBtn);
 
     for (let i = 1; i <= totalPages; i++) {
-        const pageBtn = document.createElement("button");
+        const pageBtn = document.createElement('button');
         pageBtn.textContent = i;
-        pageBtn.classList.toggle("active", i === paginationState.currentPage);
-        pageBtn.addEventListener("click", () => {
+        pageBtn.classList.toggle('active', i === paginationState.currentPage);
+        pageBtn.addEventListener('click', () => {
             paginationState.currentPage = i;
-            createTable(taskList);
+            createTaskCards(taskList);
         });
         paginationDiv.appendChild(pageBtn);
     }
 
-    const nextBtn = document.createElement("button");
-    nextBtn.textContent = "Вперед";
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Вперед';
     nextBtn.disabled = paginationState.currentPage === totalPages;
-    nextBtn.addEventListener("click", () => {
+    nextBtn.addEventListener('click', () => {
         if (paginationState.currentPage < totalPages) {
             paginationState.currentPage++;
-            createTable(taskList);
+            createTaskCards(taskList);
         }
     });
     paginationDiv.appendChild(nextBtn);
 
-    const appDiv = document.getElementById("app");
+    const appDiv = document.getElementById('app');
     appDiv.appendChild(paginationDiv);
 }

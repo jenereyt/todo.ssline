@@ -1,4 +1,4 @@
-import { createTable, createInterface } from './interface.js';
+import { createTaskCards, createInterface } from './interface.js';
 import { fetchExecutors } from './executors.js';
 import { fetchExecutorsOnTasks, assignExecutorToTask, removeExecutorFromTask } from './executorsOnTask.js';
 import { createHistory, fetchHistory } from './history.js';
@@ -14,7 +14,7 @@ export const paginationState = {
 };
 
 let historyCache = [];
-// working
+
 function formatDate(isoDate) {
     if (!isoDate) return '';
     return new Date(isoDate).toISOString().split('T')[0];
@@ -255,7 +255,7 @@ export function applyFilters() {
 
         sortTasks(filteredTasks);
         console.log('Обновление таблицы с задачами:', filteredTasks);
-        createTable(filteredTasks);
+        createTaskCards(filteredTasks);
     } catch (error) {
         console.error('Ошибка в applyFilters:', error);
     }
@@ -452,6 +452,7 @@ export function openEditModal(taskId) {
                             user: "Текущий пользователь"
                         });
                         updateHistoryList();
+                        showNotification(`Срок выполнения обновлён`);
                     }
                 });
             } else {
@@ -471,6 +472,7 @@ export function openEditModal(taskId) {
                                 user: "Текущий пользователь"
                             });
                             updateHistoryList();
+                            showNotification(`${field === "theme" ? "Тема" : "Описание"} обновлено`);
                         }
                     }
                 });
@@ -489,6 +491,7 @@ export function openEditModal(taskId) {
                             user: "Текущий пользователь"
                         });
                         updateHistoryList();
+                        showNotification(`${field === "theme" ? "Тема" : "Описание"} обновлено`);
                     }
                 });
             }
@@ -550,6 +553,7 @@ export function openEditModal(taskId) {
                             });
                             updateHistoryList();
                             updateExecutorList();
+                            showNotification(`Исполнитель "${executorName}" добавлен`);
                         }
                     });
 
@@ -573,6 +577,7 @@ export function openEditModal(taskId) {
                     });
                     updateHistoryList();
                     updateExecutorList();
+                    showNotification(`Исполнитель "${executorName}" удалён`);
                 });
             });
 
@@ -606,6 +611,7 @@ export function openEditModal(taskId) {
                             });
                             updateHistoryList();
                             updateExecutorList();
+                            showNotification(`Исполнитель изменён на "${newExecutorName}"`);
                         }
                     });
 
@@ -616,6 +622,7 @@ export function openEditModal(taskId) {
             });
         } catch (error) {
             console.error('Ошибка в updateExecutorList:', error);
+            showNotification('Ошибка при обновлении списка исполнителей');
         }
     }
 
@@ -635,6 +642,7 @@ export function openEditModal(taskId) {
             `).join("") : "Нет истории изменений";
         } catch (error) {
             console.error('Ошибка в updateHistoryList:', error);
+            showNotification('Ошибка при обновлении истории');
         }
     }
 
@@ -656,11 +664,15 @@ export function openEditModal(taskId) {
                 });
                 updateHistoryList();
                 newCommentTextarea.value = "";
+                showNotification('Комментарий добавлен');
             }
         });
     }
 
     const closeModal = () => {
+        if (pendingHistory.length || JSON.stringify(tempTask) !== JSON.stringify(task)) {
+            showNotification('Изменения сохранены локально');
+        }
         modal.remove();
     };
 
@@ -683,6 +695,7 @@ export function openEditModal(taskId) {
                         user: "Текущий пользователь"
                     });
                     tempTask.status = newStatus;
+                    showNotification(`Статус изменён на "${newStatus}"`);
                 }
 
                 await updateTask(tempTask);

@@ -34,7 +34,7 @@ export async function createExecutor(name) {
         });
         if (!response.ok) {
             if (response.status === 409) {
-                throw new Error('Исполнитель с таким именем уже существует');
+                // throw new Error('Исполнитель с таким именем уже существует');
             }
             throw new Error(`Ошибка HTTP: ${response.status}`);
         }
@@ -58,7 +58,7 @@ export async function updateExecutor(id, name) {
         });
         if (!response.ok) {
             if (response.status === 409) {
-                throw new Error('Исполнитель с таким именем уже существует');
+                // throw new Error('Исполнитель с таким именем уже существует');
             }
             if (response.status === 404) {
                 throw new Error('Исполнитель не найден');

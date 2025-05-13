@@ -98,7 +98,7 @@ export function openGlobalExecutorModal() {
                             // Проверяем, нет ли уже такого имени
                             const existingExecutor = executors.find(ex => ex.name.toLowerCase() === newName.toLowerCase());
                             if (existingExecutor) {
-                                alert('Исполнитель с таким именем уже существует');
+                                // alert('Исполнитель с таким именем уже существует');
                                 await refreshExecutorsList();
                                 return;
                             }
