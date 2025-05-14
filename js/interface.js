@@ -13,23 +13,39 @@ export function createTaskCards(taskList) {
     const endIndex = startIndex + paginationState.tasksPerPage;
     const paginatedTasks = taskList.slice(startIndex, endIndex);
 
-    // Создаём контейнер для карточек
     const container = document.createElement('div');
     container.className = 'task-cards-container';
 
-    // Создаём карточки для каждой задачи
     paginatedTasks.forEach(task => {
         const card = document.createElement('div');
         card.className = 'task-card';
+        let deadlineClass = '';
+        if (task.deadline) {
+            const daysLeft = Math.ceil((new Date(task.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+            if (daysLeft <= 2) deadlineClass = 'deadline-red';
+            else if (daysLeft <= 7) deadlineClass = 'deadline-yellow';
+        }
+        const subtaskCounts = { yellow: 0, red: 0 };
+        if (task.subtasks && task.subtasks.length) {
+            task.subtasks.forEach(sub => {
+                if (sub.subDeadline) {
+                    const daysLeft = Math.ceil((new Date(sub.subDeadline) - new Date()) / (1000 * 60 * 60 * 24));
+                    if (daysLeft <= 2) subtaskCounts.red++;
+                    else if (daysLeft <= 7) subtaskCounts.yellow++;
+                }
+            });
+        }
         card.innerHTML = `
             <div class="task-field"><strong>№:</strong> ${task.id}</div>
-            <div class="task-field"><strong>Дата постановки:</strong> ${task.dateSet || 'Не указана'}</div>
-            <div class="task-field"><strong>Дедлайн:</strong> ${task.deadline || 'Не указан'}</div>
             <div class="task-field"><strong>Проект/Заказчик:</strong> ${task.project || 'Без проекта'}</div>
             <div class="task-field"><strong>Тема:</strong> ${task.theme || 'Нет темы'}</div>
             <div class="task-field"><strong>Описание:</strong> ${task.description || 'Нет описания'}</div>
+            <div class="task-field"><strong>Дата постановки:</strong> ${task.dateSet || 'Не указана'}</div>
+            <div class="task-field"><strong>Дедлайн:</strong> <span class="${deadlineClass}">${task.deadline || 'Не указан'}</span></div>
             <div class="task-field"><strong>Исполнители:</strong> ${task.executors.length ? task.executors.join(', ') : 'Не назначены'}</div>
             <div class="task-field"><strong>Статус:</strong> ${task.status || 'Не указан'}</div>
+            ${subtaskCounts.yellow ? `<span class="subtask-circle yellow">${subtaskCounts.yellow}</span>` : ''}
+            ${subtaskCounts.red ? `<span class="subtask-circle red">${subtaskCounts.red}</span>` : ''}
         `;
         card.addEventListener('click', () => openEditModal(task.id));
         container.appendChild(card);
@@ -38,7 +54,6 @@ export function createTaskCards(taskList) {
     appDiv.appendChild(container);
     renderPagination(taskList, totalPages);
 }
-
 export function createInterface() {
     const appDiv = document.getElementById('app');
     appDiv.innerHTML = `
@@ -89,7 +104,7 @@ export function createInterface() {
                 <input type="text" id="searchInput" placeholder="Поиск по задачам...">
                 <button id="searchBtn"><img src="./image/search.svg" alt="Поиск" width="16" height="16"></button>
             </div>
-            <button id="addGlobalExecutorBtn">Управление исполнителями</button>
+            <button id="addGlobalExecutorBtn">Исполнители</button>
         </div>
     `;
     createTaskCards(tasks);

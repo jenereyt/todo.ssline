@@ -10,7 +10,7 @@ export function openGlobalExecutorModal() {
     modal.innerHTML = `
         <div class="modal-contente">
             <div class="modale-header">
-                <h2>Управление исполнителями</h2>
+                <h2>Исполнители</h2>
                 <button class="close-modal-btn" id="closeModalBtn">×</button>
             </div>
             <div class="add-executor-section">
