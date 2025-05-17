@@ -46,15 +46,16 @@ button {
     margin-bottom: 10px;
 }
 
+#sortField {
+    height: 42px;
+}
 
 .history-executor {
     background: #e6e6ff;
-    /* Фиолетовый для исполнителей */
 }
 
 .history-theme {
     background: #fff5e6;
-    /* Жёлтый для темы */
 }
 
 .history-description {

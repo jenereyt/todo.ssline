@@ -8,10 +8,6 @@ export let executors = [];
 export let filters = {};
 export let sortState = { field: null, ascending: true };
 export let allProjects = [];
-export const paginationState = {
-    currentPage: 1,
-    tasksPerPage: 20
-};
 
 let historyCache = [];
 
@@ -94,7 +90,7 @@ async function fetchTasks() {
             executors: [],
             files: [],
             history: [],
-            subtasks: [] // Добавляем подзадачи
+            subtasks: []
         }));
         await syncExecutorsOnTasks();
         await syncFiles();
@@ -310,12 +306,11 @@ export function openEditModal(taskId) {
     tempTask.executors = tempTask.executors || [];
     tempTask.history = tempTask.history || [];
     tempTask.deadline = tempTask.deadline || "";
-    tempTask.subtasks = tempTask.subtasks || []; // Инициализация подзадач
+    tempTask.subtasks = tempTask.subtasks || [];
     const pendingHistory = [];
 
     const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
 
-    // HTML модалки
     modal.innerHTML = `
         <div class="modal-content trello-modal-content">
             <div class="modal-header">
@@ -427,7 +422,6 @@ export function openEditModal(taskId) {
 
     document.body.appendChild(modal);
 
-    // Классификация истории изменений
     function getHistoryClass(change) {
         if (change.includes('комментарий')) return 'history-comment';
         if (change.includes('статус')) return 'history-status';
@@ -441,7 +435,6 @@ export function openEditModal(taskId) {
         return 'history-other';
     }
 
-    // Переключение вкладок
     modal.querySelectorAll(".tab-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -525,7 +518,6 @@ export function openEditModal(taskId) {
         }
     });
 
-    // Обновление списка подзадач
     function updateSubtaskList() {
         const subtaskList = modal.querySelector("#subtaskList");
         subtaskList.innerHTML = tempTask.subtasks.length ? tempTask.subtasks.map((sub, index) => `
@@ -606,7 +598,6 @@ export function openEditModal(taskId) {
         });
     }
 
-    // Обновление списка исполнителей
     async function updateExecutorList() {
         try {
             const executorList = modal.querySelector("#executorList");
@@ -735,7 +726,6 @@ export function openEditModal(taskId) {
         }
     }
 
-    // Обновление истории
     async function updateHistoryList() {
         try {
             const historyList = modal.querySelector("#historyList");
@@ -756,11 +746,9 @@ export function openEditModal(taskId) {
         }
     }
 
-    // Инициализация подзадач и исполнителей
     updateExecutorList();
     updateSubtaskList();
 
-    // Добавление подзадачи
     modal.querySelector('#addSubtaskBtn').addEventListener('click', () => {
         tempTask.subtasks.push({ theme: '', subDateSet: '', subDeadline: '' });
         pendingHistory.push({
@@ -774,7 +762,6 @@ export function openEditModal(taskId) {
         showNotification('Подзадача добавлена');
     });
 
-    // Добавление комментария
     const addCommentBtn = modal.querySelector("#addComment");
     const newCommentTextarea = modal.querySelector("#newComment");
     if (addCommentBtn) {
@@ -795,7 +782,6 @@ export function openEditModal(taskId) {
         });
     }
 
-    // Закрытие модалки
     const closeModal = () => {
         if (pendingHistory.length || JSON.stringify(tempTask) !== JSON.stringify(task)) {
             showNotification('Изменения сохранены локально');
@@ -806,7 +792,6 @@ export function openEditModal(taskId) {
     modal.querySelector("#closeModalBtn").addEventListener("click", closeModal);
     modal.querySelector("#closeBtn").addEventListener("click", closeModal);
 
-    // Сохранение изменений
     modal.querySelector("#saveBtn").addEventListener("click", (e) => {
         e.stopPropagation();
         showLoading(modal.querySelector("#saveBtn"), true);
@@ -826,22 +811,18 @@ export function openEditModal(taskId) {
                     showNotification(`Статус изменён на "${newStatus}"`);
                 }
 
-                // Сохранение подзадач
                 tempTask.subtasks = Array.from(modal.querySelectorAll('.subtask-item')).map(item => ({
                     theme: item.querySelector('.subtask-theme').value.trim(),
                     subDateSet: item.querySelector('.subtask-dateSet').value,
                     subDeadline: item.querySelector('.subtask-deadline').value
                 }));
 
-                // Обновление задачи через API
                 await updateTask(tempTask);
 
-                // Сохранение истории
                 await Promise.all(pendingHistory.map(entry =>
                     createHistory(tempTask.id, entry.change, entry.user)
                 ));
 
-                // Обновление исполнителей
                 const originalExecutors = task.executors || [];
                 const addedExecutors = tempTask.executors.filter(ex => !originalExecutors.includes(ex));
                 const removedExecutors = originalExecutors.filter(ex => !tempTask.executors.includes(ex));
@@ -875,13 +856,11 @@ export function openEditModal(taskId) {
                     })
                 ]);
 
-                // Обновление локального массива задач с подзадачами
                 const taskIndex = tasks.findIndex(t => t.id === tempTask.id);
                 if (taskIndex !== -1) {
                     tasks[taskIndex] = { ...tempTask };
                 }
 
-                // Перезагрузка данных
                 executors.length = 0;
                 historyCache = [];
                 executors = await fetchExecutors();
@@ -902,7 +881,6 @@ export function openEditModal(taskId) {
         }, 0);
     });
 
-    // Закрытие модалки по клику вне контента
     modal.addEventListener("click", (e) => {
         if (!modal.querySelector(".modal-content").contains(e.target)) {
             closeModal();

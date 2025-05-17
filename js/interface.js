@@ -1,22 +1,15 @@
 import { openGlobalExecutorModal } from './executorsModal.js';
-import { tasks, executors, getAllExecutors, filters, sortState, allProjects, openEditModal, applyFilters, paginationState } from './app.js';
+import { tasks, executors, getAllExecutors, filters, sortState, allProjects, openEditModal, applyFilters } from './app.js';
 
 export function createTaskCards(taskList) {
     const appDiv = document.getElementById('app');
     const existingContainer = appDiv.querySelector('.task-cards-container');
-    const existingPagination = appDiv.querySelector('.pagination');
     if (existingContainer) existingContainer.remove();
-    if (existingPagination) existingPagination.remove();
-
-    const totalPages = Math.ceil(taskList.length / paginationState.tasksPerPage);
-    const startIndex = (paginationState.currentPage - 1) * paginationState.tasksPerPage;
-    const endIndex = startIndex + paginationState.tasksPerPage;
-    const paginatedTasks = taskList.slice(startIndex, endIndex);
 
     const container = document.createElement('div');
     container.className = 'task-cards-container';
 
-    paginatedTasks.forEach(task => {
+    taskList.forEach(task => {
         const card = document.createElement('div');
         card.className = 'task-card';
         let deadlineClass = '';
@@ -52,8 +45,8 @@ export function createTaskCards(taskList) {
     });
 
     appDiv.appendChild(container);
-    renderPagination(taskList, totalPages);
 }
+
 export function createInterface() {
     const appDiv = document.getElementById('app');
     appDiv.innerHTML = `
@@ -175,7 +168,6 @@ export function createInterface() {
         sortState.ascending = true;
         sortFieldSelect.value = '';
         toggleSortDirection.textContent = '↑';
-        paginationState.currentPage = 1;
         applyFilters();
     });
 
@@ -192,7 +184,6 @@ export function createInterface() {
                 task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
                 (task.status || '').toLowerCase().includes(searchTerm)
         );
-        paginationState.currentPage = 1;
         createTaskCards(filteredTasks);
     });
 
@@ -271,45 +262,4 @@ export function createInterface() {
             projectSuggestions.classList.add('hidden');
         }
     });
-}
-
-export function renderPagination(taskList, totalPages) {
-    const paginationDiv = document.createElement('div');
-    paginationDiv.className = 'pagination';
-
-    const prevBtn = document.createElement('button');
-    prevBtn.textContent = 'Назад';
-    prevBtn.disabled = paginationState.currentPage === 1;
-    prevBtn.addEventListener('click', () => {
-        if (paginationState.currentPage > 1) {
-            paginationState.currentPage--;
-            createTaskCards(taskList);
-        }
-    });
-    paginationDiv.appendChild(prevBtn);
-
-    for (let i = 1; i <= totalPages; i++) {
-        const pageBtn = document.createElement('button');
-        pageBtn.textContent = i;
-        pageBtn.classList.toggle('active', i === paginationState.currentPage);
-        pageBtn.addEventListener('click', () => {
-            paginationState.currentPage = i;
-            createTaskCards(taskList);
-        });
-        paginationDiv.appendChild(pageBtn);
-    }
-
-    const nextBtn = document.createElement('button');
-    nextBtn.textContent = 'Вперед';
-    nextBtn.disabled = paginationState.currentPage === totalPages;
-    nextBtn.addEventListener('click', () => {
-        if (paginationState.currentPage < totalPages) {
-            paginationState.currentPage++;
-            createTaskCards(taskList);
-        }
-    });
-    paginationDiv.appendChild(nextBtn);
-
-    const appDiv = document.getElementById('app');
-    appDiv.appendChild(paginationDiv);
 }
