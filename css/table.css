@@ -1,160 +1,32 @@
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background-color: #fff;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    border-radius: 12px;
-    overflow: hidden;
-    display: table;
-    height: calc(100vh - 150px);
-}
-
-thead {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: linear-gradient(135deg, #4a90e2, #357abd);
-}
-
-th {
-    color: white;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    padding: 12px 15px;
-    text-align: left;
-    vertical-align: middle;
-    white-space: nowrap;
-}
-
-th:nth-child(1), td:nth-child(1) {
-    min-width: 40px;
-}
-
-/* № */
-th:nth-child(2), td:nth-child(2) {
-    min-width: 100px;
-}
-
-/* Дата постановки */
-th:nth-child(3), td:nth-child(3) {
-    min-width: 120px;
-}
-
-/* Проект/Заказчик */
-th:nth-child(4), td:nth-child(4) {
-    min-width: 120px;
-}
-
-/* Тема */
-th:nth-child(5), td:nth-child(5) {
-    min-width: 150px;
-}
-
-/* Описание */
-th:nth-child(6), td:nth-child(6) {
-    min-width: 120px;
-}
-
-/* Исполнители */
-th:nth-child(7), td:nth-child(7) {
-    min-width: 100px;
-}
-
-/* Дедлайн */
-th:nth-child(8), td:nth-child(8) {
-    min-width: 100px;
-}
-
-tbody {
-    display: block;
-    overflow-y: auto;
-    max-height: calc(100vh - 194px);
-    width: 100%;
-    overflow-x: hidden;
-}
-
-tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-}
-
-td {
-    background-color: #fff;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #e6eaee;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    vertical-align: top;
-}
-
-tr:hover td {
-    background-color: #dfe1e3;
-    cursor: pointer;
-}
-
-.editable:hover {
-    background-color: #e9f1ff;
-    cursor: pointer;
-    color: #4a90e2;
-}
-
-.selected {
-    background-color: #e6f3ff;
-    border: 2px solid #4d94ff;
-    color: #333;
-}
-
-td.clicked {
-    background-color: #cce5ff;
-    font-weight: 600;
-}
-
-th[data-sort] {
-    cursor: pointer;
-}
-
-th[data-sort]::after {
-    content: "";
-    display: inline-block;
-    margin-left: 5px;
-    width: 0;
-    height: 0;
-    vertical-align: middle;
-}
-
-th[data-sort] span {
-    font-size: 10px;
-    margin-left: 5px;
-}
-
 .pagination {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
-    gap: 6px;
     justify-content: center;
-    margin-top: 15px;
+    gap: 2px; /* Уменьшили gap */
+    padding: 10px 0px;
+    background-color: #f8fafc;
+    border-top: 1px solid #e6eaee;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    z-index: 1;
 }
 
 .pagination button {
-    padding: 6px 10px;
+    padding: 4px 8px; /* Уменьшили padding */
     border: 1px solid #d8dde3;
-    border-radius: 6px;
-    background-color: #fff;
-    color: #333;
+    border-radius: 4px; /* Уменьшили радиус */
+    background: linear-gradient(135deg, #4a90e2, #357abd);
+    color: white;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 13px;
+    font-size: 11px; /* Уменьшили шрифт */
 }
 
 .pagination button:hover {
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, #357abd, #2a6097);
     transform: translateY(-1px);
 }
 
@@ -165,55 +37,81 @@ th[data-sort] span {
 }
 
 .pagination button.active {
-    background: linear-gradient(135deg, #4a90e2, #357abd);
+    background: linear-gradient(135deg, #357abd, #2a6097);
     color: white;
     border: none;
 }
 
 @media (max-width: 768px) {
+    .table-wrapper {
+        max-height: 250px; /* Уменьшили для мобильных */
+        overflow-x: auto;
+    }
+
     table {
         display: block;
         overflow-x: auto;
     }
 
     th, td {
-        font-size: 12px;
-        padding: 8px 10px;
+        font-size: 11px; /* Уменьшили шрифт */
+        padding: 6px 8px; /* Уменьшили padding */
     }
 
     tbody {
-        max-height: calc(60vh - 44px);
+        max-height: 180px; /* Уменьшили max-height */
+    }
+
+    .pagination {
+        flex-direction: column;
+        align-items: center;
+        gap: 1px; /* Уменьшили gap */
+    }
+
+    .pagination button {
+        width: 100%;
+        text-align: center;
+        padding: 3px 6px; /* Уменьшили padding */
+        font-size: 10px; /* Уменьшили шрифт */
     }
 }
 
 @media screen and (max-width: 1150px) {
     .filter-group input[type="text"] {
-        width: 145px !important;
+        width: 120px !important; /* Уменьшили ширину */
     }
 
     .clear-btn {
-        right: 40px !important;
+        right: 30px !important; /* Уменьшили отступ */
     }
 }
 
-
+.task-section {
+    position: relative;
+    width: 100%;
+    min-height: 150px; /* Заменили фиксированную высоту на минимальную */
+    overflow: hidden;
+    border-radius: 12px;
+}
 
 .task-cards-container {
+    max-width: 1950px;
     display: flex;
     flex-wrap: wrap;
-    max-height: 70vh;
+    height: 75vh;
     overflow-y: auto;
-    gap: 20px;
-    padding: 20px;
-    justify-content: center;
+    gap: 15px; 
+    padding: 15px; 
 }
 
 .task-card {
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 15px;
-    width: 300px;
+    padding: 12px; 
+    width: 280px; 
+    min-height: 200px;
+    max-height: 250px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -225,8 +123,8 @@ th[data-sort] span {
 }
 
 .task-field {
-    margin-bottom: 10px;
-    font-size: 14px;
+    margin-bottom: 8px; /* Уменьшили margin */
+    font-size: 13px; /* Уменьшили шрифт */
 }
 
 .task-field strong {
@@ -236,11 +134,11 @@ th[data-sort] span {
 .sort-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px; /* Уменьшили gap */
 }
 
 .sort-option {
-    padding: 5px 10px;
+    padding: 4px 8px; /* Уменьшили padding */
     border: none;
     background: #f0f0f0;
     color: #333;
@@ -260,18 +158,18 @@ th[data-sort] span {
 
 .sort-controls {
     display: flex;
-    gap: 10px;
+    gap: 8px; /* Уменьшили gap */
     align-items: center;
 }
 
 .sort-controls select {
-    padding: 5px;
+    padding: 4px; /* Уменьшили padding */
     border-radius: 4px;
     border: 1px solid #ddd;
 }
 
 .sort-controls button {
-    padding: 5px 10px;
+    padding: 4px 8px; /* Уменьшили padding */
     border: none;
     background: #007bff;
     color: #fff;
@@ -283,45 +181,16 @@ th[data-sort] span {
     background: #0056b3;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.pagination button {
-    padding: 8px 12px;
-    border: none;
-    background: #007bff;
-    color: #fff;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.pagination button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
-.pagination button.active {
-    background: #0056b3;
-}
-
-#sortField {
-    height: 40px;
-}
-
 .subtask-item {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 8px; /* Уменьшили gap */
+    margin-bottom: 8px; /* Уменьшили margin */
     align-items: center;
 }
 
 .subtask-item input {
     flex: 1;
-    padding: 5px;
+    padding: 4px; /* Уменьшили padding */
     border: 1px solid #ddd;
     border-radius: 4px;
 }
@@ -332,12 +201,12 @@ th[data-sort] span {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    padding: 2px 8px;
+    padding: 2px 6px; /* Уменьшили padding */
 }
 
 #addSubtaskBtn {
-    margin-top: 10px;
-    padding: 5px 10px;
+    margin-top: 8px; /* Уменьшили margin */
+    padding: 4px 8px; /* Уменьшили padding */
     border: none;
     background: #007bff;
     color: white;
@@ -353,30 +222,6 @@ th[data-sort] span {
 .deadline-red {
     color: #dc3545;
     font-weight: bold;
-}
-
-.subtask-circle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.subtask-circle.yellow {
-    background: #ffc107;
-}
-
-.subtask-circle.red {
-    background: #dc3545;
-    right: 35px;
 }
 
 .history-dateSet {
