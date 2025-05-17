@@ -100,9 +100,12 @@ async function fetchTasks(startDate, endDate) {
             history: [],
             subtasks: []
         }));
-        await syncExecutorsOnTasks();
-        await syncFiles();
-        await syncHistory();
+        await Promise.all([
+            syncExecutorsOnTasks(),
+            syncFiles(),
+            syncSubtasks(),
+            syncHistory()
+        ]);
         updateDerivedData();
         console.log('Обновлённый массив tasks:', tasks);
         return tasks;
@@ -158,15 +161,166 @@ async function syncFiles() {
     });
 }
 
+async function fetchSubtasks() {
+    const url = 'https://servtodo.ssline.uz/subtasks';
+    console.log('Запрос подзадач:', url);
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log('Полученные подзадачи:', data);
+        return data.map(subtask => ({
+            id: subtask.id,
+            taskId: subtask.taskId,
+            theme: subtask.description || '', // Map 'description' to 'theme'
+            subDateSet: formatDate(subtask.dateSet),
+            subDeadline: formatDate(subtask.deadline)
+        }));
+    } catch (error) {
+        console.error('Ошибка при загрузке подзадач:', error);
+        showNotification('Не удалось загрузить подзадачи');
+        return [];
+    }
+}
+
+async function syncSubtasks() {
+    const subtasks = await fetchSubtasks();
+    const subtaskMap = new Map();
+    subtasks.forEach(subtask => {
+        if (!subtaskMap.has(subtask.taskId)) {
+            subtaskMap.set(subtask.taskId, []);
+        }
+        subtaskMap.get(subtask.taskId).push({
+            id: subtask.id,
+            theme: subtask.theme,
+            subDateSet: subtask.subDateSet,
+            subDeadline: subtask.subDeadline
+        });
+    });
+    tasks.forEach(task => {
+        task.subtasks = subtaskMap.get(task.id) || [];
+    });
+    console.log('Подзадачи синхронизированы:', tasks.map(t => ({ id: t.id, subtasks: t.subtasks })));
+}
+
+async function createSubtask(taskId, subtaskData) {
+    const url = 'https://servtodo.ssline.uz/subtasks';
+    const body = {
+        taskId,
+        description: subtaskData.theme || 'Новая подзадача', // Use 'description' and default value
+        dateSet: toISODate(subtaskData.subDateSet) || new Date().toISOString(),
+        deadline: toISODate(subtaskData.subDeadline) || null
+    };
+    console.log('Создание подзадачи:', url, 'Тело:', body);
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Создана подзадача:', data);
+        return {
+            id: data.id,
+            taskId: data.taskId,
+            theme: data.description || '', // Map back to 'theme' for UI
+            subDateSet: formatDate(data.dateSet),
+            subDeadline: formatDate(data.deadline)
+        };
+    } catch (error) {
+        console.error('Ошибка при создании подзадачи:', error);
+        showNotification(`Не удалось создать подзадачу: ${error.message}`);
+        throw error;
+    }
+}
+
+async function updateSubtask(subtaskId, subtaskData) {
+    const url = `https://servtodo.ssline.uz/subtasks/${subtaskId}`;
+    const body = {
+        description: subtaskData.theme || '', // Use 'description'
+        dateSet: toISODate(subtaskData.subDateSet) || null,
+        deadline: toISODate(subtaskData.subDeadline) || null
+    };
+    console.log('Обновление подзадачи:', url, 'Тело:', body);
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        if (!response.ok) {
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log('Обновлена подзадача:', data);
+        return {
+            id: data.id,
+            taskId: data.taskId,
+            theme: data.description || '', // Map back to 'theme'
+            subDateSet: formatDate(data.dateSet),
+            subDeadline: formatDate(data.deadline)
+        };
+    } catch (error) {
+        console.error('Ошибка при обновлении подзадачи:', error);
+        showNotification(`Не удалось обновить подзадачу: ${error.message}`);
+        throw error;
+    }
+}
+
+async function deleteSubtask(subtaskId) {
+    const url = `https://servtodo.ssline.uz/subtasks/${subtaskId}`;
+    console.log('Удаление подзадачи:', url);
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+        }
+        console.log('Подзадача удалена:', subtaskId);
+    } catch (error) {
+        console.error('Ошибка при удалении подзадачи:', error);
+        showNotification(`Не удалось удалить подзадачу: ${error.message}`);
+        throw error;
+    }
+}
+
 async function syncExecutorsOnTasks() {
     try {
         const relations = await fetchExecutorsOnTasks();
+        console.log('Полученные связи исполнителей:', relations);
+        if (!relations || !Array.isArray(relations)) {
+            console.warn('Отношения исполнителей пусты или некорректны:', relations);
+            return;
+        }
         const executorMap = new Map();
         relations.forEach(rel => {
-            if (!executorMap.has(rel.taskId)) {
-                executorMap.set(rel.taskId, []);
+            if (rel.taskId && rel.executor && rel.executor.name) {
+                if (!executorMap.has(rel.taskId)) {
+                    executorMap.set(rel.taskId, []);
+                }
+                executorMap.get(rel.taskId).push(rel.executor.name);
+            } else {
+                console.warn('Некорректная запись отношения:', rel);
             }
-            executorMap.get(rel.taskId).push(rel.executor.name);
         });
         tasks.forEach(task => {
             task.executors = executorMap.get(task.id) || [];
@@ -174,12 +328,14 @@ async function syncExecutorsOnTasks() {
         console.log('Исполнители синхронизированы:', tasks.map(t => ({ id: t.id, executors: t.executors })));
     } catch (error) {
         console.error('Ошибка синхронизации исполнителей:', error);
+        showNotification('Не удалось синхронизировать исполнителей');
     }
 }
 
 async function syncHistory() {
     try {
         historyCache = await fetchHistory();
+        console.log('Полученная история:', historyCache);
         const historyMap = new Map();
         historyCache.forEach(record => {
             if (!historyMap.has(record.taskId)) {
@@ -199,6 +355,7 @@ async function syncHistory() {
         });
     } catch (error) {
         console.error('Ошибка синхронизации истории:', error);
+        showNotification('Не удалось синхронизировать историю');
     }
 }
 
@@ -229,6 +386,7 @@ async function updateTask(task) {
         return updatedTask;
     } catch (error) {
         console.error('Ошибка при обновлении задачи:', error);
+        showNotification(`Не удалось обновить задачу: ${error.message}`);
         throw error;
     }
 }
@@ -239,6 +397,9 @@ function updateDerivedData() {
 
 export function getAllExecutors() {
     console.log('Доступные исполнители:', executors);
+    if (!executors.length) {
+        console.warn('Список исполнителей пуст');
+    }
     return executors.map(ex => ex.name).sort();
 }
 
@@ -256,7 +417,6 @@ export function applyFilters() {
             return;
         }
 
-        // Fetch tasks with date range
         fetchTasks(dateFrom, dateTo).then(() => {
             let filteredTasks = tasks.filter(task => {
                 const matchesExecutors = !executorFilter || task.executors.some(ex => ex.toLowerCase().includes(executorFilter));
@@ -410,11 +570,11 @@ export function openEditModal(taskId) {
                         <h3>Подзадачи</h3>
                         <div id="subtaskList">
                             ${tempTask.subtasks.length ? tempTask.subtasks.map((sub, index) => `
-                                <div class="subtask-item">
+                                <div class="subtask-item" data-id="${sub.id}">
                                     <input type="text" class="subtask-theme" value="${sub.theme || ''}" placeholder="Тема подзадачи">
                                     <input type="date" class="subtask-dateSet" value="${sub.subDateSet || ''}">
                                     <input type="date" class="subtask-deadline" value="${sub.subDeadline || ''}">
-                                    <button class="remove-subtask" data-index="${index}">×</button>
+                                    <button class="remove-subtask" data-index="${index}" data-id="${sub.id}">×</button>
                                 </div>
                             `).join('') : '<p>Нет подзадач</p>'}
                         </div>
@@ -541,82 +701,108 @@ export function openEditModal(taskId) {
         }
     });
 
-    function updateSubtaskList() {
+    async function updateSubtaskList() {
         const subtaskList = modal.querySelector("#subtaskList");
         subtaskList.innerHTML = tempTask.subtasks.length ? tempTask.subtasks.map((sub, index) => `
-            <div class="subtask-item">
+            <div class="subtask-item" data-id="${sub.id}">
                 <input type="text" class="subtask-theme" value="${sub.theme || ''}" placeholder="Тема подзадачи">
                 <input type="date" class="subtask-dateSet" value="${sub.subDateSet || ''}">
                 <input type="date" class="subtask-deadline" value="${sub.subDeadline || ''}">
-                <button class="remove-subtask" data-index="${index}">×</button>
+                <button class="remove-subtask" data-index="${index}" data-id="${sub.id}">×</button>
             </div>
         `).join('') : '<p>Нет подзадач</p>';
 
         subtaskList.querySelectorAll('.subtask-item').forEach(item => {
             const index = parseInt(item.querySelector('.remove-subtask').dataset.index);
+            const subtaskId = item.querySelector('.remove-subtask').dataset.id;
             const themeInput = item.querySelector('.subtask-theme');
             const dateSetInput = item.querySelector('.subtask-dateSet');
             const deadlineInput = item.querySelector('.subtask-deadline');
 
-            themeInput.addEventListener('change', () => {
+            themeInput.addEventListener('change', async () => {
                 const oldTheme = tempTask.subtasks[index].theme;
                 tempTask.subtasks[index].theme = themeInput.value.trim();
                 if (oldTheme !== tempTask.subtasks[index].theme) {
-                    pendingHistory.push({
-                        date: formatCommentDate(new Date()),
-                        rawDate: new Date().toISOString(),
-                        change: `Тема подзадачи ${index + 1} изменена с "${oldTheme || "не указано"}" на "${tempTask.subtasks[index].theme || "не указано"}"`,
-                        user: "Текущий пользователь"
-                    });
-                    updateHistoryList();
-                    showNotification('Тема подзадачи обновлена');
+                    try {
+                        await updateSubtask(subtaskId, tempTask.subtasks[index]);
+                        pendingHistory.push({
+                            date: formatCommentDate(new Date()),
+                            rawDate: new Date().toISOString(),
+                            change: `Тема подзадачи ${index + 1} изменена с "${oldTheme || "не указано"}" на "${tempTask.subtasks[index].theme || "не указано"}"`,
+                            user: "Текущий пользователь"
+                        });
+                        updateHistoryList();
+                        showNotification('Тема подзадачи обновлена');
+                    } catch (error) {
+                        tempTask.subtasks[index].theme = oldTheme; // Revert on error
+                        updateSubtaskList();
+                    }
                 }
             });
 
-            dateSetInput.addEventListener('change', () => {
+            dateSetInput.addEventListener('change', async () => {
                 const oldDateSet = tempTask.subtasks[index].subDateSet;
                 tempTask.subtasks[index].subDateSet = dateSetInput.value;
                 if (oldDateSet !== tempTask.subtasks[index].subDateSet) {
-                    pendingHistory.push({
-                        date: formatCommentDate(new Date()),
-                        rawDate: new Date().toISOString(),
-                        change: `Дата постановки подзадачи ${index + 1} изменена с "${oldDateSet || "не указана"}" на "${tempTask.subtasks[index].subDateSet || "не указана"}"`,
-                        user: "Текущий пользователь"
-                    });
-                    updateHistoryList();
-                    showNotification('Дата постановки подзадачи обновлена');
+                    try {
+                        await updateSubtask(subtaskId, tempTask.subtasks[index]);
+                        pendingHistory.push({
+                            date: formatCommentDate(new Date()),
+                            rawDate: new Date().toISOString(),
+                            change: `Дата постановки подзадачи ${index + 1} изменена с "${oldDateSet || "не указана"}" на "${tempTask.subtasks[index].subDateSet || "не указана"}"`,
+                            user: "Текущий пользователь"
+                        });
+                        updateHistoryList();
+                        showNotification('Дата постановки подзадачи обновлена');
+                    } catch (error) {
+                        tempTask.subtasks[index].subDateSet = oldDateSet; // Revert on error
+                        updateSubtaskList();
+                    }
                 }
             });
 
-            deadlineInput.addEventListener('change', () => {
+            deadlineInput.addEventListener('change', async () => {
                 const oldDeadline = tempTask.subtasks[index].subDeadline;
                 tempTask.subtasks[index].subDeadline = deadlineInput.value;
                 if (oldDeadline !== tempTask.subtasks[index].subDeadline) {
-                    pendingHistory.push({
-                        date: formatCommentDate(new Date()),
-                        rawDate: new Date().toISOString(),
-                        change: `Дедлайн подзадачи ${index + 1} изменён с "${oldDeadline || "не указан"}" на "${tempTask.subtasks[index].subDeadline || "не указан"}"`,
-                        user: "Текущий пользователь"
-                    });
-                    updateHistoryList();
-                    showNotification('Дедлайн подзадачи обновлён');
+                    try {
+                        await updateSubtask(subtaskId, tempTask.subtasks[index]);
+                        pendingHistory.push({
+                            date: formatCommentDate(new Date()),
+                            rawDate: new Date().toISOString(),
+                            change: `Дедлайн подзадачи ${index + 1} изменён с "${oldDeadline || "не указан"}" на "${tempTask.subtasks[index].subDeadline || "не указан"}"`,
+                            user: "Текущий пользователь"
+                        });
+                        updateHistoryList();
+                        showNotification('Дедлайн подзадачи обновлён');
+                    } catch (error) {
+                        tempTask.subtasks[index].subDeadline = oldDeadline; // Revert on error
+                        updateSubtaskList();
+                    }
                 }
             });
         });
 
         subtaskList.querySelectorAll('.remove-subtask').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const index = parseInt(btn.dataset.index);
-                const removedSubtask = tempTask.subtasks.splice(index, 1)[0];
-                pendingHistory.push({
-                    date: formatCommentDate(new Date()),
-                    rawDate: new Date().toISOString(),
-                    change: `Удалена подзадача: "${removedSubtask.theme || "без темы"}"`,
-                    user: "Текущий пользователь"
-                });
-                updateHistoryList();
-                updateSubtaskList();
-                showNotification('Подзадача удалена');
+                const subtaskId = btn.dataset.id;
+                const removedSubtask = tempTask.subtasks[index];
+                try {
+                    await deleteSubtask(subtaskId);
+                    tempTask.subtasks.splice(index, 1);
+                    pendingHistory.push({
+                        date: formatCommentDate(new Date()),
+                        rawDate: new Date().toISOString(),
+                        change: `Удалена подзадача: "${removedSubtask.theme || "без темы"}"`,
+                        user: "Текущий пользователь"
+                    });
+                    updateHistoryList();
+                    updateSubtaskList();
+                    showNotification('Подзадача удалена');
+                } catch (error) {
+                    updateSubtaskList(); // Revert on error
+                }
             });
         });
     }
@@ -625,17 +811,18 @@ export function openEditModal(taskId) {
         try {
             const executorList = modal.querySelector("#executorList");
             executorList.innerHTML = '';
-            tempTask.executors.forEach(ex => {
-                const executorItem = document.createElement("span");
-                executorItem.className = "executor-item";
-                executorItem.innerHTML = `
-                    <span class="executor-name">${ex}</span>
-                    <button class="remove-executor" data-executor="${ex}">×</button>
-                `;
-                executorList.appendChild(executorItem);
-            });
-
-            if (!tempTask.executors.length) {
+            console.log('Обновление списка исполнителей в модалке:', tempTask.executors);
+            if (tempTask.executors.length) {
+                tempTask.executors.forEach(ex => {
+                    const executorItem = document.createElement("span");
+                    executorItem.className = "executor-item";
+                    executorItem.innerHTML = `
+                        <span class="executor-name">${ex}</span>
+                        <button class="remove-executor" data-executor="${ex}">×</button>
+                    `;
+                    executorList.appendChild(executorItem);
+                });
+            } else {
                 const noExecutors = document.createElement("span");
                 noExecutors.textContent = "Не назначены";
                 executorList.appendChild(noExecutors);
@@ -649,12 +836,18 @@ export function openEditModal(taskId) {
             addButton.addEventListener("click", (e) => {
                 e.stopPropagation();
                 if (!executorList.querySelector("#addExecutorSelect")) {
+                    const availableExecutors = getAllExecutors().filter(ex => !tempTask.executors.includes(ex));
+                    console.log('Доступные исполнители для добавления:', availableExecutors);
+                    if (!availableExecutors.length) {
+                        showNotification('Нет доступных исполнителей для добавления');
+                        return;
+                    }
                     const selectWrapper = document.createElement("span");
                     selectWrapper.className = "executor-item";
                     selectWrapper.innerHTML = `
                         <select id="addExecutorSelect">
                             <option value="">Выберите исполнителя</option>
-                            ${getAllExecutors().filter(ex => !tempTask.executors.includes(ex)).map(ex => `
+                            ${availableExecutors.map(ex => `
                                 <option value="${ex}">${ex}</option>
                             `).join("")}
                         </select>
@@ -710,10 +903,16 @@ export function openEditModal(taskId) {
                     const oldExecutorName = span.textContent;
                     const executorItem = span.parentElement;
 
+                    const availableExecutors = getAllExecutors().filter(ex => !tempTask.executors.includes(ex) || ex === oldExecutorName);
+                    if (!availableExecutors.length) {
+                        showNotification('Нет доступных исполнителей для замены');
+                        return;
+                    }
+
                     const select = document.createElement("select");
                     select.innerHTML = `
                         <option value="">Выберите исполнителя</option>
-                        ${getAllExecutors().filter(ex => !tempTask.executors.includes(ex) || ex === oldExecutorName).map(ex => `
+                        ${availableExecutors.map(ex => `
                             <option value="${ex}" ${ex === oldExecutorName ? 'selected' : ''}>${ex}</option>
                         `).join("")}
                     `;
@@ -772,17 +971,27 @@ export function openEditModal(taskId) {
     updateExecutorList();
     updateSubtaskList();
 
-    modal.querySelector('#addSubtaskBtn').addEventListener('click', () => {
-        tempTask.subtasks.push({ theme: '', subDateSet: '', subDeadline: '' });
-        pendingHistory.push({
-            date: formatCommentDate(new Date()),
-            rawDate: new Date().toISOString(),
-            change: `Добавлена новая подзадача`,
-            user: "Текущий пользователь"
-        });
-        updateHistoryList();
-        updateSubtaskList();
-        showNotification('Подзадача добавлена');
+    modal.querySelector('#addSubtaskBtn').addEventListener('click', async () => {
+        try {
+            const newSubtask = {
+                theme: '',
+                subDateSet: formatDate(new Date()),
+                subDeadline: ''
+            };
+            const createdSubtask = await createSubtask(tempTask.id, newSubtask);
+            tempTask.subtasks.push(createdSubtask);
+            pendingHistory.push({
+                date: formatCommentDate(new Date()),
+                rawDate: new Date().toISOString(),
+                change: `Добавлена новая подзадача: "${createdSubtask.theme || "без темы"}"`,
+                user: "Текущий пользователь"
+            });
+            updateHistoryList();
+            updateSubtaskList();
+            showNotification('Подзадача добавлена');
+        } catch (error) {
+            showNotification('Не удалось добавить подзадачу');
+        }
     });
 
     const addCommentBtn = modal.querySelector("#addComment");
@@ -834,12 +1043,6 @@ export function openEditModal(taskId) {
                     showNotification(`Статус изменён на "${newStatus}"`);
                 }
 
-                tempTask.subtasks = Array.from(modal.querySelectorAll('.subtask-item')).map(item => ({
-                    theme: item.querySelector('.subtask-theme').value.trim(),
-                    subDateSet: item.querySelector('.subtask-dateSet').value,
-                    subDeadline: item.querySelector('.subtask-deadline').value
-                }));
-
                 await updateTask(tempTask);
 
                 await Promise.all(pendingHistory.map(entry =>
@@ -887,6 +1090,7 @@ export function openEditModal(taskId) {
                 executors.length = 0;
                 historyCache = [];
                 executors = await fetchExecutors();
+                console.log('Исполнители после сохранения:', executors);
                 if (filters.dateFrom && filters.dateTo) {
                     await fetchTasks(filters.dateFrom, filters.dateTo);
                 } else {
@@ -901,6 +1105,7 @@ export function openEditModal(taskId) {
                 console.error('Ошибка сохранения:', error);
                 showNotification(`Не удалось сохранить задачу: ${error.message}`);
                 executors = await fetchExecutors();
+                console.log('Исполнители после ошибки сохранения:', executors);
                 if (filters.dateFrom && filters.dateTo) {
                     await fetchTasks(filters.dateFrom, filters.dateTo);
                 } else {
@@ -929,6 +1134,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         executors = await fetchExecutors();
+        console.log('Инициализация: Полученные исполнители:', executors);
+        if (!executors.length) {
+            showNotification('Не удалось загрузить список исполнителей');
+        }
         createInterface();
         showNotification('Пожалуйста, укажите диапазон дат для загрузки задач');
     } catch (error) {
