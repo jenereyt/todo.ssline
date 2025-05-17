@@ -64,8 +64,11 @@ function showNotification(message) {
     }
 }
 
-async function fetchTasks() {
-    const url = 'https://servtodo.ssline.uz/tasks';
+async function fetchTasks(startDate = '', endDate = '') {
+    let url = 'https://servtodo.ssline.uz/tasks';
+    if (startDate && endDate) {
+        url = `https://servtodo.ssline.uz/tasks/${startDate}/${endDate}`;
+    }
     console.log('Запрос задач:', url);
     try {
         const response = await fetch(url, {
@@ -241,18 +244,21 @@ export function applyFilters() {
         const dateFrom = document.getElementById("dateFrom")?.value || '';
         const dateTo = document.getElementById("dateTo")?.value || '';
 
-        let filteredTasks = tasks.filter(task => {
-            const matchesExecutors = !executorFilter || task.executors.some(ex => ex.toLowerCase().includes(executorFilter));
-            const matchesProject = !projectFilter || (task.project && task.project.toLowerCase().includes(projectFilter));
-            const matchesDateFrom = !dateFrom || task.dateSet >= dateFrom;
-            const matchesDateTo = !dateTo || task.dateSet <= dateTo;
+        // Fetch tasks with date range if provided
+        fetchTasks(dateFrom, dateTo).then(() => {
+            let filteredTasks = tasks.filter(task => {
+                const matchesExecutors = !executorFilter || task.executors.some(ex => ex.toLowerCase().includes(executorFilter));
+                const matchesProject = !projectFilter || (task.project && task.project.toLowerCase().includes(projectFilter));
+                return matchesExecutors && matchesProject;
+            });
 
-            return matchesExecutors && matchesProject && matchesDateFrom && matchesDateTo;
+            sortTasks(filteredTasks);
+            console.log('Обновление таблицы с задачами:', filteredTasks);
+            createTaskCards(filteredTasks);
+        }).catch(error => {
+            console.error('Ошибка при применении фильтров:', error);
+            showNotification('Ошибка при загрузке задач');
         });
-
-        sortTasks(filteredTasks);
-        console.log('Обновление таблицы с задачами:', filteredTasks);
-        createTaskCards(filteredTasks);
     } catch (error) {
         console.error('Ошибка в applyFilters:', error);
     }
@@ -864,7 +870,7 @@ export function openEditModal(taskId) {
                 executors.length = 0;
                 historyCache = [];
                 executors = await fetchExecutors();
-                await fetchTasks();
+                await fetchTasks(filters.dateFrom, filters.dateTo);
                 applyFilters();
 
                 console.log('Задача сохранена и синхронизирована:', tempTask);
@@ -873,7 +879,7 @@ export function openEditModal(taskId) {
                 console.error('Ошибка сохранения:', error);
                 showNotification(`Не удалось сохранить задачу: ${error.message}`);
                 executors = await fetchExecutors();
-                await fetchTasks();
+                await fetchTasks(filters.dateFrom, filters.dateTo);
                 applyFilters();
             } finally {
                 showLoading(modal.querySelector("#saveBtn"), false);
@@ -904,4 +910,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     } finally {
         loadingOverlay.remove();
     }
-});
+});ё
