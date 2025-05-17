@@ -64,11 +64,16 @@ function showNotification(message) {
     }
 }
 
-async function fetchTasks(startDate = '', endDate = '') {
-    let url = 'https://servtodo.ssline.uz/tasks';
-    if (startDate && endDate) {
-        url = `https://servtodo.ssline.uz/tasks/${startDate}/${endDate}`;
+async function fetchTasks(startDate, endDate) {
+    if (!startDate || !endDate) {
+        console.log('Дата начала или окончания не указана, пропуск запроса задач');
+        return [];
     }
+    if (new Date(endDate) < new Date(startDate)) {
+        showNotification('Дата окончания не может быть раньше даты начала');
+        return [];
+    }
+    const url = `https://servtodo.ssline.uz/tasks/${startDate}/${endDate}`;
     console.log('Запрос задач:', url);
     try {
         const response = await fetch(url, {
@@ -244,7 +249,14 @@ export function applyFilters() {
         const dateFrom = document.getElementById("dateFrom")?.value || '';
         const dateTo = document.getElementById("dateTo")?.value || '';
 
-        // Fetch tasks with date range if provided
+        if (!dateFrom || !dateTo) {
+            tasks = [];
+            createTaskCards([]);
+            showNotification('Пожалуйста, укажите диапазон дат для загрузки задач');
+            return;
+        }
+
+        // Fetch tasks with date range
         fetchTasks(dateFrom, dateTo).then(() => {
             let filteredTasks = tasks.filter(task => {
                 const matchesExecutors = !executorFilter || task.executors.some(ex => ex.toLowerCase().includes(executorFilter));
@@ -258,9 +270,14 @@ export function applyFilters() {
         }).catch(error => {
             console.error('Ошибка при применении фильтров:', error);
             showNotification('Ошибка при загрузке задач');
+            tasks = [];
+            createTaskCards([]);
         });
     } catch (error) {
         console.error('Ошибка в applyFilters:', error);
+        showNotification('Ошибка при применении фильтров');
+        tasks = [];
+        createTaskCards([]);
     }
 }
 
@@ -870,7 +887,12 @@ export function openEditModal(taskId) {
                 executors.length = 0;
                 historyCache = [];
                 executors = await fetchExecutors();
-                await fetchTasks(filters.dateFrom, filters.dateTo);
+                if (filters.dateFrom && filters.dateTo) {
+                    await fetchTasks(filters.dateFrom, filters.dateTo);
+                } else {
+                    tasks = [];
+                    showNotification('Диапазон дат не указан, задачи не загружены');
+                }
                 applyFilters();
 
                 console.log('Задача сохранена и синхронизирована:', tempTask);
@@ -879,7 +901,12 @@ export function openEditModal(taskId) {
                 console.error('Ошибка сохранения:', error);
                 showNotification(`Не удалось сохранить задачу: ${error.message}`);
                 executors = await fetchExecutors();
-                await fetchTasks(filters.dateFrom, filters.dateTo);
+                if (filters.dateFrom && filters.dateTo) {
+                    await fetchTasks(filters.dateFrom, filters.dateTo);
+                } else {
+                    tasks = [];
+                    showNotification('Диапазон дат не указан, задачи не загружены');
+                }
                 applyFilters();
             } finally {
                 showLoading(modal.querySelector("#saveBtn"), false);
@@ -902,12 +929,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         executors = await fetchExecutors();
-        await fetchTasks();
         createInterface();
+        showNotification('Пожалуйста, укажите диапазон дат для загрузки задач');
     } catch (error) {
         console.error('Ошибка загрузки:', error);
         showNotification(`Не удалось загрузить данные: ${error.message}`);
     } finally {
         loadingOverlay.remove();
     }
-});ё
+});
