@@ -5,7 +5,8 @@
     right: 0;
     display: flex;
     justify-content: center;
-    gap: 2px; /* Уменьшили gap */
+    gap: 2px;
+    /* Уменьшили gap */
     padding: 10px 0px;
     background-color: #f8fafc;
     border-top: 1px solid #e6eaee;
@@ -15,14 +16,17 @@
 }
 
 .pagination button {
-    padding: 4px 8px; /* Уменьшили padding */
+    padding: 4px 8px;
+    /* Уменьшили padding */
     border: 1px solid #d8dde3;
-    border-radius: 4px; /* Уменьшили радиус */
+    border-radius: 4px;
+    /* Уменьшили радиус */
     background: linear-gradient(135deg, #4a90e2, #357abd);
     color: white;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 11px; /* Уменьшили шрифт */
+    font-size: 11px;
+    /* Уменьшили шрифт */
 }
 
 .pagination button:hover {
@@ -44,7 +48,8 @@
 
 @media (max-width: 768px) {
     .table-wrapper {
-        max-height: 250px; /* Уменьшили для мобильных */
+        max-height: 250px;
+        /* Уменьшили для мобильных */
         overflow-x: auto;
     }
 
@@ -54,42 +59,51 @@
     }
 
     th, td {
-        font-size: 11px; /* Уменьшили шрифт */
-        padding: 6px 8px; /* Уменьшили padding */
+        font-size: 11px;
+        /* Уменьшили шрифт */
+        padding: 6px 8px;
+        /* Уменьшили padding */
     }
 
     tbody {
-        max-height: 180px; /* Уменьшили max-height */
+        max-height: 180px;
+        /* Уменьшили max-height */
     }
 
     .pagination {
         flex-direction: column;
         align-items: center;
-        gap: 1px; /* Уменьшили gap */
+        gap: 1px;
+        /* Уменьшили gap */
     }
 
     .pagination button {
         width: 100%;
         text-align: center;
-        padding: 3px 6px; /* Уменьшили padding */
-        font-size: 10px; /* Уменьшили шрифт */
+        padding: 3px 6px;
+        /* Уменьшили padding */
+        font-size: 10px;
+        /* Уменьшили шрифт */
     }
 }
 
 @media screen and (max-width: 1150px) {
     .filter-group input[type="text"] {
-        width: 120px !important; /* Уменьшили ширину */
+        width: 120px !important;
+        /* Уменьшили ширину */
     }
 
     .clear-btn {
-        right: 30px !important; /* Уменьшили отступ */
+        right: 30px !important;
+        /* Уменьшили отступ */
     }
 }
 
 .task-section {
     position: relative;
     width: 100%;
-    min-height: 150px; /* Заменили фиксированную высоту на минимальную */
+    min-height: 150px;
+    /* Заменили фиксированную высоту на минимальную */
     overflow: hidden;
     border-radius: 12px;
 }
@@ -100,22 +114,53 @@
     flex-wrap: wrap;
     height: calc(75vh - 25px);
     overflow-y: auto;
-    gap: 15px; 
-    padding: 15px; 
+    gap: 15px;
+    padding: 15px;
 }
 
 .task-card {
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 12px; 
-    width: 280px; 
+    padding: 12px;
+    width: 280px;
     min-height: 200px;
     max-height: 250px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
 }
+
+
+
+.subtask-indicators {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    gap: 5px;
+}
+
+.subtask-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%; 
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.subtask-circle.yellow {
+    background-color: #ffc107;
+}
+
+.subtask-circle.red {
+    background-color: #dc3545;
+}
+
 
 .task-card:hover {
     transform: translateY(-5px);
@@ -123,8 +168,10 @@
 }
 
 .task-field {
-    margin-bottom: 8px; /* Уменьшили margin */
-    font-size: 13px; /* Уменьшили шрифт */
+    margin-bottom: 8px;
+    /* Уменьшили margin */
+    font-size: 13px;
+    /* Уменьшили шрифт */
 }
 
 .task-field strong {
@@ -134,11 +181,13 @@
 .sort-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px; /* Уменьшили gap */
+    gap: 8px;
+    /* Уменьшили gap */
 }
 
 .sort-option {
-    padding: 4px 8px; /* Уменьшили padding */
+    padding: 4px 8px;
+    /* Уменьшили padding */
     border: none;
     background: #f0f0f0;
     color: #333;
@@ -158,18 +207,21 @@
 
 .sort-controls {
     display: flex;
-    gap: 8px; /* Уменьшили gap */
+    gap: 8px;
+    /* Уменьшили gap */
     align-items: center;
 }
 
 .sort-controls select {
-    padding: 4px; /* Уменьшили padding */
+    padding: 4px;
+    /* Уменьшили padding */
     border-radius: 4px;
     border: 1px solid #ddd;
 }
 
 .sort-controls button {
-    padding: 4px 8px; /* Уменьшили padding */
+    padding: 4px 8px;
+    /* Уменьшили padding */
     border: none;
     background: #007bff;
     color: #fff;
@@ -183,14 +235,17 @@
 
 .subtask-item {
     display: flex;
-    gap: 8px; /* Уменьшили gap */
-    margin-bottom: 8px; /* Уменьшили margin */
+    gap: 8px;
+    /* Уменьшили gap */
+    margin-bottom: 8px;
+    /* Уменьшили margin */
     align-items: center;
 }
 
 .subtask-item input {
     flex: 1;
-    padding: 4px; /* Уменьшили padding */
+    padding: 4px;
+    /* Уменьшили padding */
     border: 1px solid #ddd;
     border-radius: 4px;
 }
@@ -201,27 +256,20 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    padding: 2px 6px; /* Уменьшили padding */
+    padding: 2px 6px;
+    /* Уменьшили padding */
 }
 
 #addSubtaskBtn {
-    margin-top: 8px; /* Уменьшили margin */
-    padding: 4px 8px; /* Уменьшили padding */
+    margin-top: 8px;
+    /* Уменьшили margin */
+    padding: 4px 8px;
+    /* Уменьшили padding */
     border: none;
     background: #007bff;
     color: white;
     border-radius: 4px;
     cursor: pointer;
-}
-
-.deadline-yellow {
-    color: #ffc107;
-    font-weight: bold;
-}
-
-.deadline-red {
-    color: #dc3545;
-    font-weight: bold;
 }
 
 .history-dateSet {
@@ -231,6 +279,7 @@
 .history-subtask {
     background: #e6fff3;
 }
+
 /* .subtask-circle{
     position: absolute;
     right: 10px;

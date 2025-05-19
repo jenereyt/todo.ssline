@@ -641,7 +641,7 @@ export function openEditModal(taskId) {
             });
 
             if (field === "deadline" || field === "dateSet") {
-                input.addEventListener("change", () => {
+                const saveDate = () => {
                     const oldValue = tempTask[field];
                     tempTask[field] = input.value;
                     display.textContent = tempTask[field] || "Не указан";
@@ -657,8 +657,23 @@ export function openEditModal(taskId) {
                         updateHistoryList();
                         showNotification(`${field === "deadline" ? "Срок выполнения" : "Дата постановки"} обновлён${field === "deadline" ? "" : "а"}`);
                     }
+                };
+
+                input.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        saveDate();
+                    }
+                });
+
+                input.addEventListener("blur", (e) => {
+                    // Игнорируем blur, если фокус остаётся в самом поле
+                    if (!modal.contains(e.relatedTarget) || e.relatedTarget !== input) {
+                        saveDate();
+                    }
                 });
             } else {
+                // Обработчики для theme и description остаются без изменений
                 input.addEventListener("keypress", (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();

@@ -37,8 +37,10 @@ export function createTaskCards(taskList) {
             <div class="task-field"><strong>Дедлайн:</strong> <span class="${deadlineClass}">${task.deadline || 'Не указан'}</span></div>
             <div class="task-field"><strong>Исполнители:</strong> ${task.executors.length ? task.executors.join(', ') : 'Не назначены'}</div>
             <div class="task-field"><strong>Статус:</strong> ${task.status || 'Не указан'}</div>
-            ${subtaskCounts.yellow ? `<span class="subtask-circle yellow">${subtaskCounts.yellow}</span>` : ''}
-            ${subtaskCounts.red ? `<span class="subtask-circle red">${subtaskCounts.red}</span>` : ''}
+            <div class="subtask-indicators">
+                ${subtaskCounts.yellow ? `<span class="subtask-circle yellow">${subtaskCounts.yellow}</span>` : ''}
+                ${subtaskCounts.red ? `<span class="subtask-circle red">${subtaskCounts.red}</span>` : ''}
+            </div>
         `;
         card.addEventListener('click', () => openEditModal(task.id));
         container.appendChild(card);
