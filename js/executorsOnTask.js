@@ -78,4 +78,4 @@ export async function removeExecutorFromTask(taskId, executorId) {
         console.error('Ошибка при удалении исполнителя из задачи:', error);
         throw error;
     }
-}
+}   

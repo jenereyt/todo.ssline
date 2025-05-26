@@ -58,7 +58,8 @@
         overflow-x: auto;
     }
 
-    th, td {
+    th,
+    td {
         font-size: 11px;
         /* Уменьшили шрифт */
         padding: 6px 8px;
@@ -145,7 +146,7 @@
 .subtask-circle {
     width: 20px;
     height: 20px;
-    border-radius: 50%; 
+    border-radius: 50%;
     color: white;
     display: flex;
     align-items: center;
@@ -233,21 +234,40 @@
     background: #0056b3;
 }
 
+
+
 .subtask-item {
     display: flex;
-    gap: 8px;
-    /* Уменьшили gap */
-    margin-bottom: 8px;
-    /* Уменьшили margin */
     align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
-.subtask-item input {
+.subtask-done {
+    width: 20px;
+    height: 20px;
+}
+
+.history-subtask-status {
+    background-color: #e6f3ff;
+    /* Цвет для изменения статуса подзадачи */
+}
+
+.subtask-theme,
+.subtask-dateSet,
+.subtask-deadline {
     flex: 1;
     padding: 4px;
     /* Уменьшили padding */
     border: 1px solid #ddd;
     border-radius: 4px;
+}
+
+.subtask-theme:focus,
+.subtask-dateSet:focus,
+.subtask-deadline:focus {
+    outline: none;
+    border: #007bff 1px solid;
 }
 
 .remove-subtask {
@@ -258,6 +278,15 @@
     cursor: pointer;
     padding: 2px 6px;
     /* Уменьшили padding */
+}
+
+.subtask-item.completed {
+    background-color: #e6f4ea;
+    /* Light green background for completed subtasks */
+    border-left: 4px solid #2ecc71;
+    /* Green left border for emphasis */
+    padding-left: 8px;
+    /* Slight padding to align with border */
 }
 
 #addSubtaskBtn {
@@ -285,3 +314,24 @@
     right: 10px;
     top: 10px;
 } */
+
+
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#newGlobalExecutorName,
+#newGlobalExecutorPhone {
+    padding: 5px;
+    border-radius: 5px;
+    border: #007bff 1px solid;
+}
+
+#newGlobalExecutorName:focus,
+#newGlobalExecutorPhone:focus {
+    outline: none;
+    border: #007bff 1px solid;
+}

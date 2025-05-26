@@ -13,7 +13,11 @@ export async function fetchExecutors() {
         }
         const data = await response.json();
         console.log('Полученные исполнители:', data);
-        return data; // [{ id, name }, ...]
+        return data.map(executor => ({
+            id: executor.id,
+            name: executor.name,
+            phone_number: executor.phone_number || ''
+        }));
     } catch (error) {
         console.error('Ошибка при получении исполнителей:', error);
         alert(`Не удалось загрузить список исполнителей: ${error.message}`);
@@ -21,49 +25,71 @@ export async function fetchExecutors() {
     }
 }
 
-export async function createExecutor(name) {
+export async function createExecutor(executorData) {
     const url = 'https://servtodo.ssline.uz/executors';
-    console.log('Создание исполнителя:', name, url);
+    console.log('Создание исполнителя:', executorData, url);
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name })
+            body: JSON.stringify({
+                name: executorData.name,
+                phone_number: executorData.phone_number || ''
+            })
         });
         if (!response.ok) {
             if (response.status === 409) {
+                throw new Error('Исполнитель с таким именем или номером телефона уже существует');
             }
-            throw new Error(`Ошибка HTTP: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
         }
-        return await response.json();
+        const data = await response.json();
+        console.log('Создан исполнитель:', data);
+        return {
+            id: data.id,
+            name: data.name,
+            phone_number: data.phone_number || ''
+        };
     } catch (error) {
         console.error('Ошибка при создании исполнителя:', error);
         throw error;
     }
 }
 
-export async function updateExecutor(id, name) {
+export async function updateExecutor(id, executorData) {
     const url = `https://servtodo.ssline.uz/executors/${id}`;
-    console.log('Обновление исполнителя:', id, name, url);
+    console.log('Обновление исполнителя:', id, executorData, url);
     try {
         const response = await fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name })
+            body: JSON.stringify({
+                name: executorData.name,
+                phone_number: executorData.phone_number || ''
+            })
         });
         if (!response.ok) {
             if (response.status === 409) {
+                throw new Error('Исполнитель с таким именем или номером телефона уже существует');
             }
             if (response.status === 404) {
                 throw new Error('Исполнитель не найден');
             }
-            throw new Error(`Ошибка HTTP: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
         }
-        return await response.json();
+        const data = await response.json();
+        console.log('Обновлён исполнитель:', data);
+        return {
+            id: data.id,
+            name: data.name,
+            phone_number: data.phone_number || ''
+        };
     } catch (error) {
         console.error('Ошибка при обновлении исполнителя:', error);
         throw error;
@@ -84,8 +110,10 @@ export async function deleteExecutor(id) {
             if (response.status === 404) {
                 throw new Error('Исполнитель не найден');
             }
-            throw new Error(`Ошибка HTTP: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
         }
+        console.log('Исполнитель удалён:', id);
         return true;
     } catch (error) {
         console.error('Ошибка при удалении исполнителя:', error);
