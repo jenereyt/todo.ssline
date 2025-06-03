@@ -33,7 +33,8 @@ button {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    max-width: 100%;
+    max-width: 1950px;
+    /* margin: 0 auto; */
 }
 
 .history-item {

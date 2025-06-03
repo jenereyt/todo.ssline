@@ -523,7 +523,9 @@ export function openEditModal(taskId) {
             </div>
             <div class="modal-tabs">
                 <button class="tab-btn active" data-tab="info">Информация о задаче</button>
-                <button class="tab-btn" data-tab="extras">Дополнения к задаче</button>
+                <button class="tab-btn" data-tab="extras">Исполнители</button>
+                <button class="tab-btn" data-tab="subtasks">Подзадачи</button>
+                <button class="tab-btn" data-tab="investments">Вложения</button>
                 <button class="tab-btn" data-tab="history">История</button>
             </div>
             <div class="modal-body">
@@ -543,34 +545,23 @@ export function openEditModal(taskId) {
                         </div>
                     </div>
                     <div class="section">
-                        <h3>Срок выполнения</h3>
-                        <div class="editable-field">
-                            <span id="deadlineDisplay">${tempTask.deadline || "Не указан"}</span>
-                            <input type="date" id="editDeadline" value="${tempTask.deadline || ""}" class="hidden">
-                        </div>
-                    </div>
-                    <div class="section">
                         <h3>Дата постановки</h3>
                         <div class="editable-field">
                             <span id="dateSetDisplay">${tempTask.dateSet || "Не указана"}</span>
                             <input type="date" id="editDateSet" value="${tempTask.dateSet || ""}" class="hidden">
                         </div>
                     </div>
+                    <div class="section">
+                        <h3>Срок выполнения</h3>
+                        <div class="editable-field">
+                            <span id="deadlineDisplay">${tempTask.deadline || "Не указан"}</span>
+                            <input type="date" id="editDeadline" value="${tempTask.deadline || ""}" class="hidden">
+                        </div>
+                    </div>
                     <div class="section comment-section">
                         <h3>Комментарий</h3>
                         <div class="comment-wrapper">
-                            <textarea id="newComment" placeholder="Введите комментарий"></textarea>
-                        </div>
-                        <button id="addComment">Добавить</button>
-                    </div>
-                    <div class="section">
-                        <h3>Вложения</h3>
-                        <div id="fileList">
-                            ${tempTask.files.length ? tempTask.files.map(file => `
-                                <div class="file-item">
-                                    <a href="${file.url}" target="_blank">${file.name}</a>
-                                </div>
-                            `).join("") : "Нет файлов"}
+                            <textarea id="newComment" placeholder="Введите комментарий и нажмите Enter"></textarea>
                         </div>
                     </div>
                 </div>
@@ -579,6 +570,8 @@ export function openEditModal(taskId) {
                         <h3>Исполнители</h3>
                         <div id="executorList" class="executor-list"></div>
                     </div>
+                </div>
+                <div class="tab-content hidden" id="subtasksTab">
                     <div class="section">
                         <h3>Подзадачи</h3>
                         <div id="subtaskList">
@@ -593,6 +586,18 @@ export function openEditModal(taskId) {
                             `).join('') : '<p>Нет подзадач</p>'}
                         </div>
                         <button id="addSubtaskBtn">Добавить подзадачу</button>
+                    </div>
+                </div>
+                <div class="tab-content hidden" id="investmentsTab">
+                    <div class="section">
+                        <h3>Вложения</h3>
+                        <div id="fileList">
+                            ${tempTask.files.length ? tempTask.files.map(file => `
+                                <div class="file-item">
+                                    <a href="${file.url}" target="_blank">${file.name}</a>
+                                </div>
+                            `).join("") : "Нет файлов"}
+                        </div>
                     </div>
                 </div>
                 <div class="tab-content hidden" id="historyTab">
@@ -1050,22 +1055,23 @@ export function openEditModal(taskId) {
         }
     });
 
-    const addCommentBtn = modal.querySelector("#addComment");
     const newCommentTextarea = modal.querySelector("#newComment");
-    if (addCommentBtn) {
-        addCommentBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const commentText = newCommentTextarea.value.trim();
-            if (commentText) {
-                pendingHistory.push({
-                    date: formatCommentDate(new Date()),
-                    rawDate: new Date().toISOString(),
-                    change: `Добавлен комментарий: "${commentText}"`,
-                    user: "Текущий пользователь"
-                });
-                updateHistoryList();
-                newCommentTextarea.value = "";
-                showNotification('Комментарий добавлен');
+    if (newCommentTextarea) {
+        newCommentTextarea.addEventListener("keypress", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                const commentText = newCommentTextarea.value.trim();
+                if (commentText) {
+                    pendingHistory.push({
+                        date: formatCommentDate(new Date()),
+                        rawDate: new Date().toISOString(),
+                        change: `Добавлен комментарий: "${commentText}"`,
+                        user: "Текущий пользователь"
+                    });
+                    updateHistoryList();
+                    newCommentTextarea.value = "";
+                    showNotification('Комментарий добавлен');
+                }
             }
         });
     }

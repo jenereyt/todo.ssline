@@ -104,7 +104,6 @@
     position: relative;
     width: 100%;
     min-height: 150px;
-    /* Заменили фиксированную высоту на минимальную */
     overflow: hidden;
     border-radius: 12px;
 }
