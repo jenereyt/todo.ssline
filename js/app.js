@@ -28,7 +28,7 @@ function formatCommentDate(isoDate) {
 }
 
 function toISODate(localDate) {
-    if (!localDate) return null;
+    if (!localDate || isNaN(new Date(localDate))) return null;
     return new Date(localDate).toISOString().split('T')[0];
 }
 
@@ -61,6 +61,51 @@ function showNotification(message) {
         }, 3000);
     } catch (error) {
         console.error('Ошибка в showNotification:', error);
+    }
+}
+
+async function createTask(taskData) {
+    const url = 'https://servtodo.ssline.uz/tasks';
+    const body = {
+        dateSet: toISODate(taskData.dateSet) || new Date().toISOString().split('T')[0],
+        project: taskData.project || '',
+        theme: taskData.theme || '',
+        description: taskData.description || '',
+        status: taskData.status || 'OPEN',
+        deadline: toISODate(taskData.deadline) || null
+    };
+    console.log('Создание задачи:', url, 'Тело:', body);
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Создана задача:', data);
+        return {
+            id: data.id,
+            dateSet: formatDate(data.dateSet),
+            project: data.project,
+            theme: data.theme,
+            description: data.description,
+            status: data.status,
+            deadline: formatDate(data.deadline),
+            executors: [],
+            files: [],
+            history: [],
+            subtasks: []
+        };
+    } catch (error) {
+        console.error('Ошибка при создании задачи:', error);
+        showNotification(`Не удалось создать задачу: ${error.message}`);
+        throw error;
     }
 }
 
@@ -485,8 +530,20 @@ export function sortTasks(taskList) {
 
 export function openEditModal(taskId) {
     console.log('Попытка открыть задачу с ID:', taskId, 'Тип:', typeof taskId);
-    const task = tasks.find(t => t.id === taskId);
-    if (!task) {
+    const task = taskId ? tasks.find(t => t.id === taskId) : {
+        id: null,
+        dateSet: formatDate(new Date()),
+        project: '',
+        theme: '',
+        description: '',
+        status: 'OPEN',
+        deadline: '',
+        executors: [],
+        files: [],
+        history: [],
+        subtasks: []
+    };
+    if (!task && taskId) {
         console.error('Задача не найдена:', taskId);
         console.log('Текущий массив tasks:', tasks);
         showNotification('Задача не найдена');
@@ -1105,7 +1162,18 @@ export function openEditModal(taskId) {
                     showNotification(`Статус изменён на "${newStatus}"`);
                 }
 
-                await updateTask(tempTask);
+                let updatedTask;
+                if (!tempTask.id) {
+                    updatedTask = await createTask(tempTask);
+                    tempTask.id = updatedTask.id;
+                    tasks.push(tempTask);
+                } else {
+                    updatedTask = await updateTask(tempTask);
+                    const taskIndex = tasks.findIndex(t => t.id === tempTask.id);
+                    if (taskIndex !== -1) {
+                        tasks[taskIndex] = { ...tempTask };
+                    }
+                }
 
                 await Promise.all(pendingHistory.map(entry =>
                     createHistory(tempTask.id, entry.change, entry.user)
@@ -1144,11 +1212,6 @@ export function openEditModal(taskId) {
                     })
                 ]);
 
-                const taskIndex = tasks.findIndex(t => t.id === tempTask.id);
-                if (taskIndex !== -1) {
-                    tasks[taskIndex] = { ...tempTask };
-                }
-
                 executors.length = 0;
                 historyCache = [];
                 executors = await fetchExecutors();
@@ -1162,7 +1225,7 @@ export function openEditModal(taskId) {
                 applyFilters();
 
                 console.log('Задача сохранена и синхронизирована:', tempTask);
-                showNotification('Задача сохранена');
+                showNotification(tempTask.id ? 'Задача сохранена' : 'Задача создана');
             } catch (error) {
                 console.error('Ошибка сохранения:', error);
                 showNotification(`Не удалось сохранить задачу: ${error.message}`);

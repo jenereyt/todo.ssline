@@ -93,13 +93,14 @@ export function createInterface() {
                         <button id="toggleSortDirection">${sortState.ascending ? '↑' : '↓'}</button>
                     </div>
                 </div>
-                <button id="resetFiltersBtn"><img src="./image/trash.svg" alt="Сбросить"></button>
+                <button id="resetFiltersBtn"><img src="./image/X.svg" alt="Сбросить"></button>
             </div>
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Поиск по задачам...">
                 <button id="searchBtn"><img src="./image/search.svg" alt="Поиск" width="16" height="16"></button>
             </div>
             <button id="addGlobalExecutorBtn">Исполнители</button>
+            <button id="createTaskBtn">Создать задачу</button>
         </div>
     `;
     createTaskCards(tasks);
@@ -135,6 +136,10 @@ export function createInterface() {
     // Обработчики фильтров
     [dateFrom, dateTo].forEach(input => {
         input.addEventListener('change', () => {
+            if (dateTo.value && dateFrom.value && new Date(dateTo.value) < new Date(dateFrom.value)) {
+                showNotification('Дата окончания не может быть раньше даты начала');
+                dateTo.value = '';
+            }
             filters.dateFrom = dateFrom.value;
             filters.dateTo = dateTo.value;
             applyFilters();
@@ -254,6 +259,10 @@ export function createInterface() {
 
     document.getElementById('addGlobalExecutorBtn').addEventListener('click', () => {
         openGlobalExecutorModal();
+    });
+
+    document.getElementById('createTaskBtn').addEventListener('click', () => {
+        openEditModal(null); // Открываем модалку для создания новой задачи
     });
 
     document.addEventListener('click', e => {
