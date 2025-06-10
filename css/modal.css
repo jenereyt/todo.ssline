@@ -636,7 +636,8 @@
     gap: 5px;
 }
 
-.edit-executor-btn, .delete-executor-btn {
+.edit-executor-btn,
+.delete-executor-btn {
     background: none;
     border: none;
     font-size: 16px;
@@ -644,12 +645,19 @@
     padding: 2px 5px;
 }
 
-#editTheme, #editDescription, #newComment, .edit-executor-input {
+#editTheme,
+#editDescription,
+#newComment,
+.edit-executor-input,
+.edit-executor-phone {
     outline: none;
     border-radius: 3px;
     border-color: #3498db;
     border-width: 1px;
 }
+
+
+
 
 .edit-executor-btn:hover {
     color: #3498db;
@@ -694,6 +702,38 @@
 }
 
 #editExecutorInput:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+.subtask-description,
+.subtask-executor {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.subtask-description:focus,
+.subtask-executor:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+#editProject:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+#editDateSet:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+select:focus {
     outline: none;
     border-color: #3498db;
     box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);

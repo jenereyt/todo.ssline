@@ -42,7 +42,7 @@ function showLoading(element, isLoading) {
     }
 }
 
-function showNotification(message) {
+export function showNotification(message) {
     try {
         const notification = document.createElement('div');
         notification.className = 'notification';
@@ -227,10 +227,12 @@ async function fetchSubtasks() {
         return data.map(subtask => ({
             id: subtask.id,
             taskId: subtask.taskId,
-            theme: subtask.description || '',
-            subDateSet: formatDate(subtask.dateSet),
-            subDeadline: formatDate(subtask.deadline),
-            done: subtask.done || false
+            description: subtask.description || '',
+            dateSet: formatDate(subtask.dateSet),
+            deadline: formatDate(subtask.deadline),
+            done: subtask.done || false,
+            executorId: subtask.executorId || null,
+            executorName: executors.find(ex => ex.id === subtask.executorId)?.name || 'Не назначен'
         }));
     } catch (error) {
         console.error('Ошибка при загрузке подзадач:', error);
@@ -248,10 +250,12 @@ async function syncSubtasks() {
         }
         subtaskMap.get(subtask.taskId).push({
             id: subtask.id,
-            theme: subtask.theme,
-            subDateSet: subtask.subDateSet,
-            subDeadline: subtask.subDeadline,
-            done: subtask.done
+            description: subtask.description,
+            dateSet: subtask.dateSet,
+            deadline: subtask.deadline,
+            done: subtask.done,
+            executorId: subtask.executorId,
+            executorName: subtask.executorName
         });
     });
     tasks.forEach(task => {
@@ -264,10 +268,11 @@ async function createSubtask(taskId, subtaskData) {
     const url = 'https://servtodo.ssline.uz/subtasks';
     const body = {
         taskId,
-        description: subtaskData.theme || 'Новая подзадача',
-        dateSet: toISODate(subtaskData.subDateSet) || new Date().toISOString().split('T')[0],
-        deadline: subtaskData.subDeadline ? toISODate(subtaskData.subDeadline) : null,
-        done: subtaskData.done || false
+        description: subtaskData.description || 'Новая подзадача',
+        dateSet: toISODate(subtaskData.dateSet) || new Date().toISOString().split('T')[0],
+        deadline: subtaskData.deadline ? toISODate(subtaskData.deadline) : null,
+        done: subtaskData.done || false,
+        executorId: subtaskData.executorId || null
     };
     console.log('Создание подзадачи:', url, 'Тело:', body);
     try {
@@ -287,10 +292,12 @@ async function createSubtask(taskId, subtaskData) {
         return {
             id: data.id,
             taskId: data.taskId,
-            theme: data.description || '',
-            subDateSet: formatDate(data.dateSet),
-            subDeadline: formatDate(data.deadline),
-            done: data.done || false
+            description: data.description || '',
+            dateSet: formatDate(data.dateSet),
+            deadline: formatDate(data.deadline),
+            done: data.done || false,
+            executorId: data.executorId || null,
+            executorName: executors.find(ex => ex.id === data.executorId)?.name || 'Не назначен'
         };
     } catch (error) {
         console.error('Ошибка при создании подзадачи:', error);
@@ -303,10 +310,11 @@ async function updateSubtask(subtaskId, subtaskData) {
     const url = `https://servtodo.ssline.uz/subtasks/${subtaskId}`;
     const body = {
         taskId: subtaskData.taskId,
-        description: subtaskData.theme || '',
-        dateSet: toISODate(subtaskData.subDateSet) || null,
-        deadline: subtaskData.subDeadline ? toISODate(subtaskData.subDeadline) : null,
-        done: subtaskData.done || false
+        description: subtaskData.description || '',
+        dateSet: toISODate(subtaskData.dateSet) || null,
+        deadline: subtaskData.deadline ? toISODate(subtaskData.deadline) : null,
+        done: subtaskData.done || false,
+        executorId: subtaskData.executorId || null
     };
     console.log('Обновление подзадачи:', url, 'Тело:', body);
     try {
@@ -326,10 +334,12 @@ async function updateSubtask(subtaskId, subtaskData) {
         return {
             id: data.id,
             taskId: data.taskId,
-            theme: data.description || '',
-            subDateSet: formatDate(data.dateSet),
-            subDeadline: formatDate(data.deadline),
-            done: data.done || false
+            description: data.description || '',
+            dateSet: formatDate(data.dateSet),
+            deadline: formatDate(data.deadline),
+            done: data.done || false,
+            executorId: data.executorId || null,
+            executorName: executors.find(ex => ex.id === data.executorId)?.name || 'Не назначен'
         };
     } catch (error) {
         console.error('Ошибка при обновлении подзадачи:', error);
@@ -528,6 +538,15 @@ export function sortTasks(taskList) {
     });
 }
 
+function getDeadlineClass(deadline, isCompleted) {
+    if (isCompleted) return 'deadline-green'; // Green for completed tasks/subtasks
+    if (!deadline) return '';
+    const daysLeft = Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24));
+    if (daysLeft <= 2) return 'deadline-red';
+    if (daysLeft <= 7) return 'deadline-yellow';
+    return '';
+}
+
 export function openEditModal(taskId) {
     console.log('Попытка открыть задачу с ID:', taskId, 'Тип:', typeof taskId);
     const task = taskId ? tasks.find(t => t.id === taskId) : {
@@ -545,29 +564,31 @@ export function openEditModal(taskId) {
     };
     if (!task && taskId) {
         console.error('Задача не найдена:', taskId);
-        console.log('Текущий массив tasks:', tasks);
         showNotification('Задача не найдена');
         return;
     }
     console.log('Открытие модалки для задачи:', task);
 
-    const modal = document.createElement("div");
-    modal.className = "modal trello-style-modal";
+    const modal = document.createElement('div');
+    modal.className = 'modal trello-style-modal';
 
     const tempTask = JSON.parse(JSON.stringify(task));
     tempTask.files = tempTask.files || [];
     tempTask.executors = tempTask.executors || [];
     tempTask.history = tempTask.history || [];
-    tempTask.deadline = tempTask.deadline || "";
+    tempTask.deadline = tempTask.deadline || '';
     tempTask.subtasks = tempTask.subtasks || [];
     const pendingHistory = [];
 
-    const statuses = ["Принято", "Выполнено", "Принято заказчиком", "Аннулировано", "Возвращен"];
+    const statuses = ['Принято', 'Выполнено', 'Принято заказчиком', 'Аннулировано', 'Возвращен'];
 
     modal.innerHTML = `
         <div class="modal-content trello-modal-content">
             <div class="modal-header">
-                <h2>${tempTask.project || "Без проекта"}</h2>
+                <div class="editable-field">
+                    <h2 id="projectDisplay">${tempTask.project || 'Без проекта'}</h2>
+                    <input type="text" id="editProject" value="${tempTask.project || ''}" class="hidden">
+                </div>
                 <div class="header-actions">
                     <span class="status-label">Статус:</span>
                     <select id="statusSelect">
@@ -590,29 +611,29 @@ export function openEditModal(taskId) {
                     <div class="section">
                         <h3>Тема</h3>
                         <div class="editable-field">
-                            <span id="themeDisplay">${tempTask.theme || "Нет темы"}</span>
-                            <input type="text" id="editTheme" value="${tempTask.theme || ""}" class="hidden">
+                            <span id="themeDisplay">${tempTask.theme || 'Нет темы'}</span>
+                            <input type="text" id="editTheme" value="${tempTask.theme || ''}" class="hidden">
                         </div>
                     </div>
                     <div class="section">
                         <h3>Описание</h3>
                         <div class="editable-field">
-                            <span id="descriptionDisplay">${tempTask.description || "Нет описания"}</span>
-                            <textarea id="editDescription" class="hidden">${tempTask.description || ""}</textarea>
+                            <span id="descriptionDisplay">${tempTask.description || 'Нет описания'}</span>
+                            <textarea id="editDescription" class="hidden">${tempTask.description || ''}</textarea>
                         </div>
                     </div>
                     <div class="section">
                         <h3>Дата постановки</h3>
                         <div class="editable-field">
-                            <span id="dateSetDisplay">${tempTask.dateSet || "Не указана"}</span>
-                            <input type="date" id="editDateSet" value="${tempTask.dateSet || ""}" class="hidden">
+                            <span id="dateSetDisplay">${tempTask.dateSet || 'Не указана'}</span>
+                            <input type="date" id="editDateSet" value="${tempTask.dateSet || ''}" class="hidden">
                         </div>
                     </div>
                     <div class="section">
                         <h3>Срок выполнения</h3>
                         <div class="editable-field">
-                            <span id="deadlineDisplay">${tempTask.deadline || "Не указан"}</span>
-                            <input type="date" id="editDeadline" value="${tempTask.deadline || ""}" class="hidden">
+                            <span id="deadlineDisplay" class="${getDeadlineClass(tempTask.deadline, tempTask.status === 'Выполнено')}">${tempTask.deadline || 'Не указан'}</span>
+                            <input type="date" id="editDeadline" value="${tempTask.deadline || ''}" class="hidden">
                         </div>
                     </div>
                     <div class="section comment-section">
@@ -634,11 +655,17 @@ export function openEditModal(taskId) {
                         <div id="subtaskList">
                             ${tempTask.subtasks.length ? tempTask.subtasks.map((sub, index) => `
                                 <div class="subtask-item" data-id="${sub.id}">
-                                    <input type="text" class="subtask-theme" value="${sub.theme || ''}" placeholder="Тема подзадачи">
-                                    <input type="date" class="subtask-dateSet" value="${sub.subDateSet || ''}">
-                                    <input type="date" class="subtask-deadline" value="${sub.subDeadline || ''}">
+                                    <input type="text" class="subtask-description" value="${sub.description || ''}" placeholder="Описание подзадачи">
+                                    <input type="date" class="subtask-dateSet" value="${sub.dateSet || ''}">
+                                    <input type="date" class="subtask-deadline ${getDeadlineClass(sub.deadline, sub.done)}" value="${sub.deadline || ''}">
+                                    <select class="subtask-executor">
+                                        <option value="">Не назначен</option>
+                                        ${executors.map(ex => `
+                                            <option value="${ex.id}" ${sub.executorId === ex.id ? 'selected' : ''}>${ex.name}</option>
+                                        `).join('')}
+                                    </select>
                                     <input type="checkbox" class="subtask-done" ${sub.done ? 'checked' : ''}>
-                                    <button class="remove-subtask" data-index="${index}" data-id="${sub.id}">×</button>
+                                    <button class="remove-subtask" data-index="${index}" data-id="${sub.id}"><img src="./image/x_icon.svg" alt=""></button>
                                 </div>
                             `).join('') : '<p>Нет подзадач</p>'}
                         </div>
@@ -653,7 +680,7 @@ export function openEditModal(taskId) {
                                 <div class="file-item">
                                     <a href="${file.url}" target="_blank">${file.name}</a>
                                 </div>
-                            `).join("") : "Нет файлов"}
+                            `).join('') : 'Нет файлов'}
                         </div>
                     </div>
                 </div>
@@ -661,13 +688,13 @@ export function openEditModal(taskId) {
                     <div class="section">
                         <h3>История</h3>
                         <div id="historyList">
-                            ${tempTask.history.length ? tempTask.history.map((entry) => `
+                            ${tempTask.history.length ? tempTask.history.map(entry => `
                                 <div class="history-item ${getHistoryClass(entry.change)}" data-id="${entry.id || 'temp-' + Math.random()}">
                                     <span class="history-date">${entry.date}</span>
                                     <span class="history-change">${entry.change}</span>
                                     <span class="history-user">${entry.user}</span>
                                 </div>
-                            `).join("") : "Нет истории изменений"}
+                            `).join('') : 'Нет истории изменений'}
                         </div>
                     </div>
                 </div>
@@ -686,12 +713,12 @@ export function openEditModal(taskId) {
         if (change.includes('статус подзадачи')) return 'history-subtask-status';
         if (change.includes('статус')) return 'history-status';
         if (change.includes('исполнитель')) return 'history-executor';
-        if (change.includes('тема')) return 'history-theme';
-        if (change.includes('описание')) return 'history-description';
+        if (change.includes('описание подзадачи')) return 'history-subtask-description';
         if (change.includes('срок выполнения')) return 'history-deadline';
         if (change.includes('дата постановки')) return 'history-dateSet';
         if (change.includes('файл')) return 'history-file';
         if (change.includes('подзадач')) return 'history-subtask';
+        if (change.includes('проект')) return 'history-project';
         return 'history-other';
     }
 
@@ -705,6 +732,59 @@ export function openEditModal(taskId) {
         });
     });
 
+    // Handle project name editing
+    const projectDisplay = modal.querySelector("#projectDisplay");
+    const projectInput = modal.querySelector("#editProject");
+
+    if (projectDisplay && projectInput) {
+        projectDisplay.addEventListener("dblclick", (e) => {
+            e.stopPropagation();
+            projectDisplay.classList.add("hidden");
+            projectInput.classList.remove("hidden");
+            projectInput.focus();
+        });
+
+        projectInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const oldValue = tempTask.project;
+                tempTask.project = projectInput.value.trim();
+                projectDisplay.textContent = tempTask.project || "Без проекта";
+                projectDisplay.classList.remove("hidden");
+                projectInput.classList.add("hidden");
+                if (oldValue !== tempTask.project) {
+                    pendingHistory.push({
+                        date: formatCommentDate(new Date()),
+                        rawDate: new Date().toISOString(),
+                        change: `Проект изменён с "${oldValue || "не указан"}" на "${tempTask.project || "не указан"}"`,
+                        user: "Текущий пользователь"
+                    });
+                    updateHistoryList();
+                    showNotification('Проект обновлён');
+                }
+            }
+        });
+
+        projectInput.addEventListener("blur", () => {
+            const oldValue = tempTask.project;
+            tempTask.project = projectInput.value.trim();
+            projectDisplay.textContent = tempTask.project || "Без проекта";
+            projectDisplay.classList.remove("hidden");
+            projectInput.classList.add("hidden");
+            if (oldValue !== tempTask.project) {
+                pendingHistory.push({
+                    date: formatCommentDate(new Date()),
+                    rawDate: new Date().toISOString(),
+                    change: `Проект изменён с "${oldValue || "не указан"}" на "${tempTask.project || "не указан"}"`,
+                    user: "Текущий пользователь"
+                });
+                updateHistoryList();
+                showNotification('Проект обновлён');
+            }
+        });
+    }
+
+    // Handle other editable fields
     ["theme", "description", "deadline", "dateSet"].forEach(field => {
         const display = modal.querySelector(`#${field}Display`);
         const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
@@ -792,83 +872,114 @@ export function openEditModal(taskId) {
     });
 
     async function updateSubtaskList() {
-        const subtaskList = modal.querySelector("#subtaskList");
+        const subtaskList = modal.querySelector('#subtaskList');
         subtaskList.innerHTML = tempTask.subtasks.length ? tempTask.subtasks.map((sub, index) => `
             <div class="subtask-item" data-id="${sub.id}">
-                <input type="text" class="subtask-theme" value="${sub.theme || ''}" placeholder="Тема подзадачи">
-                <input type="date" class="subtask-dateSet" value="${sub.subDateSet || ''}">
-                <input type="date" class="subtask-deadline" value="${sub.subDeadline || ''}">
+                <input type="text" class="subtask-description" value="${sub.description || ''}" placeholder="Описание подзадачи">
+                <input type="date" class="subtask-dateSet" value="${sub.dateSet || ''}">
+                <input type="date" class="subtask-deadline ${getDeadlineClass(sub.deadline, sub.done)}" value="${sub.deadline || ''}">
+                <select class="subtask-executor">
+                    <option value="">Не назначен</option>
+                    ${executors.map(ex => `
+                        <option value="${ex.id}" ${sub.executorId === ex.id ? 'selected' : ''}>${ex.name}</option>
+                    `).join('')}
+                </select>
                 <input type="checkbox" class="subtask-done" ${sub.done ? 'checked' : ''}>
-                <button class="remove-subtask" data-index="${index}" data-id="${sub.id}">×</button>
+                <button class="remove-subtask" data-index="${index}" data-id="${sub.id}"><img src="./image/x_icon.svg" alt=""></button>
             </div>
         `).join('') : '<p>Нет подзадач</p>';
 
         subtaskList.querySelectorAll('.subtask-item').forEach(item => {
             const index = parseInt(item.querySelector('.remove-subtask').dataset.index);
             const subtaskId = item.querySelector('.remove-subtask').dataset.id;
-            const themeInput = item.querySelector('.subtask-theme');
+            const descriptionInput = item.querySelector('.subtask-description');
             const dateSetInput = item.querySelector('.subtask-dateSet');
             const deadlineInput = item.querySelector('.subtask-deadline');
+            const executorSelect = item.querySelector('.subtask-executor');
             const doneInput = item.querySelector('.subtask-done');
 
-            themeInput.addEventListener('change', async () => {
-                const oldTheme = tempTask.subtasks[index].theme;
-                tempTask.subtasks[index].theme = themeInput.value.trim();
-                if (oldTheme !== tempTask.subtasks[index].theme) {
+            descriptionInput.addEventListener('change', async () => {
+                const oldDescription = tempTask.subtasks[index].description;
+                tempTask.subtasks[index].description = descriptionInput.value.trim();
+                if (oldDescription !== tempTask.subtasks[index].description) {
                     try {
                         await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
                         pendingHistory.push({
                             date: formatCommentDate(new Date()),
                             rawDate: new Date().toISOString(),
-                            change: `Тема подзадачи ${index + 1} изменена с "${oldTheme || "не указано"}" на "${tempTask.subtasks[index].theme || "не указано"}"`,
+                            change: `Описание подзадачи ${index + 1} изменено с "${oldDescription || "не указано"}" на "${tempTask.subtasks[index].description || "не указано"}"`,
                             user: "Текущий пользователь"
                         });
                         updateHistoryList();
-                        showNotification('Тема подзадачи обновлена');
+                        showNotification('Описание подзадачи обновлено');
                     } catch (error) {
-                        tempTask.subtasks[index].theme = oldTheme;
+                        tempTask.subtasks[index].description = oldDescription;
                         updateSubtaskList();
                     }
                 }
             });
 
             dateSetInput.addEventListener('change', async () => {
-                const oldDateSet = tempTask.subtasks[index].subDateSet;
-                tempTask.subtasks[index].subDateSet = dateSetInput.value;
-                if (oldDateSet !== tempTask.subtasks[index].subDateSet) {
+                const oldDateSet = tempTask.subtasks[index].dateSet;
+                tempTask.subtasks[index].dateSet = dateSetInput.value;
+                if (oldDateSet !== tempTask.subtasks[index].dateSet) {
                     try {
                         await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
                         pendingHistory.push({
                             date: formatCommentDate(new Date()),
                             rawDate: new Date().toISOString(),
-                            change: `Дата постановки подзадачи ${index + 1} изменена с "${oldDateSet || "не указана"}" на "${tempTask.subtasks[index].subDateSet || "не указана"}"`,
+                            change: `Дата постановки подзадачи ${index + 1} изменена с "${oldDateSet || "не указана"}" на "${tempTask.subtasks[index].dateSet || "не указана"}"`,
                             user: "Текущий пользователь"
                         });
                         updateHistoryList();
                         showNotification('Дата постановки подзадачи обновлена');
                     } catch (error) {
-                        tempTask.subtasks[index].subDateSet = oldDateSet;
+                        tempTask.subtasks[index].dateSet = oldDateSet;
                         updateSubtaskList();
                     }
                 }
             });
 
             deadlineInput.addEventListener('change', async () => {
-                const oldDeadline = tempTask.subtasks[index].subDeadline;
-                tempTask.subtasks[index].subDeadline = deadlineInput.value;
-                if (oldDeadline !== tempTask.subtasks[index].subDeadline) {
+                const oldDeadline = tempTask.subtasks[index].deadline;
+                tempTask.subtasks[index].deadline = deadlineInput.value;
+                if (oldDeadline !== tempTask.subtasks[index].deadline) {
                     try {
                         await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
                         pendingHistory.push({
                             date: formatCommentDate(new Date()),
                             rawDate: new Date().toISOString(),
-                            change: `Дедлайн подзадачи ${index + 1} изменён с "${oldDeadline || "не указан"}" на "${tempTask.subtasks[index].subDeadline || "не указан"}"`,
+                            change: `Дедлайн подзадачи ${index + 1} изменён с "${oldDeadline || "не указан"}" на "${tempTask.subtasks[index].deadline || "не указан"}"`,
                             user: "Текущий пользователь"
                         });
                         updateHistoryList();
                         showNotification('Дедлайн подзадачи обновлён');
                     } catch (error) {
-                        tempTask.subtasks[index].subDeadline = oldDeadline;
+                        tempTask.subtasks[index].deadline = oldDeadline;
+                        updateSubtaskList();
+                    }
+                }
+            });
+
+            executorSelect.addEventListener('change', async () => {
+                const oldExecutorId = tempTask.subtasks[index].executorId;
+                const newExecutorId = executorSelect.value ? parseInt(executorSelect.value) : null;
+                tempTask.subtasks[index].executorId = newExecutorId;
+                tempTask.subtasks[index].executorName = executors.find(ex => ex.id === newExecutorId)?.name || 'Не назначен';
+                if (oldExecutorId !== newExecutorId) {
+                    try {
+                        await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
+                        pendingHistory.push({
+                            date: formatCommentDate(new Date()),
+                            rawDate: new Date().toISOString(),
+                            change: `Исполнитель подзадачи ${index + 1} изменён с "${executors.find(ex => ex.id === oldExecutorId)?.name || 'не назначен'}" на "${tempTask.subtasks[index].executorName}"`,
+                            user: "Текущий пользователь"
+                        });
+                        updateHistoryList();
+                        showNotification('Исполнитель подзадачи обновлён');
+                    } catch (error) {
+                        tempTask.subtasks[index].executorId = oldExecutorId;
+                        tempTask.subtasks[index].executorName = executors.find(ex => ex.id === oldExecutorId)?.name || 'Не назначен';
                         updateSubtaskList();
                     }
                 }
@@ -908,7 +1019,7 @@ export function openEditModal(taskId) {
                     pendingHistory.push({
                         date: formatCommentDate(new Date()),
                         rawDate: new Date().toISOString(),
-                        change: `Удалена подзадача: "${removedSubtask.theme || "без темы"}"`,
+                        change: `Удалена подзадача: "${removedSubtask.description || "без описания"}"`,
                         user: "Текущий пользователь"
                     });
                     updateHistoryList();
@@ -1090,17 +1201,19 @@ export function openEditModal(taskId) {
         try {
             const newSubtask = {
                 taskId: tempTask.id,
-                theme: 'Новая подзадача',
-                subDateSet: formatDate(new Date()),
-                subDeadline: '',
-                done: false
+                description: 'Новая подзадача',
+                dateSet: formatDate(new Date()),
+                deadline: '',
+                done: false,
+                executorId: null,
+                executorName: 'Не назначен'
             };
             const createdSubtask = await createSubtask(tempTask.id, newSubtask);
             tempTask.subtasks.push(createdSubtask);
             pendingHistory.push({
                 date: formatCommentDate(new Date()),
                 rawDate: new Date().toISOString(),
-                change: `Добавлена новая подзадача: "${createdSubtask.theme || "без темы"}"`,
+                change: `Добавлена новая подзадача: "${createdSubtask.description || "без описания"}"`,
                 user: "Текущий пользователь"
             });
             updateHistoryList();

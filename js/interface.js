@@ -12,22 +12,31 @@ export function createTaskCards(taskList) {
     taskList.forEach(task => {
         const card = document.createElement('div');
         card.className = 'task-card';
+
+        // Определяем цвет дедлайна задачи
         let deadlineClass = '';
-        if (task.deadline) {
+        if (task.status === 'Выполнено') {
+            deadlineClass = 'deadline-green'; // Зелёный для выполненных задач
+        } else if (task.deadline) {
             const daysLeft = Math.ceil((new Date(task.deadline) - new Date()) / (1000 * 60 * 60 * 24));
             if (daysLeft <= 2) deadlineClass = 'deadline-red';
             else if (daysLeft <= 7) deadlineClass = 'deadline-yellow';
         }
-        const subtaskCounts = { yellow: 0, red: 0 };
+
+        // Подсчёт подзадач по цветам
+        const subtaskCounts = { yellow: 0, red: 0, green: 0 };
         if (task.subtasks && task.subtasks.length) {
             task.subtasks.forEach(sub => {
-                if (sub.subDeadline) {
-                    const daysLeft = Math.ceil((new Date(sub.subDeadline) - new Date()) / (1000 * 60 * 60 * 24));
+                if (sub.done) {
+                    subtaskCounts.green++; // Зелёный для выполненных подзадач
+                } else if (sub.deadline) {
+                    const daysLeft = Math.ceil((new Date(sub.deadline) - new Date()) / (1000 * 60 * 60 * 24));
                     if (daysLeft <= 2) subtaskCounts.red++;
                     else if (daysLeft <= 7) subtaskCounts.yellow++;
                 }
             });
         }
+
         card.innerHTML = `
             <div class="task-field"><strong>№:</strong> ${task.id}</div>
             <div class="task-field"><strong>Проект/Заказчик:</strong> ${task.project || 'Без проекта'}</div>
@@ -40,6 +49,7 @@ export function createTaskCards(taskList) {
             <div class="subtask-indicators">
                 ${subtaskCounts.yellow ? `<span class="subtask-circle yellow">${subtaskCounts.yellow}</span>` : ''}
                 ${subtaskCounts.red ? `<span class="subtask-circle red">${subtaskCounts.red}</span>` : ''}
+                ${subtaskCounts.green ? `<span class="subtask-circle green">${subtaskCounts.green}</span>` : ''}
             </div>
         `;
         card.addEventListener('click', () => openEditModal(task.id));

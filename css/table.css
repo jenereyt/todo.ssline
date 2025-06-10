@@ -275,8 +275,12 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    padding: 2px 6px;
-    /* Уменьшили padding */
+    padding: 2px;
+}
+.remove-subtask img {
+    height: 15px;
+    width: 15px;
+    fill: white;
 }
 
 .subtask-item.completed {

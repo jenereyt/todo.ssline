@@ -63,6 +63,7 @@ export async function updateExecutor(id, executorData) {
     const url = `https://servtodo.ssline.uz/executors/${id}`;
     console.log('Обновление исполнителя:', id, executorData, url);
     try {
+        // Отправляем запрос на обновление имени и номера телефона
         const response = await fetch(url, {
             method: 'PUT',
             headers: {

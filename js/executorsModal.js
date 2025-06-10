@@ -1,4 +1,4 @@
-import { applyFilters, tasks, executors } from './app.js';
+import { applyFilters, tasks, executors, showNotification } from './app.js';
 import { fetchExecutors, createExecutor, updateExecutor, deleteExecutor } from './executors.js';
 import { removeExecutorFromTask } from './executorsOnTask.js';
 import { createHistory } from './history.js';
@@ -35,7 +35,7 @@ export function openGlobalExecutorModal() {
     async function refreshExecutorsList() {
         const listContainer = modal.querySelector("#allExecutorsList");
         const allExecutors = executors.length ? executors : await fetchExecutors();
-        listContainer.innerHTML = allExecutors.length ? allExecutors.map(executor => `
+        listContainer.innerHTML = allExecutors.map(executor => `
             <li class="executor-list-item" data-executor="${executor.name}" data-id="${executor.id}">
                 <span class="executor-name">${executor.name}${executor.phone_number ? ` (${executor.phone_number})` : ''}</span>
                 <div class="executor-actions">
@@ -44,14 +44,16 @@ export function openGlobalExecutorModal() {
                     </button>
                 </div>
             </li>
-        `).join('') : '<span>Нет исполнителей</span>';
+        `).join('') || '<span>Нет исполнителей</span>';
 
         listContainer.querySelectorAll(".delete-executor-btn").forEach(btn => {
             btn.addEventListener("click", async (e) => {
+                e.stopPropagation();
                 const id = e.currentTarget.dataset.id;
                 const executorName = e.currentTarget.closest('.executor-list-item').dataset.executor;
-                if (confirm(`Вы уверены, что хотите удалить исполнителя "${executorName}"? Это удалит его из всех задач.`)) {
+                if (confirm(`Вы уверены, что хотите удалить исполнителя "${executorName}"? Это удалит его из всех задач и подзадач.`)) {
                     try {
+                        // Удаляем исполнителя из задач
                         for (const task of tasks) {
                             if (task.executors.includes(executorName)) {
                                 await removeExecutorFromTask(task.id, id);
@@ -62,14 +64,33 @@ export function openGlobalExecutorModal() {
                                 );
                                 task.executors = task.executors.filter(ex => ex !== executorName);
                             }
+                            // Проверяем подзадачи и сбрасываем executorId
+                            for (const subtask of task.subtasks) {
+                                if (subtask.executorId === parseInt(id)) {
+                                    await updateSubtask(subtask.id, {
+                                        ...subtask,
+                                        taskId: task.id,
+                                        executorId: null,
+                                        executorName: 'Не назначен'
+                                    });
+                                    await createHistory(
+                                        task.id,
+                                        `Исполнитель "${executorName}" удалён из подзадачи "${subtask.description || 'без описания'}"`,
+                                        "Текущий пользователь"
+                                    );
+                                    subtask.executorId = null;
+                                    subtask.executorName = 'Не назначен';
+                                }
+                            }
                         }
                         await deleteExecutor(id);
                         executors.length = 0;
                         executors.push(...(await fetchExecutors()));
                         await refreshExecutorsList();
                         applyFilters();
+                        showNotification(`Исполнитель "${executorName}" удалён`);
                     } catch (error) {
-                        alert(error.message);
+                        showNotification(`Ошибка при удалении исполнителя: ${error.message}`);
                     }
                 }
             });
@@ -92,23 +113,41 @@ export function openGlobalExecutorModal() {
                 `;
                 listItem.replaceChild(editContainer, span);
                 const nameInput = editContainer.querySelector(".edit-executor-input");
+                const phoneInput = editContainer.querySelector(".edit-executor-phone");
                 nameInput.focus();
 
-                async function saveEdit() {
+                async function saveEdit(e) {
+                    // Проверяем, не переключается ли фокус между полями
+                    if (e.relatedTarget === nameInput || e.relatedTarget === phoneInput) {
+                        return;
+                    }
                     const newName = nameInput.value.trim();
-                    const newPhone = editContainer.querySelector(".edit-executor-phone").value.trim();
-                    if (newName && (newName !== currentName || newPhone !== currentPhone)) {
+                    const newPhone = phoneInput.value.trim();
+                    if (!newName) {
+                        showNotification('Имя исполнителя не может быть пустым');
+                        await refreshExecutorsList();
+                        return;
+                    }
+                    if (newName !== currentName || newPhone !== currentPhone) {
                         try {
-                            const existingExecutor = executors.find(ex =>
-                                (ex.name.toLowerCase() === newName.toLowerCase() ||
-                                    (newPhone && ex.phone_number === newPhone)) &&
-                                ex.id !== id
+                            // Проверяем конфликты, исключая текущего исполнителя
+                            const nameConflict = executors.find(ex =>
+                                ex.name.toLowerCase() === newName.toLowerCase() && ex.id !== parseInt(id)
                             );
-                            if (existingExecutor) {
-                                alert('Исполнитель с таким именем или номером телефона уже существует');
+                            const phoneConflict = newPhone && executors.find(ex =>
+                                ex.phone_number === newPhone && ex.id !== parseInt(id)
+                            );
+                            if (nameConflict) {
+                                showNotification('Исполнитель с таким именем уже существует');
                                 await refreshExecutorsList();
                                 return;
                             }
+                            if (phoneConflict) {
+                                showNotification('Исполнитель с таким номером телефона уже существует');
+                                await refreshExecutorsList();
+                                return;
+                            }
+                            console.log(`Отправка обновления для id=${id}: name=${newName}, phone=${newPhone}`);
                             await updateExecutor(id, { name: newName, phone_number: newPhone });
                             for (const task of tasks) {
                                 if (task.executors.includes(currentName)) {
@@ -124,8 +163,10 @@ export function openGlobalExecutorModal() {
                             executors.push(...(await fetchExecutors()));
                             await refreshExecutorsList();
                             applyFilters();
+                            showNotification(`Исполнитель "${newName}" обновлён`);
                         } catch (error) {
-                            alert(error.message);
+                            console.error('Ошибка при обновлении:', error);
+                            showNotification(`Ошибка при обновлении исполнителя: ${error.message}`);
                             await refreshExecutorsList();
                         }
                     } else {
@@ -133,14 +174,27 @@ export function openGlobalExecutorModal() {
                     }
                 }
 
-                nameInput.addEventListener("blur", saveEdit, { once: true });
-                editContainer.querySelector(".edit-executor-phone").addEventListener("blur", saveEdit, { once: true });
+                nameInput.addEventListener("blur", saveEdit);
+                phoneInput.addEventListener("blur", saveEdit);
                 nameInput.addEventListener("keypress", async (e) => {
-                    if (e.key === "Enter") await saveEdit();
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        await saveEdit({ relatedTarget: null });
+                    }
                 });
-                editContainer.querySelector(".edit-executor-phone").addEventListener("keypress", async (e) => {
-                    if (e.key === "Enter") await saveEdit();
+                phoneInput.addEventListener("keypress", async (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        await saveEdit({ relatedTarget: null });
+                    }
                 });
+
+                editContainer.addEventListener("focusout", (e) => {
+                    if (!editContainer.contains(e.relatedTarget)) {
+                        nameInput.removeEventListener("blur", saveEdit);
+                        phoneInput.removeEventListener("blur", saveEdit);
+                    }
+                }, { once: true });
             });
         });
     }
@@ -148,7 +202,9 @@ export function openGlobalExecutorModal() {
     refreshExecutorsList();
 
     modal.addEventListener("click", (e) => {
-        if (e.target === modal) modal.remove();
+        if (e.target === modal) {
+            modal.remove();
+        }
     });
 
     modal.querySelector("#closeModalBtn").addEventListener("click", () => modal.remove());
@@ -165,7 +221,7 @@ export function openGlobalExecutorModal() {
                     (newExecutorPhone && ex.phone_number === newExecutorPhone)
                 );
                 if (existingExecutor) {
-                    alert('Исполнитель с таким именем или номером телефона уже существует');
+                    showNotification('Исполнитель с таким именем или номером телефона уже существует');
                     return;
                 }
                 await createExecutor({ name: newExecutorName, phone_number: newExecutorPhone });
@@ -175,11 +231,12 @@ export function openGlobalExecutorModal() {
                 applyFilters();
                 nameInput.value = "";
                 phoneInput.value = "";
+                showNotification(`Исполнитель "${newExecutorName}" добавлен`);
             } catch (error) {
-                alert(error.message);
+                showNotification(error.message);
             }
         } else {
-            alert('Введите имя исполнителя');
+            showNotification('Введите имя исполнителя');
         }
     });
 
