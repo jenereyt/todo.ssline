@@ -538,8 +538,18 @@ export function sortTasks(taskList) {
     });
 }
 
-function getDeadlineClass(deadline, isCompleted) {
-    if (isCompleted) return 'deadline-green'; // Green for completed tasks/subtasks
+function getDeadlineClass(deadline, statusOrDone) {
+    // Для задач: statusOrDone — это строка статуса; для подзадач — булево done
+    if (typeof statusOrDone === 'string') {
+        if (statusOrDone === 'Выполнено' || statusOrDone === 'Принято заказчиком') {
+            return 'deadline-green'; // Зелёный для выполненных или принятых
+        }
+        if (statusOrDone === 'Аннулировано') {
+            return 'deadline-gray'; // Серый для аннулированных
+        }
+    } else if (statusOrDone === true) {
+        return 'deadline-green'; // Зелёный для выполненных подзадач
+    }
     if (!deadline) return '';
     const daysLeft = Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24));
     if (daysLeft <= 2) return 'deadline-red';

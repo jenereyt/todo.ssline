@@ -179,6 +179,11 @@ button {
     /* Зелёный для выполненных задач/подзадач */
 }
 
+.deadline-gray {
+    color: #808080;
+    /* Серый для аннулированных задач */
+}
+
 .subtask-circle {
     border-radius: 50%;
     width: 20px;
@@ -203,4 +208,11 @@ button {
 .subtask-circle.green {
     background-color: #00FF00;
     color: #000000;
+}
+
+.subtask-circle.gray {
+    background-color: #808080;
+    /* Серый для общего количества подзадач */
+    color: #FFFFFF;
+    /* Белый текст для читаемости */
 }

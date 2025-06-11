@@ -15,17 +15,20 @@ export function createTaskCards(taskList) {
 
         // Определяем цвет дедлайна задачи
         let deadlineClass = '';
-        if (task.status === 'Выполнено') {
-            deadlineClass = 'deadline-green'; // Зелёный для выполненных задач
+        if (task.status === 'Выполнено' || task.status === 'Принято заказчиком') {
+            deadlineClass = 'deadline-green'; // Зелёный для выполненных или принятых
+        } else if (task.status === 'Аннулировано') {
+            deadlineClass = 'deadline-gray'; // Серый для аннулированных
         } else if (task.deadline) {
             const daysLeft = Math.ceil((new Date(task.deadline) - new Date()) / (1000 * 60 * 60 * 24));
             if (daysLeft <= 2) deadlineClass = 'deadline-red';
             else if (daysLeft <= 7) deadlineClass = 'deadline-yellow';
         }
 
-        // Подсчёт подзадач по цветам
-        const subtaskCounts = { yellow: 0, red: 0, green: 0 };
+        // Подсчёт подзадач по цветам и общего количества
+        const subtaskCounts = { yellow: 0, red: 0, green: 0, total: 0 };
         if (task.subtasks && task.subtasks.length) {
+            subtaskCounts.total = task.subtasks.length; // Общее количество подзадач
             task.subtasks.forEach(sub => {
                 if (sub.done) {
                     subtaskCounts.green++; // Зелёный для выполненных подзадач
@@ -47,6 +50,7 @@ export function createTaskCards(taskList) {
             <div class="task-field"><strong>Исполнители:</strong> ${task.executors.length ? task.executors.join(', ') : 'Не назначены'}</div>
             <div class="task-field"><strong>Статус:</strong> ${task.status || 'Не указан'}</div>
             <div class="subtask-indicators">
+                ${subtaskCounts.total ? `<span class="subtask-circle gray">${subtaskCounts.total}</span>` : ''}
                 ${subtaskCounts.yellow ? `<span class="subtask-circle yellow">${subtaskCounts.yellow}</span>` : ''}
                 ${subtaskCounts.red ? `<span class="subtask-circle red">${subtaskCounts.red}</span>` : ''}
                 ${subtaskCounts.green ? `<span class="subtask-circle green">${subtaskCounts.green}</span>` : ''}
