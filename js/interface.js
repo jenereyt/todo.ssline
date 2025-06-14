@@ -1,6 +1,7 @@
 import { openGlobalExecutorModal } from './executorsModal.js';
-import { tasks, executors, getAllExecutors, filters, sortState, allProjects, openEditModal, applyFilters } from './app.js';
-
+import { tasks, executors, getAllExecutors, filters, sortState, allProjects,} from './app.js';
+import { showNotification } from './utils.js';
+import { applyFilters,openEditModal } from './modal.js';
 export function createTaskCards(taskList) {
     const appDiv = document.getElementById('app');
     const existingContainer = appDiv.querySelector('.task-cards-container');

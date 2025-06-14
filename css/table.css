@@ -255,7 +255,6 @@
 .subtask-theme,
 .subtask-dateSet,
 .subtask-deadline {
-    flex: 1;
     padding: 4px;
     /* Уменьшили padding */
     border: 1px solid #ddd;

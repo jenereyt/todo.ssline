@@ -1,7 +1,9 @@
-import { applyFilters, tasks, executors, showNotification } from './app.js';
+import { tasks, executors} from './app.js';
 import { fetchExecutors, createExecutor, updateExecutor, deleteExecutor } from './executors.js';
 import { removeExecutorFromTask } from './executorsOnTask.js';
 import { createHistory } from './history.js';
+import { showNotification } from './utils.js';
+import { applyFilters } from './modal.js';
 
 export function openGlobalExecutorModal() {
     const modal = document.createElement("div");

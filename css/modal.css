@@ -714,6 +714,10 @@
     padding: 4px;
 }
 
+.subtask-description {
+    width: 450px;
+}
+
 .subtask-description:focus,
 .subtask-executor:focus {
     outline: none;
