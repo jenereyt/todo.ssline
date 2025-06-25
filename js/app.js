@@ -8,11 +8,19 @@ import { applyFilters, sortTasks, openEditModal } from './modal.js';
 
 export let tasks = [];
 export let executors = [];
+export const customers = [];
 export let filters = {};
 export let sortState = { field: null, ascending: true };
 export let allProjects = [];
 export function getAllExecutors() {
     return executors.map(ex => ex.name).sort();
+}
+export async function syncCustomers() {
+    const { fetchCustomers } = await import('./customers.js');
+    const fetchedCustomers = await fetchCustomers();
+    customers.length = 0;
+    customers.push(...fetchedCustomers);
+    console.log('Заказчики синхронизированы:', customers);
 }
 document.addEventListener("DOMContentLoaded", async () => {
     const loadingOverlay = document.createElement("div");

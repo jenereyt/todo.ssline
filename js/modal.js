@@ -1,4 +1,4 @@
-import { tasks, executors, filters, sortState } from './app.js';
+import { tasks, executors, filters, sortState, customers } from './app.js';
 import { createTaskCards } from './interface.js';
 import { fetchExecutorsOnTasks, assignExecutorToTask, removeExecutorFromTask } from './executorsOnTask.js';
 import { createHistory } from './history.js';
@@ -36,15 +36,17 @@ function getHistoryClass(change) {
     if (change.includes('файл')) return 'history-file';
     if (change.includes('подзадач')) return 'history-subtask';
     if (change.includes('проект')) return 'history-project';
+    if (change.includes('заказчик')) return 'history-customer';
     return 'history-other';
 }
 
 export function applyFilters() {
     try {
-        const executorFilter = document.getElementById("executorFilter")?.value.toLowerCase() || '';
-        const projectFilter = document.getElementById("projectFilter")?.value.toLowerCase() || '';
-        const dateFrom = document.getElementById("dateFrom")?.value || '';
-        const dateTo = document.getElementById("dateTo")?.value || '';
+        const executorFilter = document.getElementById('executorFilter')?.value?.toLowerCase() || '';
+        const projectFilter = document.getElementById('projectFilter')?.value?.toLowerCase() || '';
+        const customerFilter = document.getElementById('customerFilter')?.value?.toLowerCase() || '';
+        const dateFrom = document.getElementById('dateFrom')?.value || '';
+        const dateTo = document.getElementById('dateTo')?.value || '';
 
         if (!dateFrom || !dateTo) {
             tasks.length = 0;
@@ -53,22 +55,29 @@ export function applyFilters() {
             return;
         }
 
-        fetchTasks(dateFrom, dateTo).then(() => {
-            let filteredTasks = tasks.filter(task => {
-                const matchesExecutors = !executorFilter || task.executors.some(ex => ex.toLowerCase().includes(executorFilter));
-                const matchesProject = !projectFilter || (task.project && task.project.toLowerCase().includes(projectFilter));
-                return matchesExecutors && matchesProject;
-            });
+        fetchTasks(dateFrom, dateTo)
+            .then(() => {
+                const filteredTasks = tasks.filter(task => {
+                    const matchesExecutors = !executorFilter ||
+                        (task.executors && task.executors.some(ex =>
+                            ex && ex.toLowerCase().includes(executorFilter)));
+                    const matchesProject = !projectFilter ||
+                        (task.project && task.project.toLowerCase().includes(projectFilter));
+                    const customer = customers.find(c => c.id === task.customerId);
+                    const matchesCustomer = !customerFilter ||
+                        (customer && customer.name && customer.name.toLowerCase().includes(customerFilter));
+                    return matchesExecutors && matchesProject && matchesCustomer;
+                });
 
-            sortTasks(filteredTasks);
-            console.log('Обновление таблицы с задачами:', filteredTasks);
-            createTaskCards(filteredTasks);
-        }).catch(error => {
-            console.error('Ошибка при применении фильтров:', error);
-            showNotification('Ошибка при загрузке задач');
-            tasks.length = 0;
-            createTaskCards([]);
-        });
+                sortTasks(filteredTasks);
+                createTaskCards(filteredTasks);
+            })
+            .catch(error => {
+                console.error('Ошибка при применении фильтров:', error);
+                showNotification('Ошибка при загрузке задач');
+                tasks.length = 0;
+                createTaskCards([]);
+            });
     } catch (error) {
         console.error('Ошибка в applyFilters:', error);
         showNotification('Ошибка при применении фильтров');
@@ -78,29 +87,29 @@ export function applyFilters() {
 }
 
 export function sortTasks(taskList) {
-    if (!sortState.field) return;
+    if (!sortState?.field || !taskList) return;
 
     taskList.sort((a, b) => {
         let valA = a[sortState.field];
         let valB = b[sortState.field];
 
-        if (sortState.field === "dateSet" || sortState.field === "deadline") {
-            valA = valA || "9999-12-31";
-            valB = valB || "9999-12-31";
+        if (sortState.field === 'dateSet' || sortState.field === 'deadline') {
+            valA = valA || '9999-12-31';
+            valB = valB || '9999-12-31';
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        } else if (sortState.field === "id") {
+        } else if (sortState.field === 'id') {
             return sortState.ascending ? valA - valB : valB - valA;
-        } else if (sortState.field === "executors") {
-            valA = valA.length ? valA.join(", ") : "";
-            valB = valB.length ? valB.join(", ") : "";
+        } else if (sortState.field === 'executors') {
+            valA = valA?.length ? valA.join(', ') : '';
+            valB = valB?.length ? valB.join(', ') : '';
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        } else if (sortState.field === "status") {
-            valA = valA || "Не указан";
-            valB = valB || "Не указан";
+        } else if (sortState.field === 'status') {
+            valA = valA || 'Не указано';
+            valB = valB || 'Не указано';
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
         } else {
-            valA = valA || "";
-            valB = valB || "";
+            valA = valA || '';
+            valB = valB || '';
             return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
         }
     });
@@ -112,6 +121,7 @@ export function openEditModal(taskId) {
         id: null,
         dateSet: formatDate(new Date()),
         project: '',
+        customerId: null,
         theme: '',
         description: '',
         status: 'OPEN',
@@ -121,15 +131,16 @@ export function openEditModal(taskId) {
         history: [],
         subtasks: []
     };
+
     if (!task && taskId) {
         console.error('Задача не найдена:', taskId);
         showNotification('Задача не найдена');
         return;
     }
-    console.log('Открытие модалки для задачи:', task);
 
     const modal = document.createElement('div');
     modal.className = 'modal trello-style-modal';
+    document.body.appendChild(modal);
 
     const tempTask = JSON.parse(JSON.stringify(task));
     tempTask.files = tempTask.files || [];
@@ -138,8 +149,7 @@ export function openEditModal(taskId) {
     tempTask.deadline = tempTask.deadline || '';
     tempTask.subtasks = tempTask.subtasks || [];
     const pendingHistory = [];
-
-    const statuses = ['Принято', 'Выполнено', 'Принято заказчиком', 'Аннулировано', 'Возвращен'];
+    const statuses = ['Принято', 'Выполнено', 'Принято заказчиком', 'Аннулировано', 'Возвращено'];
 
     modal.innerHTML = `
         <div class="modal-content trello-modal-content">
@@ -148,12 +158,17 @@ export function openEditModal(taskId) {
                     <h2 id="projectDisplay">${tempTask.project || 'Без проекта'}</h2>
                     <input type="text" id="editProject" value="${tempTask.project || ''}" class="hidden">
                 </div>
+                <div class="editable-field">
+                    <h3 id="customerDisplay">${customers.find(c => c.id === tempTask.customerId)?.name || 'Не указан'}</h3>
+                    <select id="editCustomer" class="hidden">
+                        <option value="">Не выбран</option>
+                        ${customers.map(c => `<option value="${c.id}" ${tempTask.customerId === c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+                    </select>
+                </div>
                 <div class="header-actions">
                     <span class="status-label">Статус:</span>
                     <select id="statusSelect">
-                        ${statuses.map(status => `
-                            <option value="${status}" ${tempTask.status === status ? 'selected' : ''}>${status}</option>
-                        `).join('')}
+                        ${statuses.map(status => `<option value="${status}" ${tempTask.status === status ? 'selected' : ''}>${status}</option>`).join('')}
                     </select>
                     <button class="close-modal-btn" id="closeModalBtn">×</button>
                 </div>
@@ -219,9 +234,7 @@ export function openEditModal(taskId) {
                                     <input type="date" class="subtask-deadline ${getDeadlineClass(sub.deadline, sub.done)}" value="${sub.deadline || ''}">
                                     <select class="subtask-executor">
                                         <option value="">Не назначен</option>
-                                        ${executors.map(ex => `
-                                            <option value="${ex.id}" ${sub.executorId === ex.id ? 'selected' : ''}>${ex.name}</option>
-                                        `).join('')}
+                                        ${executors.map(ex => `<option value="${ex.id}" ${sub.executorId === ex.id ? 'selected' : ''}>${ex.name}</option>`).join('')}
                                     </select>
                                     <input type="checkbox" class="subtask-done" ${sub.done ? 'checked' : ''}>
                                     <button class="remove-subtask" data-index="${index}" data-id="${sub.id}"><img src="./image/x_icon.svg" alt="Удалить"></button>
@@ -248,7 +261,7 @@ export function openEditModal(taskId) {
                         <h3>История</h3>
                         <div id="historyList">
                             ${tempTask.history.length ? tempTask.history.map(entry => `
-                                <div class="history-item ${getHistoryClass(entry.change)}" data-id="${entry.id || 'temp-' + Math.random()}">
+                                <div class="history-item ${getHistoryClass(entry.change)}" data-id="${entry.id || 'temp-' + Math.random().toString(36).substr(2, 9)}">
                                     <span class="history-date">${entry.date}</span>
                                     <span class="history-change">${entry.change}</span>
                                     <span class="history-user">${entry.user}</span>
@@ -265,523 +278,406 @@ export function openEditModal(taskId) {
         </div>
     `;
 
-    document.body.appendChild(modal);
-
-    // Переключение вкладок
-    modal.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            e.stopPropagation();
-            modal.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            modal.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-            modal.querySelector(`#${btn.dataset.tab}Tab`).classList.remove('hidden');
-        });
-    });
-
-    // Редактирование проекта
-    const projectDisplay = modal.querySelector('#projectDisplay');
-    const projectInput = modal.querySelector('#editProject');
-
-    if (projectDisplay && projectInput) {
-        projectDisplay.addEventListener('dblclick', e => {
-            e.stopPropagation();
-            projectDisplay.classList.add('hidden');
-            projectInput.classList.remove('hidden');
-            projectInput.focus();
-        });
-
-        projectInput.addEventListener('keypress', e => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const oldValue = tempTask.project;
-                tempTask.project = projectInput.value.trim();
-                projectDisplay.textContent = tempTask.project || 'Без проекта';
-                projectDisplay.classList.remove('hidden');
-                projectInput.classList.add('hidden');
-                if (oldValue !== tempTask.project) {
-                    pendingHistory.push({
-                        date: formatCommentDate(new Date()),
-                        rawDate: new Date().toISOString(),
-                        change: `Проект изменён с "${oldValue || 'не указан'}" на "${tempTask.project || 'не указан'}"`,
-                        user: 'Текущий пользователь'
-                    });
-                    updateHistoryList();
-                    showNotification('Проект обновлён');
-                }
-            }
-        });
-
-        projectInput.addEventListener('blur', () => {
-            const oldValue = tempTask.project;
-            tempTask.project = projectInput.value.trim();
-            projectDisplay.textContent = tempTask.project || 'Без проекта';
-            projectDisplay.classList.remove('hidden');
-            projectInput.classList.add('hidden');
-            if (oldValue !== tempTask.project) {
-                pendingHistory.push({
-                    date: formatCommentDate(new Date()),
-                    rawDate: new Date().toISOString(),
-                    change: `Проект изменён с "${oldValue || 'не указан'}" на "${tempTask.project || 'не указан'}"`,
-                    user: 'Текущий пользователь'
-                });
-                updateHistoryList();
-                showNotification('Проект обновлён');
-            }
-        });
-    }
-
-    // Редактирование остальных полей
-    ['theme', 'description', 'deadline', 'dateSet'].forEach(field => {
-        const display = modal.querySelector(`#${field}Display`);
-        const input = modal.querySelector(`#edit${field.charAt(0).toUpperCase() + field.slice(1)}`);
-
-        if (display && input) {
-            display.addEventListener('dblclick', e => {
+    // Обработчики событий и вспомогательные функции
+    const setupTabs = () => {
+        modal.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
                 e.stopPropagation();
-                display.classList.add('hidden');
-                input.classList.remove('hidden');
-                input.focus();
+                modal.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                modal.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+                const tabId = `${btn.dataset.tab}Tab`;
+                const tabContent = modal.querySelector(`#${tabId}`);
+                if (tabContent) tabContent.classList.remove('hidden');
             });
+        });
+    };
 
-            if (field === 'deadline' || field === 'dateSet') {
-                const saveDate = () => {
-                    const oldValue = tempTask[field];
-                    tempTask[field] = input.value;
-                    display.textContent = tempTask[field] || 'Не указан';
-                    display.classList.remove('hidden');
-                    input.classList.add('hidden');
-                    if (oldValue !== tempTask[field]) {
+    const setupEditableFields = () => {
+        // Обработка редактируемых полей
+        const fields = [
+            { display: 'projectDisplay', input: 'editProject', prop: 'project', defaultText: 'Без проекта' },
+            { display: 'themeDisplay', input: 'editTheme', prop: 'theme', defaultText: 'Нет темы' },
+            { display: 'descriptionDisplay', input: 'editDescription', prop: 'description', defaultText: 'Нет описания' },
+            { display: 'dateSetDisplay', input: 'editDateSet', prop: 'dateSet', defaultText: 'Не указана' },
+            { display: 'deadlineDisplay', input: 'editDeadline', prop: 'deadline', defaultText: 'Не указан' }
+        ];
+
+        fields.forEach(({ display, input, prop, defaultText }) => {
+            const displayEl = modal.querySelector(`#${display}`);
+            const inputEl = modal.querySelector(`#${input}`);
+
+            if (displayEl && inputEl) {
+                displayEl.addEventListener('dblclick', () => {
+                    displayEl.classList.add('hidden');
+                    inputEl.classList.remove('hidden');
+                    inputEl.focus();
+                });
+
+                const saveHandler = () => {
+                    const oldValue = tempTask[prop];
+                    const newValue = inputEl.value.trim();
+                    tempTask[prop] = newValue;
+                    displayEl.textContent = newValue || defaultText;
+                    displayEl.classList.remove('hidden');
+                    inputEl.classList.add('hidden');
+
+                    if (oldValue !== newValue) {
+                        const fieldNames = {
+                            project: 'Проект',
+                            theme: 'Тема',
+                            description: 'Описание',
+                            dateSet: 'Дата постановки',
+                            deadline: 'Срок выполнения'
+                        };
                         pendingHistory.push({
                             date: formatCommentDate(new Date()),
                             rawDate: new Date().toISOString(),
-                            change: `${field === 'deadline' ? 'Срок выполнения' : 'Дата постановки'} изменён${field === 'deadline' ? '' : 'а'} с "${oldValue || 'не указан'}" на "${tempTask[field] || 'не указан'}"`,
+                            change: `${fieldNames[prop]} изменен${prop === 'description' ? 'о' : ''} с "${oldValue || 'не указан'}" на "${newValue || 'не указан'}"`,
                             user: 'Текущий пользователь'
                         });
                         updateHistoryList();
-                        showNotification(`${field === 'deadline' ? 'Срок выполнения' : 'Дата постановки'} обновлён${field === 'deadline' ? '' : 'а'}`);
                     }
                 };
 
-                input.addEventListener('keypress', e => {
+                inputEl.addEventListener('keypress', e => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        saveDate();
+                        saveHandler();
                     }
                 });
 
-                input.addEventListener('blur', e => {
-                    if (!modal.contains(e.relatedTarget) || e.relatedTarget !== input) {
-                        saveDate();
-                    }
-                });
-            } else {
-                input.addEventListener('keypress', e => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const oldValue = tempTask[field];
-                        tempTask[field] = input.value.trim();
-                        display.textContent = tempTask[field] || (field === 'theme' ? 'Нет темы' : 'Нет описания');
-                        display.classList.remove('hidden');
-                        input.classList.add('hidden');
-                        if (oldValue !== tempTask[field]) {
-                            pendingHistory.push({
-                                date: formatCommentDate(new Date()),
-                                rawDate: new Date().toISOString(),
-                                change: `${field === 'theme' ? 'Тема' : 'Описание'} изменено с "${oldValue || 'не указано'}" на "${tempTask[field] || 'не указано'}"`,
-                                user: 'Текущий пользователь'
-                            });
-                            updateHistoryList();
-                            showNotification(`${field === 'theme' ? 'Тема' : 'Описание'} обновлено`);
-                        }
-                    }
-                });
-
-                input.addEventListener('blur', () => {
-                    const oldValue = tempTask[field];
-                    tempTask[field] = input.value.trim();
-                    display.textContent = tempTask[field] || (field === 'theme' ? 'Нет темы' : 'Нет описания');
-                    display.classList.remove('hidden');
-                    input.classList.add('hidden');
-                    if (oldValue !== tempTask[field]) {
-                        pendingHistory.push({
-                            date: formatCommentDate(new Date()),
-                            rawDate: new Date().toISOString(),
-                            change: `${field === 'theme' ? 'Тема' : 'Описание'} изменено с "${oldValue || 'не указано'}" на "${tempTask[field] || 'не указано'}"`,
-                            user: 'Текущий пользователь'
-                        });
-                        updateHistoryList();
-                        showNotification(`${field === 'theme' ? 'Тема' : 'Описание'} обновлено`);
-                    }
-                });
+                inputEl.addEventListener('blur', saveHandler);
             }
+        });
+
+        // В функции openEditModal, в части обработки заказчика:
+        const customerDisplay = modal.querySelector('#customerDisplay');
+        const customerSelect = modal.querySelector('#editCustomer');
+
+        if (customerDisplay && customerSelect) {
+            customerDisplay.addEventListener('dblclick', () => {
+                customerDisplay.classList.add('hidden');
+                customerSelect.classList.remove('hidden');
+                customerSelect.focus();
+            });
+
+            customerSelect.addEventListener('change', async () => {
+                const oldCustomerId = tempTask.customerId;
+                const newCustomerId = customerSelect.value ? parseInt(customerSelect.value) : null;
+
+                if (oldCustomerId !== newCustomerId) {
+                    const oldCustomerName = customers.find(c => c.id === oldCustomerId)?.name || 'Не указан';
+                    const newCustomerName = customers.find(c => c.id === newCustomerId)?.name || 'Не указан';
+
+                    tempTask.customerId = newCustomerId;
+                    customerDisplay.textContent = newCustomerName;
+                    customerDisplay.classList.remove('hidden');
+                    customerSelect.classList.add('hidden');
+
+                    // Добавляем запись в историю изменений
+                    pendingHistory.push({
+                        date: formatCommentDate(new Date()),
+                        rawDate: new Date().toISOString(),
+                        change: `Заказчик изменён с "${oldCustomerName}" на "${newCustomerName}"`,
+                        user: 'Текущий пользователь'
+                    });
+
+                    updateHistoryList();
+
+                    // Непосредственно обновляем задачу на сервере
+                    try {
+                        await updateTask({
+                            ...tempTask,
+                            customerId: newCustomerId
+                        });
+
+                        // Обновляем локальное состояние
+                        const taskIndex = tasks.findIndex(t => t.id === tempTask.id);
+                        if (taskIndex !== -1) {
+                            tasks[taskIndex].customerId = newCustomerId;
+                        }
+
+                        showNotification('Заказчик успешно изменён');
+                    } catch (error) {
+                        console.error('Ошибка при обновлении заказчика:', error);
+                        showNotification('Ошибка при сохранении заказчика');
+                        // Откатываем изменения при ошибке
+                        tempTask.customerId = oldCustomerId;
+                        customerDisplay.textContent = oldCustomerName;
+                    }
+                }
+            });
         }
-    });
+    }
 
-    // Обновление списка подзадач
-    async function updateSubtaskList() {
+    const updateExecutorList = async () => {
+        const executorList = modal.querySelector('#executorList');
+        if (!executorList) return;
+
+        executorList.innerHTML = '';
+
+        if (tempTask.executors?.length) {
+            tempTask.executors.forEach(executorName => {
+                const executorItem = document.createElement('div');
+                executorItem.className = 'executor-item';
+                executorItem.innerHTML = `
+                    <span class="executor-name">${executorName}</span>
+                    <button class="delete-executor" data-executor="${executorName}">×</button>
+                `;
+                executorList.appendChild(executorItem);
+            });
+        } else {
+            executorList.textContent = 'Не назначены';
+        }
+
+        const addButton = document.createElement('button');
+        addButton.className = 'add-executor-btn';
+        addButton.innerHTML = '+ Добавить исполнителя';
+        executorList.appendChild(addButton);
+
+        addButton.addEventListener('click', () => {
+            const availableExecutors = executors
+                .map(ex => ex.name)
+                .filter(name => !tempTask.executors.includes(name));
+
+            if (!availableExecutors.length) {
+                showNotification('Нет доступных исполнителей для добавления');
+                return;
+            }
+
+            const select = document.createElement('select');
+            select.innerHTML = `
+                <option value="">Выберите исполнителя</option>
+                ${availableExecutors.map(name => `<option value="${name}">${name}</option>`).join('')}
+            `;
+
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'Добавить';
+
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = 'Отмена';
+
+            const container = document.createElement('div');
+            container.className = 'executor-select-container';
+            container.appendChild(select);
+            container.appendChild(confirmButton);
+            container.appendChild(cancelButton);
+
+            executorList.removeChild(addButton);
+            executorList.appendChild(container);
+
+            confirmButton.addEventListener('click', () => {
+                const selectedExecutor = select.value;
+                if (selectedExecutor) {
+                    tempTask.executors.push(selectedExecutor);
+                    pendingHistory.push({
+                        date: formatCommentDate(new Date()),
+                        rawDate: new Date().toISOString(),
+                        change: `Добавлен исполнитель: "${selectedExecutor}"`,
+                        user: 'Текущий пользователь'
+                    });
+                    updateExecutorList();
+                    updateHistoryList();
+                }
+            });
+
+            cancelButton.addEventListener('click', () => {
+                executorList.removeChild(container);
+                executorList.appendChild(addButton);
+            });
+        });
+
+        // Обработка удаления исполнителей
+        executorList.querySelectorAll('.delete-executor').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const executorName = btn.dataset.executor;
+                tempTask.executors = tempTask.executors.filter(name => name !== executorName);
+                pendingHistory.push({
+                    date: formatCommentDate(new Date()),
+                    rawDate: new Date().toISOString(),
+                    change: `Удален исполнитель: "${executorName}"`,
+                    user: 'Текущий пользователь'
+                });
+                updateExecutorList();
+                updateHistoryList();
+            });
+        });
+    };
+
+    const updateSubtaskList = () => {
         const subtaskList = modal.querySelector('#subtaskList');
-        subtaskList.innerHTML = tempTask.subtasks.length ? tempTask.subtasks.map((sub, index) => `
-            <div class="subtask-item" data-id="${sub.id}">
-                <input type="text" class="subtask-description" value="${sub.description || ''}" placeholder="Описание подзадачи">
-                <input type="date" class="subtask-dateSet" value="${sub.dateSet || ''}">
-                <input type="date" class="subtask-deadline ${getDeadlineClass(sub.deadline, sub.done)}" value="${sub.deadline || ''}">
-                <select class="subtask-executor">
-                    <option value="">Не назначен</option>
-                    ${executors.map(ex => `
-                        <option value="${ex.id}" ${sub.executorId === ex.id ? 'selected' : ''}>${ex.name}</option>
-                    `).join('')}
-                </select>
-                <input type="checkbox" class="subtask-done" ${sub.done ? 'checked' : ''}>
-                <button class="remove-subtask" data-index="${index}" data-id="${sub.id}"><img src="./image/x_icon.svg" alt="Удалить"></button>
-            </div>
-        `).join('') : '<p>Нет подзадач</p>';
+        if (!subtaskList) return;
 
-        subtaskList.querySelectorAll('.subtask-item').forEach(item => {
-            const index = parseInt(item.querySelector('.remove-subtask').dataset.index);
-            const subtaskId = item.querySelector('.remove-subtask').dataset.id;
+        subtaskList.innerHTML = tempTask.subtasks.length ?
+            tempTask.subtasks.map((subtask, index) => `
+                <div class="subtask-item" data-id="${subtask.id}">
+                    <input type="text" class="subtask-description" 
+                           value="${subtask.description || ''}" 
+                           placeholder="Описание подзадачи">
+                    <input type="date" class="subtask-dateSet" 
+                           value="${subtask.dateSet || ''}">
+                    <input type="date" class="subtask-deadline ${getDeadlineClass(subtask.deadline, subtask.done)}" 
+                           value="${subtask.deadline || ''}">
+                    <select class="subtask-executor">
+                        <option value="">Не назначен</option>
+                        ${executors.map(executor => `
+                            <option value="${executor.id}" 
+                                    ${subtask.executorId === executor.id ? 'selected' : ''}>
+                                ${executor.name}
+                            </option>
+                        `).join('')}
+                    </select>
+                    <input type="checkbox" class="subtask-done" 
+                           ${subtask.done ? 'checked' : ''}>
+                    <button class="remove-subtask" data-index="${index}" data-id="${subtask.id}">
+                        <img src="./image/x_icon.svg" alt="Удалить">
+                    </button>
+                </div>
+            `).join('') : '<p>Нет подзадач</p>';
+
+        // Обработчики событий для подзадач
+        subtaskList.querySelectorAll('.subtask-item').forEach((item, index) => {
             const descriptionInput = item.querySelector('.subtask-description');
             const dateSetInput = item.querySelector('.subtask-dateSet');
             const deadlineInput = item.querySelector('.subtask-deadline');
             const executorSelect = item.querySelector('.subtask-executor');
-            const doneInput = item.querySelector('.subtask-done');
+            const doneCheckbox = item.querySelector('.subtask-done');
+            const removeButton = item.querySelector('.remove-subtask');
 
-            descriptionInput.addEventListener('change', async () => {
-                const oldDescription = tempTask.subtasks[index].description;
-                tempTask.subtasks[index].description = descriptionInput.value.trim();
-                if (oldDescription !== tempTask.subtasks[index].description) {
-                    try {
-                        await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
-                        pendingHistory.push({
-                            date: formatCommentDate(new Date()),
-                            rawDate: new Date().toISOString(),
-                            change: `Описание подзадачи ${index + 1} изменено с "${oldDescription || 'не указано'}" на "${tempTask.subtasks[index].description || 'не указано'}"`,
-                            user: 'Текущий пользователь'
-                        });
-                        updateHistoryList();
-                        showNotification('Описание подзадачи обновлено');
-                    } catch (error) {
-                        tempTask.subtasks[index].description = oldDescription;
-                        updateSubtaskList();
-                    }
+            const subtaskId = parseInt(removeButton.dataset.id);
+            const subtask = tempTask.subtasks[index];
+
+            const updateSubtaskField = async (field, value, changeMessage) => {
+                const oldValue = subtask[field];
+                subtask[field] = value;
+
+                try {
+                    await updateSubtask(subtaskId, { ...subtask, taskId: tempTask.id });
+                    pendingHistory.push({
+                        date: formatCommentDate(new Date()),
+                        rawDate: new Date().toISOString(),
+                        change: changeMessage,
+                        user: 'Текущий пользователь'
+                    });
+                    updateHistoryList();
+                } catch (error) {
+                    console.error('Ошибка обновления подзадачи:', error);
+                    subtask[field] = oldValue;
+                    updateSubtaskList();
+                    showNotification('Ошибка при обновлении подзадачи');
+                }
+            };
+
+            descriptionInput.addEventListener('change', () => {
+                const newDescription = descriptionInput.value.trim();
+                if (newDescription !== subtask.description) {
+                    updateSubtaskField(
+                        'description',
+                        newDescription,
+                        `Описание подзадачи ${index + 1} изменено с "${subtask.description || 'нет'}" на "${newDescription || 'нет'}"`
+                    );
                 }
             });
 
-            dateSetInput.addEventListener('change', async () => {
-                const oldDateSet = tempTask.subtasks[index].dateSet;
-                tempTask.subtasks[index].dateSet = dateSetInput.value;
-                if (oldDateSet !== tempTask.subtasks[index].dateSet) {
-                    try {
-                        await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
-                        pendingHistory.push({
-                            date: formatCommentDate(new Date()),
-                            rawDate: new Date().toISOString(),
-                            change: `Дата постановки подзадачи ${index + 1} изменена с "${oldDateSet || 'не указана'}" на "${tempTask.subtasks[index].dateSet || 'не указана'}"`,
-                            user: 'Текущий пользователь'
-                        });
-                        updateHistoryList();
-                        showNotification('Дата постановки подзадачи обновлена');
-                    } catch (error) {
-                        tempTask.subtasks[index].dateSet = oldDateSet;
-                        updateSubtaskList();
-                    }
+            dateSetInput.addEventListener('change', () => {
+                const newDate = dateSetInput.value;
+                if (newDate !== subtask.dateSet) {
+                    updateSubtaskField(
+                        'dateSet',
+                        newDate,
+                        `Дата постановки подзадачи ${index + 1} изменена с "${subtask.dateSet || 'нет'}" на "${newDate || 'нет'}"`
+                    );
                 }
             });
 
-            deadlineInput.addEventListener('change', async () => {
-                const oldDeadline = tempTask.subtasks[index].deadline;
-                tempTask.subtasks[index].deadline = deadlineInput.value;
-                if (oldDeadline !== tempTask.subtasks[index].deadline) {
-                    try {
-                        await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
-                        pendingHistory.push({
-                            date: formatCommentDate(new Date()),
-                            rawDate: new Date().toISOString(),
-                            change: `Дедлайн подзадачи ${index + 1} изменён с "${oldDeadline || 'не указан'}" на "${tempTask.subtasks[index].deadline || 'не указан'}"`,
-                            user: 'Текущий пользователь'
-                        });
-                        updateHistoryList();
-                        showNotification('Дедлайн подзадачи обновлён');
-                    } catch (error) {
-                        tempTask.subtasks[index].deadline = oldDeadline;
-                        updateSubtaskList();
-                    }
+            deadlineInput.addEventListener('change', () => {
+                const newDeadline = deadlineInput.value;
+                if (newDeadline !== subtask.deadline) {
+                    updateSubtaskField(
+                        'deadline',
+                        newDeadline,
+                        `Срок выполнения подзадачи ${index + 1} изменен с "${subtask.deadline || 'нет'}" на "${newDeadline || 'нет'}"`
+                    );
                 }
             });
 
-            executorSelect.addEventListener('change', async () => {
-                const oldExecutorId = tempTask.subtasks[index].executorId;
-                const newExecutorId = executorSelect.value ? parseInt(executorSelect.value) : null;
-                tempTask.subtasks[index].executorId = newExecutorId;
-                tempTask.subtasks[index].executorName = executors.find(ex => ex.id === newExecutorId)?.name || 'Не назначен';
-                if (oldExecutorId !== newExecutorId) {
-                    try {
-                        await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
-                        pendingHistory.push({
-                            date: formatCommentDate(new Date()),
-                            rawDate: new Date().toISOString(),
-                            change: `Исполнитель подзадачи ${index + 1} изменён с "${executors.find(ex => ex.id === oldExecutorId)?.name || 'не назначен'}" на "${tempTask.subtasks[index].executorName}"`,
-                            user: 'Текущий пользователь'
-                        });
-                        updateHistoryList();
-                        showNotification('Исполнитель подзадачи обновлён');
-                    } catch (error) {
-                        tempTask.subtasks[index].executorId = oldExecutorId;
-                        tempTask.subtasks[index].executorName = executors.find(ex => ex.id === oldExecutorId)?.name || 'Не назначен';
-                        updateSubtaskList();
-                    }
+            executorSelect.addEventListener('change', () => {
+                const newExecutorId = parseInt(executorSelect.value) || null;
+                const newExecutorName = executors.find(e => e.id === newExecutorId)?.name || 'Не назначен';
+
+                if (newExecutorId !== subtask.executorId) {
+                    const oldExecutorName = executors.find(e => e.id === subtask.executorId)?.name || 'Не назначен';
+                    subtask.executorId = newExecutorId;
+
+                    updateSubtaskField(
+                        'executorId',
+                        newExecutorId,
+                        `Исполнитель подзадачи ${index + 1} изменен с "${oldExecutorName}" на "${newExecutorName}"`
+                    );
                 }
             });
 
-            doneInput.addEventListener('change', async () => {
-                const oldDone = tempTask.subtasks[index].done;
-                tempTask.subtasks[index].done = doneInput.checked;
-                if (oldDone !== tempTask.subtasks[index].done) {
-                    try {
-                        await updateSubtask(subtaskId, { ...tempTask.subtasks[index], taskId: tempTask.id });
-                        pendingHistory.push({
-                            date: formatCommentDate(new Date()),
-                            rawDate: new Date().toISOString(),
-                            change: `Статус подзадачи ${index + 1} изменён с "${oldDone ? 'выполнена' : 'не выполнена'}" на "${tempTask.subtasks[index].done ? 'выполнена' : 'не выполнена'}"`,
-                            user: 'Текущий пользователь'
-                        });
-                        updateHistoryList();
-                        showNotification('Статус подзадачи обновлён');
-                    } catch (error) {
-                        tempTask.subtasks[index].done = oldDone;
-                        doneInput.checked = oldDone;
-                        updateSubtaskList();
-                    }
+            doneCheckbox.addEventListener('change', () => {
+                const newDone = doneCheckbox.checked;
+                if (newDone !== subtask.done) {
+                    updateSubtaskField(
+                        'done',
+                        newDone,
+                        `Статус подзадачи ${index + 1} изменен на "${newDone ? 'выполнено' : 'не выполнено'}"`
+                    );
                 }
             });
-        });
 
-        subtaskList.querySelectorAll('.remove-subtask').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const index = parseInt(btn.dataset.index);
-                const subtaskId = btn.dataset.id;
-                const removedSubtask = tempTask.subtasks[index];
+            removeButton.addEventListener('click', async () => {
                 try {
                     await deleteSubtask(subtaskId);
-                    tempTask.subtasks.splice(index, 1);
+                    const removedSubtask = tempTask.subtasks.splice(index, 1)[0];
                     pendingHistory.push({
                         date: formatCommentDate(new Date()),
                         rawDate: new Date().toISOString(),
                         change: `Удалена подзадача: "${removedSubtask.description || 'без описания'}"`,
                         user: 'Текущий пользователь'
                     });
+                    updateSubtaskList();
                     updateHistoryList();
-                    updateSubtaskList();
-                    showNotification('Подзадача удалена');
                 } catch (error) {
-                    updateSubtaskList();
+                    console.error('Ошибка удаления подзадачи:', error);
+                    showNotification('Ошибка при удалении подзадачи');
                 }
             });
         });
-    }
+    };
 
-    // Обновление списка исполнителей
-    async function updateExecutorList() {
-        try {
-            const executorList = modal.querySelector('#executorList');
-            executorList.innerHTML = '';
-            console.log('Обновление списка исполнителей в модалке:', tempTask.executors);
-            if (tempTask.executors.length) {
-                tempTask.executors.forEach(ex => {
-                    const executorItem = document.createElement('span');
-                    executorItem.className = 'executor-item';
-                    executorItem.innerHTML = `
-                        <span class="executor-name">${ex}</span>
-                        <button class="remove-executor" data-executor="${ex}">×</button>
-                    `;
-                    executorList.appendChild(executorItem);
-                });
-            } else {
-                const noExecutors = document.createElement('span');
-                noExecutors.textContent = 'Не назначены';
-                executorList.appendChild(noExecutors);
-            }
+    const updateHistoryList = () => {
+        const historyList = modal.querySelector('#historyList');
+        if (!historyList) return;
 
-            const addButton = document.createElement('button');
-            addButton.className = 'add-executor-btn';
-            addButton.innerHTML = `<img src="./image/plus.svg" style="width: 16px; height: 16px;" alt="Добавить">`;
-            executorList.appendChild(addButton);
+        const combinedHistory = [
+            ...(tempTask.history || []),
+            ...pendingHistory
+        ].sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
 
-            addButton.addEventListener('click', e => {
-                e.stopPropagation();
-                if (!executorList.querySelector('#addExecutorSelect')) {
-                    const availableExecutors = executors.map(ex => ex.name).filter(ex => !tempTask.executors.includes(ex)).sort();
-                    console.log('Доступные исполнители для добавления:', availableExecutors);
-                    if (!availableExecutors.length) {
-                        showNotification('Нет доступных исполнителей для добавления');
-                        return;
-                    }
-                    const selectWrapper = document.createElement('span');
-                    selectWrapper.className = 'executor-item';
-                    selectWrapper.innerHTML = `
-                        <select id="addExecutorSelect">
-                            <option value="">Выберите исполнителя</option>
-                            ${availableExecutors.map(ex => `
-                                <option value="${ex}">${ex}</option>
-                            `).join('')}
-                        </select>
-                        <button class="cancel-add-executor">×</button>
-                    `;
-                    executorList.replaceChild(selectWrapper, addButton);
-
-                    const addExecutorSelect = selectWrapper.querySelector('#addExecutorSelect');
-                    addExecutorSelect.addEventListener('change', e => {
-                        e.stopPropagation();
-                        const executorName = addExecutorSelect.value;
-                        if (executorName && !tempTask.executors.includes(executorName)) {
-                            tempTask.executors.push(executorName);
-                            pendingHistory.push({
-                                date: formatCommentDate(new Date()),
-                                rawDate: new Date().toISOString(),
-                                change: `Добавлен исполнитель: "${executorName}"`,
-                                user: 'Текущий пользователь'
-                            });
-                            updateHistoryList();
-                            updateExecutorList();
-                            showNotification(`Исполнитель "${executorName}" добавлен`);
-                        }
-                    });
-
-                    selectWrapper.querySelector('.cancel-add-executor').addEventListener('click', e => {
-                        e.stopPropagation();
-                        executorList.replaceChild(addButton, selectWrapper);
-                    });
-                }
-            });
-
-            executorList.querySelectorAll('.remove-executor').forEach(btn => {
-                btn.addEventListener('click', e => {
-                    e.stopPropagation();
-                    const executorName = btn.dataset.executor;
-                    tempTask.executors = tempTask.executors.filter(ex => ex !== executorName);
-                    pendingHistory.push({
-                        date: formatCommentDate(new Date()),
-                        rawDate: new Date().toISOString(),
-                        change: `Удалён исполнитель: "${executorName}"`,
-                        user: 'Текущий пользователь'
-                    });
-                    updateHistoryList();
-                    updateExecutorList();
-                    showNotification(`Исполнитель "${executorName}" удалён`);
-                });
-            });
-
-            executorList.querySelectorAll('.executor-name').forEach(span => {
-                span.addEventListener('dblclick', e => {
-                    e.stopPropagation();
-                    const oldExecutorName = span.textContent;
-                    const executorItem = span.parentElement;
-
-                    const availableExecutors = executors.map(ex => ex.name).filter(ex => !tempTask.executors.includes(ex) || ex === oldExecutorName).sort();
-                    if (!availableExecutors.length) {
-                        showNotification('Нет доступных исполнителей для замены');
-                        return;
-                    }
-
-                    const select = document.createElement('select');
-                    select.innerHTML = `
-                        <option value="">Выберите исполнителя</option>
-                        ${availableExecutors.map(ex => `
-                            <option value="${ex}" ${ex === oldExecutorName ? 'selected' : ''}>${ex}</option>
-                        `).join('')}
-                    `;
-                    executorItem.replaceChild(select, span);
-                    select.focus();
-
-                    select.addEventListener('change', e => {
-                        e.stopPropagation();
-                        const newExecutorName = select.value;
-                        if (newExecutorName && newExecutorName !== oldExecutorName && !tempTask.executors.includes(newExecutorName)) {
-                            const index = tempTask.executors.indexOf(oldExecutorName);
-                            tempTask.executors[index] = newExecutorName;
-                            pendingHistory.push({
-                                date: formatCommentDate(new Date()),
-                                rawDate: new Date().toISOString(),
-                                change: `Исполнитель изменён с "${oldExecutorName}" на "${newExecutorName}"`,
-                                user: 'Текущий пользователь'
-                            });
-                            updateHistoryList();
-                            updateExecutorList();
-                            showNotification(`Исполнитель изменён на "${newExecutorName}"`);
-                        }
-                    });
-
-                    select.addEventListener('blur', () => {
-                        updateExecutorList();
-                    });
-                });
-            });
-        } catch (error) {
-            console.error('Ошибка в updateExecutorList:', error);
-            showNotification('Ошибка при обновлении списка исполнителей');
-        }
-    }
-
-    // Обновление списка истории
-    async function updateHistoryList() {
-        try {
-            const historyList = modal.querySelector('#historyList');
-            const combinedHistory = [
-                ...tempTask.history,
-                ...pendingHistory
-            ].sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
-            historyList.innerHTML = combinedHistory.length ? combinedHistory.map(entry => `
-                <div class="history-item ${getHistoryClass(entry.change)}" data-id="${entry.id || 'temp-' + Math.random()}">
+        historyList.innerHTML = combinedHistory.length ?
+            combinedHistory.map(entry => `
+                <div class="history-item ${getHistoryClass(entry.change)}" 
+                     data-id="${entry.id || 'temp-' + Math.random().toString(36).substr(2, 9)}">
                     <span class="history-date">${entry.date}</span>
                     <span class="history-change">${entry.change}</span>
                     <span class="history-user">${entry.user}</span>
                 </div>
             `).join('') : 'Нет истории изменений';
-        } catch (error) {
-            console.error('Ошибка в updateHistoryList:', error);
-            showNotification('Ошибка при обновлении истории');
-        }
-    }
+    };
 
-    updateExecutorList();
-    updateSubtaskList();
+    const setupCommentField = () => {
+        const commentField = modal.querySelector('#newComment');
+        if (!commentField) return;
 
-    // Добавление подзадачи
-    modal.querySelector('#addSubtaskBtn').addEventListener('click', async e => {
-        e.preventDefault();
-        try {
-            const newSubtask = {
-                taskId: tempTask.id,
-                description: 'Новая подзадача',
-                dateSet: formatDate(new Date()),
-                deadline: null, // Explicitly set to null to avoid invalid dates
-                done: false,
-                executorId: null,
-                executorName: 'Не назначен'
-            };
-            const createdSubtask = await createSubtask(tempTask.id, newSubtask);
-            tempTask.subtasks.push(createdSubtask);
-            pendingHistory.push({
-                date: formatCommentDate(new Date()),
-                rawDate: new Date().toISOString(),
-                change: `Добавлена новая подзадача: "${createdSubtask.description || 'без описания'}"`,
-                user: 'Текущий пользователь'
-            });
-            updateHistoryList();
-            updateSubtaskList();
-            showNotification('Подзадача добавлена');
-        } catch (error) {
-            console.error('Ошибка при добавлении подзадачи:', error);
-            showNotification('Не удалось добавить подзадачу');
-        }
-    });
-
-    // Добавление комментария
-    const newCommentTextarea = modal.querySelector('#newComment');
-    if (newCommentTextarea) {
-        newCommentTextarea.addEventListener('keypress', e => {
+        commentField.addEventListener('keypress', e => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                const commentText = newCommentTextarea.value.trim();
+                const commentText = commentField.value.trim();
                 if (commentText) {
                     pendingHistory.push({
                         date: formatCommentDate(new Date()),
@@ -789,130 +685,198 @@ export function openEditModal(taskId) {
                         change: `Добавлен комментарий: "${commentText}"`,
                         user: 'Текущий пользователь'
                     });
+                    commentField.value = '';
                     updateHistoryList();
-                    newCommentTextarea.value = '';
-                    showNotification('Комментарий добавлен');
                 }
             }
         });
-    }
-
-    // Закрытие модального окна
-    const closeModal = () => {
-        if (pendingHistory.length || JSON.stringify(tempTask) !== JSON.stringify(task)) {
-            showNotification('Изменения сохранены локально');
-        }
-        modal.remove();
     };
 
-    modal.querySelector('#closeModalBtn').addEventListener('click', closeModal);
-    modal.querySelector('#closeBtn').addEventListener('click', closeModal);
+    const setupAddSubtaskButton = () => {
+        const addButton = modal.querySelector('#addSubtaskBtn');
+        if (!addButton) return;
 
-    // Сохранение изменений
-    modal.querySelector('#saveBtn').addEventListener('click', e => {
-        e.stopPropagation();
-        showLoading(modal.querySelector('#saveBtn'), true);
-        modal.remove();
-
-        setTimeout(async () => {
+        addButton.addEventListener('click', async () => {
             try {
-                const newStatus = modal.querySelector('#statusSelect').value;
-                if (tempTask.status !== newStatus) {
+                const newSubtask = {
+                    taskId: tempTask.id,
+                    description: 'Новая подзадача',
+                    dateSet: formatDate(new Date()),
+                    deadline: '',
+                    done: false,
+                    executorId: null
+                };
+
+                const createdSubtask = await createSubtask(tempTask.id, newSubtask);
+                tempTask.subtasks.push(createdSubtask);
+
+                pendingHistory.push({
+                    date: formatCommentDate(new Date()),
+                    rawDate: new Date().toISOString(),
+                    change: `Добавлена подзадача: "${createdSubtask.description}"`,
+                    user: 'Текущий пользователь'
+                });
+
+                updateSubtaskList();
+                updateHistoryList();
+            } catch (error) {
+                console.error('Ошибка добавления подзадачи:', error);
+                showNotification('Не удалось добавить подзадачу');
+            }
+        });
+    };
+
+    const setupSaveButton = () => {
+        const saveButton = modal.querySelector('#saveBtn');
+        if (!saveButton) return;
+
+        saveButton.addEventListener('click', async () => {
+            showLoading(saveButton, true);
+
+            try {
+                // 1. Обновляем статус если он изменился
+                const statusSelect = modal.querySelector('#statusSelect');
+                if (statusSelect && tempTask.status !== statusSelect.value) {
+                    const oldStatus = tempTask.status;
+                    tempTask.status = statusSelect.value;
                     pendingHistory.push({
                         date: formatCommentDate(new Date()),
                         rawDate: new Date().toISOString(),
-                        change: `Статус изменён с "${tempTask.status}" на "${newStatus}"`,
+                        change: `Статус изменён с "${oldStatus}" на "${tempTask.status}"`,
                         user: 'Текущий пользователь'
                     });
-                    tempTask.status = newStatus;
-                    showNotification(`Статус изменён на "${newStatus}"`);
                 }
 
+                // 2. Сохраняем все изменения задачи
                 let updatedTask;
                 if (!tempTask.id) {
+                    // Создаем новую задачу
                     updatedTask = await createTask(tempTask);
                     tempTask.id = updatedTask.id;
-                    tasks.push(tempTask);
+                    tasks.push(updatedTask);
+                    showNotification('Новая задача успешно создана');
                 } else {
+                    // Обновляем существующую задачу
                     updatedTask = await updateTask(tempTask);
+
+                    // Обновляем локальную копию задачи
                     const taskIndex = tasks.findIndex(t => t.id === tempTask.id);
                     if (taskIndex !== -1) {
-                        tasks[taskIndex] = { ...tempTask };
+                        tasks[taskIndex] = { ...updatedTask };
                     }
+                    showNotification('Задача успешно обновлена');
                 }
 
-                await Promise.all(pendingHistory.map(entry =>
-                    createHistory(tempTask.id, entry.change, entry.user)
-                ));
+                // 3. Сохраняем всю историю изменений
+                if (pendingHistory.length > 0) {
+                    await Promise.all(
+                        pendingHistory.map(entry =>
+                            createHistory(tempTask.id, entry.change, entry.user)
+                        )
+                    );
+                }
 
+                // 4. Синхронизируем исполнителей
                 const originalExecutors = task.executors || [];
-                const addedExecutors = tempTask.executors.filter(ex => !originalExecutors.includes(ex));
-                const removedExecutors = originalExecutors.filter(ex => !tempTask.executors.includes(ex));
+                const currentExecutors = tempTask.executors || [];
 
-                console.log('Добавленные исполнители:', addedExecutors);
-                console.log('Удалённые исполнители:', removedExecutors);
+                const addedExecutors = currentExecutors.filter(
+                    ex => !originalExecutors.includes(ex)
+                );
+                const removedExecutors = originalExecutors.filter(
+                    ex => !currentExecutors.includes(ex)
+                );
 
                 await Promise.all([
                     ...removedExecutors.map(async executorName => {
                         const executor = executors.find(ex => ex.name === executorName);
                         if (executor) {
-                            console.log('Удаление исполнителя:', executorName, 'ID:', executor.id);
                             await removeExecutorFromTask(tempTask.id, executor.id);
-                        } else {
-                            console.warn('Исполнитель не найден в executors:', executorName);
                         }
                     }),
                     ...addedExecutors.map(async executorName => {
                         const executor = executors.find(ex => ex.name === executorName);
                         if (executor) {
-                            console.log('Добавление исполнителя:', executorName, 'ID:', executor.id);
                             await assignExecutorToTask(
                                 tempTask.id,
                                 executor.id,
-                                { id: tempTask.id, project: tempTask.project, theme: tempTask.theme },
-                                { id: executor.id, name: executor.name }
+                                {
+                                    id: tempTask.id,
+                                    project: tempTask.project,
+                                    theme: tempTask.theme
+                                },
+                                {
+                                    id: executor.id,
+                                    name: executor.name
+                                }
                             );
-                        } else {
-                            console.warn('Исполнитель не найден в executors:', executorName);
                         }
                     })
                 ]);
 
-                executors.length = 0;
-                executors.push(...await fetchExecutors());
-                console.log('Исполнители после сохранения:', executors);
-                if (filters.dateFrom && filters.dateTo) {
-                    await fetchTasks(filters.dateFrom, filters.dateTo);
-                } else {
-                    tasks.length = 0;
-                    showNotification('Диапазон дат не указан, задачи не загружены');
-                }
-                applyFilters();
+                // 5. Обновляем данные в приложении
+                try {
+                    // Обновляем список исполнителей
+                    const freshExecutors = await fetchExecutors();
+                    executors.length = 0;
+                    executors.push(...freshExecutors);
 
-                console.log('Задача сохранена и синхронизирована:', tempTask);
-                showNotification(tempTask.id ? 'Задача сохранена' : 'Задача создана');
+                    // Обновляем список задач если указаны даты
+                    if (filters.dateFrom && filters.dateTo) {
+                        await fetchTasks(filters.dateFrom, filters.dateTo);
+                    }
+                } catch (error) {
+                    console.error('Ошибка при обновлении данных:', error);
+                }
+
+                // 6. Принудительно обновляем интерфейс
+                applyFilters();
+                createTaskCards(tasks.filter(t =>
+                    (!filters.dateFrom || t.dateSet >= filters.dateFrom) &&
+                    (!filters.dateTo || t.dateSet <= filters.dateTo)
+                ));
+
+                // 7. Закрываем модальное окно
+                modal.remove();
+
             } catch (error) {
-                console.error('Ошибка сохранения:', error);
-                showNotification(`Не удалось сохранить задачу: ${error.message}`);
-                executors.length = 0;
-                executors.push(...await fetchExecutors());
-                console.log('Исполнители после ошибки сохранения:', executors);
-                if (filters.dateFrom && filters.dateTo) {
-                    await fetchTasks(filters.dateFrom, filters.dateTo);
-                } else {
-                    tasks.length = 0;
-                    showNotification('Диапазон дат не указан, задачи не загружены');
-                }
-                applyFilters();
+                console.error('Ошибка сохранения задачи:', error);
+                showNotification(`Ошибка сохранения: ${error.message || 'Неизвестная ошибка'}`);
             } finally {
-                showLoading(modal.querySelector('#saveBtn'), false);
+                showLoading(saveButton, false);
             }
-        }, 0);
-    });
+        });
+    };
 
-    modal.addEventListener('click', e => {
-        if (!modal.querySelector('.modal-content').contains(e.target)) {
-            closeModal();
-        }
-    });
+    const setupCloseButton = () => {
+        const closeButton = modal.querySelector('#closeBtn');
+        const closeModalBtn = modal.querySelector('#closeModalBtn');
+
+        const closeHandler = () => {
+            if (pendingHistory.length || JSON.stringify(tempTask) !== JSON.stringify(task)) {
+                showNotification('Изменения не сохранены');
+            }
+            modal.remove();
+        };
+
+        if (closeButton) closeButton.addEventListener('click', closeHandler);
+        if (closeModalBtn) closeModalBtn.addEventListener('click', closeHandler);
+
+        modal.addEventListener('click', e => {
+            if (e.target === modal) {
+                closeHandler();
+            }
+        });
+    };
+
+    // Инициализация всех обработчиков
+    setupTabs();
+    setupEditableFields();
+    updateExecutorList();
+    updateSubtaskList();
+    updateHistoryList();
+    setupCommentField();
+    setupAddSubtaskButton();
+    setupSaveButton();
+    setupCloseButton();
 }

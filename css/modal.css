@@ -247,6 +247,7 @@
     padding: 4px;
     border-radius: 3px;
     cursor: pointer;
+    background-color:   rgb(33, 207, 149);
 }
 
 .add-executor-btn img {

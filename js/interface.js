@@ -1,7 +1,9 @@
 import { openGlobalExecutorModal } from './executorsModal.js';
-import { tasks, executors, getAllExecutors, filters, sortState, allProjects,} from './app.js';
+import { openGlobalCustomerModal } from './customersModal.js';
+import { tasks, executors, getAllExecutors, filters, sortState, allProjects, customers, syncCustomers } from './app.js';
 import { showNotification } from './utils.js';
-import { applyFilters,openEditModal } from './modal.js';
+import { applyFilters, openEditModal } from './modal.js';
+
 export function createTaskCards(taskList) {
     const appDiv = document.getElementById('app');
     const existingContainer = appDiv.querySelector('.task-cards-container');
@@ -14,25 +16,23 @@ export function createTaskCards(taskList) {
         const card = document.createElement('div');
         card.className = 'task-card';
 
-        // Определяем цвет дедлайна задачи
         let deadlineClass = '';
         if (task.status === 'Выполнено' || task.status === 'Принято заказчиком') {
-            deadlineClass = 'deadline-green'; // Зелёный для выполненных или принятых
+            deadlineClass = 'deadline-green';
         } else if (task.status === 'Аннулировано') {
-            deadlineClass = 'deadline-gray'; // Серый для аннулированных
+            deadlineClass = 'deadline-gray';
         } else if (task.deadline) {
             const daysLeft = Math.ceil((new Date(task.deadline) - new Date()) / (1000 * 60 * 60 * 24));
             if (daysLeft <= 2) deadlineClass = 'deadline-red';
             else if (daysLeft <= 7) deadlineClass = 'deadline-yellow';
         }
 
-        // Подсчёт подзадач по цветам и общего количества
         const subtaskCounts = { yellow: 0, red: 0, green: 0, total: 0 };
         if (task.subtasks && task.subtasks.length) {
-            subtaskCounts.total = task.subtasks.length; // Общее количество подзадач
+            subtaskCounts.total = task.subtasks.length;
             task.subtasks.forEach(sub => {
                 if (sub.done) {
-                    subtaskCounts.green++; // Зелёный для выполненных подзадач
+                    subtaskCounts.green++;
                 } else if (sub.deadline) {
                     const daysLeft = Math.ceil((new Date(sub.deadline) - new Date()) / (1000 * 60 * 60 * 24));
                     if (daysLeft <= 2) subtaskCounts.red++;
@@ -41,9 +41,11 @@ export function createTaskCards(taskList) {
             });
         }
 
+        const customerName = customers.find(c => c.id === task.customerId)?.name || 'Не указан';
+
         card.innerHTML = `
             <div class="task-field"><strong>№:</strong> ${task.id}</div>
-            <div class="task-field"><strong>Проект/Заказчик:</strong> ${task.project || 'Без проекта'}</div>
+            <div class="task-field"><strong>Проект/Заказчик:</strong> ${task.project || 'Без проекта'} / ${customerName}</div>
             <div class="task-field"><strong>Тема:</strong> ${task.theme || 'Нет темы'}</div>
             <div class="task-field"><strong>Описание:</strong> ${task.description || 'Нет описания'}</div>
             <div class="task-field"><strong>Дата постановки:</strong> ${task.dateSet || 'Не указана'}</div>
@@ -79,7 +81,7 @@ export function createInterface() {
                 <div class="filter-group">
                     <label for="executorFilter">Исполнитель</label>
                     <div class="input-with-clear">
-                        <input type="text" id="executorFilter" placeholder="Введите имя исполнителя">
+                        <input type="text" id="executorFilter" placeholder="Введите исполнителя">
                         <button class="clear-btn hidden" id="clearExecutor">×</button>
                     </div>
                     <div class="suggestions hidden" id="executorSuggestions"></div>
@@ -91,6 +93,14 @@ export function createInterface() {
                         <button class="clear-btn hidden" id="clearProject">×</button>
                     </div>
                     <div class="suggestions hidden" id="projectSuggestions"></div>
+                </div>
+                <div class="filter-group">
+                    <label for="customerFilter">Заказчик</label>
+                    <div class="input-with-clear">
+                        <input type="text" id="customerFilter" placeholder="Введите заказчика">
+                        <button class="clear-btn hidden" id="clearCustomer">×</button>
+                    </div>
+                    <div class="suggestions hidden" id="customerSuggestions"></div>
                 </div>
                 <div class="filter-group">
                     <label>Сортировать по:</label>
@@ -115,6 +125,7 @@ export function createInterface() {
                 <button id="searchBtn"><img src="./image/search.svg" alt="Поиск" width="16" height="16"></button>
             </div>
             <button id="addGlobalExecutorBtn">Исполнители</button>
+            <button id="addGlobalCustomerBtn">Заказчики</button>
             <button id="createTaskBtn">Создать задачу</button>
         </div>
     `;
@@ -128,7 +139,6 @@ export function createInterface() {
     filters.dateTo = '';
     applyFilters();
 
-    // Обработчики сортировки
     const sortFieldSelect = document.getElementById('sortField');
     const toggleSortDirection = document.getElementById('toggleSortDirection');
 
@@ -148,7 +158,6 @@ export function createInterface() {
         });
     }
 
-    // Обработчики фильтров
     [dateFrom, dateTo].forEach(input => {
         input.addEventListener('change', () => {
             if (dateTo.value && dateFrom.value && new Date(dateTo.value) < new Date(dateFrom.value)) {
@@ -177,15 +186,25 @@ export function createInterface() {
         applyFilters();
     });
 
+    const clearCustomerBtn = document.getElementById('clearCustomer');
+    clearCustomerBtn.addEventListener('click', () => {
+        document.getElementById('customerFilter').value = '';
+        filters.customer = '';
+        clearCustomerBtn.classList.add('hidden');
+        applyFilters();
+    });
+
     document.getElementById('resetFiltersBtn').addEventListener('click', () => {
         Object.keys(filters).forEach(key => delete filters[key]);
         document.getElementById('dateFrom').value = '';
         document.getElementById('dateTo').value = '';
         document.getElementById('executorFilter').value = '';
         document.getElementById('projectFilter').value = '';
+        document.getElementById('customerFilter').value = '';
         document.getElementById('searchInput').value = '';
         clearExecutorBtn.classList.add('hidden');
         clearProjectBtn.classList.add('hidden');
+        clearCustomerBtn.classList.add('hidden');
         sortState.field = null;
         sortState.ascending = true;
         sortFieldSelect.value = '';
@@ -196,15 +215,18 @@ export function createInterface() {
     document.getElementById('searchBtn').addEventListener('click', () => {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const filteredTasks = tasks.filter(
-            task =>
-                task.id.toString().includes(searchTerm) ||
-                (task.dateSet || '').toLowerCase().includes(searchTerm) ||
-                (task.deadline || '').toLowerCase().includes(searchTerm) ||
-                (task.project || '').toLowerCase().includes(searchTerm) ||
-                (task.theme || '').toLowerCase().includes(searchTerm) ||
-                (task.description || '').toLowerCase().includes(searchTerm) ||
-                task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
-                (task.status || '').toLowerCase().includes(searchTerm)
+            task => {
+                const customerName = customers.find(c => c.id === task.customerId)?.name || '';
+                return task.id.toString().includes(searchTerm) ||
+                    (task.dateSet || '').toLowerCase().includes(searchTerm) ||
+                    (task.deadline || '').toLowerCase().includes(searchTerm) ||
+                    (task.project || '').toLowerCase().includes(searchTerm) ||
+                    customerName.toLowerCase().includes(searchTerm) ||
+                    (task.theme || '').toLowerCase().includes(searchTerm) ||
+                    (task.description || '').toLowerCase().includes(searchTerm) ||
+                    task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
+                    (task.status || '').toLowerCase().includes(searchTerm);
+            }
         );
         createTaskCards(filteredTasks);
     });
@@ -272,12 +294,45 @@ export function createInterface() {
         }
     });
 
+    const customerInput = document.getElementById('customerFilter');
+    const customerSuggestions = document.getElementById('customerSuggestions');
+    customerInput.addEventListener('input', e => {
+        const value = e.target.value.toLowerCase();
+        customerSuggestions.innerHTML = '';
+        clearCustomerBtn.classList.toggle('hidden', !value);
+        if (value) {
+            customerSuggestions.classList.remove('hidden');
+            const matches = customers.map(c => c.name).filter(c => c.toLowerCase().includes(value));
+            matches.forEach(match => {
+                const div = document.createElement('div');
+                div.textContent = match;
+                div.className = 'suggestion-item';
+                div.style.cursor = 'pointer';
+                div.addEventListener('click', () => {
+                    customerInput.value = match;
+                    filters.customer = match;
+                    customerSuggestions.classList.add('hidden');
+                    applyFilters();
+                });
+                customerSuggestions.appendChild(div);
+            });
+        } else {
+            customerSuggestions.classList.add('hidden');
+            filters.customer = '';
+            applyFilters();
+        }
+    });
+
     document.getElementById('addGlobalExecutorBtn').addEventListener('click', () => {
         openGlobalExecutorModal();
     });
 
+    document.getElementById('addGlobalCustomerBtn').addEventListener('click', () => {
+        openGlobalCustomerModal();
+    });
+
     document.getElementById('createTaskBtn').addEventListener('click', () => {
-        openEditModal(null); // Открываем модалку для создания новой задачи
+        openEditModal(null);
     });
 
     document.addEventListener('click', e => {
@@ -287,5 +342,10 @@ export function createInterface() {
         if (!projectInput.contains(e.target) && !projectSuggestions.contains(e.target)) {
             projectSuggestions.classList.add('hidden');
         }
+        if (!customerInput.contains(e.target) && !customerSuggestions.contains(e.target)) {
+            customerSuggestions.classList.add('hidden');
+        }
     });
+
+    syncCustomers().then(() => applyFilters());
 }

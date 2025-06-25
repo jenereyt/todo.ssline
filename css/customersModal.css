@@ -1,0 +1,128 @@
+.customers-modal .modal-content {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.customers-modal h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+
+.customer-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.customer-form input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.customer-form button {
+    padding: 8px 16px;
+    background: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#customersList {
+    list-style: none;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#customersList,
+li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#customersList,
+li:last-child {
+    border-bottom: none;
+}
+
+#customersList span,
+#customersList .edit-input {
+    flex: 1;
+}
+
+#customersList button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#customersList,
+.edit-customer {
+    background: #007bff;
+    color: #fff;
+}
+
+#customersList,
+.edit-customer:hover {
+    background: #0056b3;
+}
+
+#customersList,
+.save-customer {
+    background: #ffc107;
+    color: #333;
+}
+
+#customersList,
+.save-customer:hover {
+    background: #e0a800;
+}
+
+.customer-list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.delete-customer {
+    background: #dc3545;
+    color: #fff;
+    padding: 7px;
+    border-radius: 7px;
+}
+
+.edit-customer-input {
+    flex: 1;
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+#customerName:focus{
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+.edit-customer-input {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+#customersList,
+.delete-customer:hover {
+    background: #c82333;
+}
