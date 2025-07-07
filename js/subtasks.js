@@ -1,9 +1,9 @@
-
+import { BASE_URL } from './config.js';
 import { showNotification, formatDate, toISODate } from './utils.js';
 import { tasks, executors } from './app.js';
 
 async function fetchSubtasks() {
-    const url = 'https://servtodo.ssline.uz/subtasks';
+    const url = `${BASE_URL}/subtasks`;
     console.log('Запрос подзадач:', url);
     try {
         const response = await fetch(url, {
@@ -14,7 +14,7 @@ async function fetchSubtasks() {
         });
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Ошибка HTTP: ${ response.status } ${ response.statusText } - ${ errorText } `);
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText} `);
         }
         const data = await response.json();
         console.log('Полученные подзадачи:', data);
@@ -59,7 +59,7 @@ async function syncSubtasks() {
 }
 
 async function createSubtask(taskId, subtaskData) {
-    const url = 'https://servtodo.ssline.uz/subtasks';
+    const url = `${BASE_URL}/subtasks`;
     const body = {
         taskId,
         description: subtaskData.description || 'Новая подзадача',
@@ -79,7 +79,7 @@ async function createSubtask(taskId, subtaskData) {
         });
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Ошибка HTTP: ${ response.status } ${ response.statusText } - ${ errorText } `);
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText} `);
         }
         const data = await response.json();
         console.log('Создана подзадача:', data);
@@ -95,55 +95,55 @@ async function createSubtask(taskId, subtaskData) {
         };
     } catch (error) {
         console.error('Ошибка при создании подзадачи:', error);
-        showNotification(`Не удалось создать подзадачу: ${ error.message } `);
+        showNotification(`Не удалось создать подзадачу: ${error.message} `);
         throw error;
     }
 }
 
 async function updateSubtask(subtaskId, subtaskData) {
-    const url = `https://servtodo.ssline.uz/subtasks/${subtaskId}`;
-const body = {
-    taskId: subtaskData.taskId,
-    description: subtaskData.description || '',
-    dateSet: toISODate(subtaskData.dateSet) || null,
-    deadline: subtaskData.deadline ? toISODate(subtaskData.deadline) : null,
-    done: subtaskData.done || false,
-    executorId: subtaskData.executorId || null
-};
-console.log('Обновление подзадачи:', url, 'Тело:', body);
-try {
-    const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    });
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
-    }
-    const data = await response.json();
-    console.log('Обновлена подзадача:', data);
-    return {
-        id: data.id,
-        taskId: data.taskId,
-        description: data.description || '',
-        dateSet: formatDate(data.dateSet),
-        deadline: data.deadline ? formatDate(data.deadline) : null, // Сохраняем null, если дедлайн не указан
-        done: data.done || false,
-        executorId: data.executorId || null,
-        executorName: executors.find(ex => ex.id === data.executorId)?.name || 'Не назначен'
+    const url = `${BASE_URL}/subtasks/${subtaskId}`;
+    const body = {
+        taskId: subtaskData.taskId,
+        description: subtaskData.description || '',
+        dateSet: toISODate(subtaskData.dateSet) || null,
+        deadline: subtaskData.deadline ? toISODate(subtaskData.deadline) : null,
+        done: subtaskData.done || false,
+        executorId: subtaskData.executorId || null
     };
-} catch (error) {
-    console.error('Ошибка при обновлении подзадачи:', error);
-    showNotification(`Не удалось обновить подзадачу: ${error.message}`);
-    throw error;
-}
+    console.log('Обновление подзадачи:', url, 'Тело:', body);
+    try {
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        const data = await response.json();
+        console.log('Обновлена подзадача:', data);
+        return {
+            id: data.id,
+            taskId: data.taskId,
+            description: data.description || '',
+            dateSet: formatDate(data.dateSet),
+            deadline: data.deadline ? formatDate(data.deadline) : null, // Сохраняем null, если дедлайн не указан
+            done: data.done || false,
+            executorId: data.executorId || null,
+            executorName: executors.find(ex => ex.id === data.executorId)?.name || 'Не назначен'
+        };
+    } catch (error) {
+        console.error('Ошибка при обновлении подзадачи:', error);
+        showNotification(`Не удалось обновить подзадачу: ${error.message}`);
+        throw error;
+    }
 }
 
 async function deleteSubtask(subtaskId) {
-    const url = `https://servtodo.ssline.uz/subtasks/${subtaskId}`;
+    const url = `${BASE_URL}/subtasks/${subtaskId}`;
     console.log('Удаление подзадачи:', url);
     try {
         const response = await fetch(url, {

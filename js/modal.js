@@ -110,7 +110,7 @@ export function sortTasks(taskList) {
         } else {
             valA = valA || '';
             valB = valB || '';
-            return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            return sortState.ascending ? valA.localeCompare(valB) : valB.localeCompare(valB);
         }
     });
 }
@@ -451,12 +451,13 @@ export function openEditModal(taskId) {
                 <option value="">Выберите исполнителя</option>
                 ${availableExecutors.map(name => `<option value="${name}">${name}</option>`).join('')}
             `;
-
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Добавить';
+            confirmButton.classList.add('confirm-button'); // Добавляем класс для кнопки подтверждения
 
             const cancelButton = document.createElement('button');
             cancelButton.textContent = 'Отмена';
+            cancelButton.classList.add('cancel-button'); // Добавляем класс для кнопки отмены
 
             const container = document.createElement('div');
             container.className = 'executor-select-container';

@@ -1,18 +1,20 @@
-import { showNotification, formatDate,formatCommentDate, toISODate } from './utils.js';
+import { showNotification, formatDate, formatCommentDate, toISODate } from './utils.js';
 import { fetchExecutorsOnTasks } from './executorsOnTask.js';
 import { fetchHistory } from './history.js';
 import { fetchSubtasks, syncSubtasks } from './subtasks.js';
 import { tasks, allProjects } from './app.js';
+import { BASE_URL } from './config.js';
 
 async function createTask(taskData) {
-    const url = 'https://servtodo.ssline.uz/tasks';
+    const url = `${BASE_URL}/tasks`;
     const body = {
         dateSet: toISODate(taskData.dateSet) || new Date().toISOString().split('T')[0],
         project: taskData.project || '',
         theme: taskData.theme || '',
         description: taskData.description || '',
         status: taskData.status || 'OPEN',
-        deadline: toISODate(taskData.deadline) || null
+        deadline: toISODate(taskData.deadline) || null,
+        customerId: taskData.customerId || null // Добавляем customerId
     };
     console.log('Создание задачи:', url, 'Тело:', body);
     try {
@@ -25,7 +27,7 @@ async function createTask(taskData) {
         });
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText} `);
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
         }
         const data = await response.json();
         console.log('Создана задача:', data);
@@ -37,6 +39,7 @@ async function createTask(taskData) {
             description: data.description,
             status: data.status,
             deadline: formatDate(data.deadline),
+            customerId: data.customerId, // Добавляем customerId
             executors: [],
             files: [],
             history: [],
@@ -44,7 +47,7 @@ async function createTask(taskData) {
         };
     } catch (error) {
         console.error('Ошибка при создании задачи:', error);
-        showNotification(`Не удалось создать задачу: ${error.message} `);
+        showNotification(`Не удалось создать задачу: ${error.message}`);
         throw error;
     }
 }
@@ -58,7 +61,7 @@ async function fetchTasks(startDate, endDate) {
         showNotification('Дата окончания не может быть раньше даты начала');
         return [];
     }
-    const url = `https://servtodo.ssline.uz/tasks/${startDate}/${endDate}`;
+    const url = `${BASE_URL}/tasks/${startDate}/${endDate}`;
     console.log('Запрос задач:', url);
     try {
         const response = await fetch(url, {
@@ -82,6 +85,7 @@ async function fetchTasks(startDate, endDate) {
             description: task.description,
             status: task.status,
             deadline: formatDate(task.deadline),
+            customerId: task.customerId, // Добавляем customerId
             executors: [],
             files: [],
             history: [],
@@ -104,7 +108,7 @@ async function fetchTasks(startDate, endDate) {
 }
 
 async function fetchFiles() {
-    const url = 'https://servtodo.ssline.uz/files';
+    const url = `${BASE_URL}/files`;
     console.log('Запрос файлов:', url);
     try {
         const response = await fetch(url, {
@@ -123,7 +127,7 @@ async function fetchFiles() {
             id: file.id,
             taskId: file.taskId,
             name: file.name,
-            url: `https://servtodo.ssline.uz/files/${file.id}`
+            url: `${BASE_URL}/files/${file.id}`
         }));
     } catch (error) {
         console.error('Ошибка при загрузке файлов:', error);
@@ -205,15 +209,16 @@ async function syncHistory() {
     }
 }
 
-async function updateTask(task) {
-    const url = `https://servtodo.ssline.uz/tasks/${task.id}`;
+async function updateTask(task) { 
+    const url = `${BASE_URL}/tasks/${task.id}`;
     const body = {
         dateSet: toISODate(task.dateSet),
         project: task.project,
         theme: task.theme,
         description: task.description,
         status: task.status,
-        deadline: toISODate(task.deadline)
+        deadline: toISODate(task.deadline),
+        customerId: task.customerId // Добавляем customerId
     };
     console.log('Обновление задачи:', task.id, url, 'Тело:', body);
     try {

@@ -1,5 +1,7 @@
+import { BASE_URL } from './config.js';
+
 export async function createComment(taskId, text) {
-    const url = 'https://servtodo.ssline.uz/comments';
+    const url = `${BASE_URL}/comments`;
     const date = new Date().toISOString();
     console.log('Создание комментария:', { taskId, text, date }, url);
     try {
@@ -25,7 +27,7 @@ export async function createComment(taskId, text) {
 }
 
 export async function fetchComments() {
-    const url = 'https://servtodo.ssline.uz/comments';
+    const url = `${BASE_URL}/comments`;
     console.log('Запрос всех комментариев:', url);
     try {
         const response = await fetch(url, {
@@ -48,7 +50,7 @@ export async function fetchComments() {
 }
 
 export async function fetchCommentById(id) {
-    const url = `https://servtodo.ssline.uz/comments/${id}`;
+    const url = `${BASE_URL}/comments/${id}`;
     console.log('Запрос комментария по ID:', id, url);
     try {
         const response = await fetch(url, {
@@ -71,7 +73,7 @@ export async function fetchCommentById(id) {
 }
 
 export async function updateComment(id, taskId, text, date) {
-    const url = `https://servtodo.ssline.uz/comments/${id}`;
+    const url = `${BASE_URL}/comments/${id}`;
     console.log('Обновление комментария:', { id, taskId, text, date }, url);
     try {
         const response = await fetch(url, {
@@ -99,7 +101,7 @@ export async function updateComment(id, taskId, text, date) {
 }
 
 export async function deleteComment(id) {
-    const url = `https://servtodo.ssline.uz/comments/${id}`;
+    const url = `${BASE_URL}/comments/${id}`;
     console.log('Удаление комментария:', id, url);
     try {
         const response = await fetch(url, {

@@ -247,7 +247,7 @@
     padding: 4px;
     border-radius: 3px;
     cursor: pointer;
-    background-color:   rgb(33, 207, 149);
+    background-color: rgb(33, 207, 149);
 }
 
 .add-executor-btn img {
@@ -263,6 +263,12 @@
     background: #fff;
     color: #172b4d;
 }
+
+/* 
+.all-customers-section {
+    max-height: 600px;
+    overflow-y: auto;
+} */
 
 .file-list {
     margin-top: 10px;

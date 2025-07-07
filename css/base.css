@@ -34,7 +34,6 @@ button {
     flex-direction: column;
     flex-grow: 1;
     max-width: 1950px;
-    /* margin: 0 auto; */
 }
 
 .history-item {
@@ -61,32 +60,26 @@ button {
 
 .history-description {
     background: #fadce8;
-    /* Розовый для описания */
 }
 
 .history-deadline {
     background: #e6faff;
-    /* Голубой для срока выполнения */
 }
 
 .history-status {
     background: #e6ffe6;
-    /* Зелёный для статуса */
 }
 
 .history-comment {
     background: #e6f3ff;
-    /* Синий для комментариев */
 }
 
 .history-other {
     background: #fbfde6;
-    /* Серый для прочего */
 }
 
 .history-file {
     background: #fff0e6;
-    /* Оранжевый для файлов */
 }
 
 
@@ -95,7 +88,6 @@ button {
     color: #5e6c84;
     min-width: 80px;
 }
-
 
 .loading-overlay {
     position: fixed;
@@ -152,7 +144,6 @@ button {
     color: #333;
     padding: 10px 20px;
     border-radius: 5px;
-    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); */
     font-size: 14px;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
@@ -166,22 +157,19 @@ button {
 
 .deadline-red {
     color: #FF0000;
-    /* Красный для дедлайнов ≤2 дней */
 }
 
 .deadline-yellow {
     color: #b1b100;
-    /* Жёлтый для дедлайнов ≤7 дней */
+
 }
 
 .deadline-green {
     color: #008100;
-    /* Зелёный для выполненных задач/подзадач */
 }
 
 .deadline-gray {
     color: #808080;
-    /* Серый для аннулированных задач */
 }
 
 .subtask-circle {
@@ -212,7 +200,5 @@ button {
 
 .subtask-circle.gray {
     background-color: #808080;
-    /* Серый для общего количества подзадач */
     color: #FFFFFF;
-    /* Белый текст для читаемости */
 }

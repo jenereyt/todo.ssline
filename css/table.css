@@ -249,7 +249,19 @@
 
 .history-subtask-status {
     background-color: #e6f3ff;
-    /* Цвет для изменения статуса подзадачи */
+}
+
+.guest_img {
+    width: 30px;
+    height: 20px;
+    color: white;
+    filter: invert(1);
+}
+
+.map_img {
+    width: 30px;
+    height: 20px;
+    filter: invert(1);
 }
 
 .subtask-theme,
@@ -276,6 +288,7 @@
     cursor: pointer;
     padding: 2px;
 }
+
 .remove-subtask img {
     height: 15px;
     width: 15px;

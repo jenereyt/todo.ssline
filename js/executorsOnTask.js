@@ -1,5 +1,7 @@
+import { BASE_URL } from './config.js';
+
 export async function assignExecutorToTask(taskId, executorId, task, executor) {
-    const url = 'https://servtodo.ssline.uz/executors-on-tasks';
+    const url = `${BASE_URL}/executors-on-tasks`;
     console.log('Назначение исполнителя:', { taskId, executorId }, url);
     try {
         const response = await fetch(url, {
@@ -35,7 +37,7 @@ export async function assignExecutorToTask(taskId, executorId, task, executor) {
 }
 
 export async function fetchExecutorsOnTasks() {
-    const url = 'https://servtodo.ssline.uz/executors-on-tasks';
+    const url = `${BASE_URL}/executors-on-tasks`;
     console.log('Запрос связей исполнителей и задач:', url);
     try {
         const response = await fetch(url, {
@@ -58,7 +60,7 @@ export async function fetchExecutorsOnTasks() {
 }
 
 export async function removeExecutorFromTask(taskId, executorId) {
-    const url = `https://servtodo.ssline.uz/executors-on-tasks/${taskId}/${executorId}`;
+    const url = `${BASE_URL}/executors-on-tasks/${taskId}/${executorId}`;
     console.log('Удаление исполнителя из задачи:', { taskId, executorId }, url);
     try {
         const response = await fetch(url, {

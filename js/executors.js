@@ -1,5 +1,7 @@
+import { BASE_URL } from './config.js';
+
 export async function fetchExecutors() {
-    const url = 'https://servtodo.ssline.uz/executors';
+    const url = `${BASE_URL}/executors`;
     console.log('Запрос исполнителей:', url);
     try {
         const response = await fetch(url, {
@@ -26,7 +28,7 @@ export async function fetchExecutors() {
 }
 
 export async function createExecutor(executorData) {
-    const url = 'https://servtodo.ssline.uz/executors';
+    const url = `${BASE_URL}/executors`;
     console.log('Создание исполнителя:', executorData, url);
     try {
         const response = await fetch(url, {
@@ -60,7 +62,7 @@ export async function createExecutor(executorData) {
 }
 
 export async function updateExecutor(id, executorData) {
-    const url = `https://servtodo.ssline.uz/executors/${id}`;
+    const url = `${BASE_URL}/executors/${id}`;
     console.log('Обновление исполнителя:', id, executorData, url);
     try {
         // Отправляем запрос на обновление имени и номера телефона
@@ -98,7 +100,7 @@ export async function updateExecutor(id, executorData) {
 }
 
 export async function deleteExecutor(id) {
-    const url = `https://servtodo.ssline.uz/executors/${id}`;
+    const url = `${BASE_URL}/executors/${id}`;
     console.log('Удаление исполнителя:', id, url);
     try {
         const response = await fetch(url, {

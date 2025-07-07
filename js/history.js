@@ -1,5 +1,7 @@
+import { BASE_URL } from './config.js';
+
 export async function createHistory(taskId, change, user) {
-    const url = 'https://servtodo.ssline.uz/history';
+    const url = `${BASE_URL}/history`;
     const date = new Date().toISOString();
     console.log('Создание записи в истории:', { taskId, change, user, date }, url);
     try {
@@ -26,7 +28,7 @@ export async function createHistory(taskId, change, user) {
 }
 
 export async function fetchHistory() {
-    const url = 'https://servtodo.ssline.uz/history';
+    const url = `${BASE_URL}/history`;
     console.log('Запрос всех записей истории:', url);
     try {
         const response = await fetch(url, {
@@ -49,7 +51,7 @@ export async function fetchHistory() {
 }
 
 export async function fetchHistoryById(id) {
-    const url = `https://servtodo.ssline.uz/history/${id}`;
+    const url = `${BASE_URL}/history/${id}`;
     console.log('Запрос записи истории по ID:', id, url);
     try {
         const response = await fetch(url, {
@@ -72,7 +74,7 @@ export async function fetchHistoryById(id) {
 }
 
 export async function updateHistory(id, taskId, change, user, date) {
-    const url = `https://servtodo.ssline.uz/history/${id}`;
+    const url = `${BASE_URL}/history/${id}`;
     console.log('Обновление записи истории:', { id, taskId, change, user, date }, url);
     try {
         const response = await fetch(url, {

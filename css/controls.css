@@ -67,7 +67,8 @@
 .clear-btn,
 #addGlobalExecutorBtn,
 #createTaskBtn,
-#addGlobalCustomerBtn {
+#addGlobalCustomerBtn,
+#addGlobalRegionBtn {
     background: linear-gradient(135deg, #4a90e2, #357abd);
     border-radius: 6px;
 }
@@ -89,7 +90,7 @@
     padding: 12px;
 }
 
-#addGlobalExecutorBtn,
+#addGlobalRegionBtn,
 #addGlobalCustomerBtn {
     border: none;
     border-radius: 6px;
@@ -117,14 +118,26 @@
 }
 
 #addGlobalExecutorBtn {
-    padding: 12px;
+    height: 40px;
+    cursor: pointer;
 }
+
 
 .search-container {
     display: flex;
     align-items: center;
     gap: 5px;
     position: relative;
+}
+
+.region-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.delete-region-btn {
+    background: transparent;
 }
 
 #searchInput {
@@ -240,7 +253,8 @@ body {
     flex-wrap: wrap;
 }
 
-.filters input, .filters select {
+.filters input,
+.filters select {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -251,18 +265,33 @@ body {
     gap: 10px;
 }
 
-.header-actions button {
+/* .header-actions button {
     padding: 8px 16px;
     background: #007bff;
     color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+} */
+
+/* .header-actions button:hover {
+    background: #0056b3;
+} */
+
+.confirm-button {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    background: #28a745;
 }
 
-.header-actions button:hover {
-    background: #0056b3;
+.cancel-button {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    background: #dc3545;
 }
+
 
 #taskContainer {
     display: grid;
@@ -294,26 +323,60 @@ body {
     font-size: 12px;
 }
 
-.open-status { background: #007bff; color: #fff; }
-.выполнено-status { background: #28a745; color: #fff; }
-.принято-заказчиком-status { background: #17a2b8; color: #fff; }
-.аннулировано-status { background: #6c757d; color: #fff; }
-.возвращено-status { background: #dc3545; color: #fff; }
+.open-status {
+    background: #007bff;
+    color: #fff;
+}
+
+.выполнено-status {
+    background: #28a745;
+    color: #fff;
+}
+
+.принято-заказчиком-status {
+    background: #17a2b8;
+    color: #fff;
+}
+
+.аннулировано-status {
+    background: #6c757d;
+    color: #fff;
+}
+
+.возвращено-status {
+    background: #dc3545;
+    color: #fff;
+}
 
 .task-body h3 {
     margin: 0 0 10px;
     font-size: 16px;
 }
 
-.task-theme, .task-customer, .task-executors, .task-date-set, .task-deadline {
+.task-theme,
+.task-customer,
+.task-executors,
+.task-date-set,
+.task-deadline {
     margin: 5px 0;
     font-size: 14px;
 }
 
-.deadline-red { color: #dc3545; }
-.deadline-yellow { color: #ffc107; }
-.deadline-green { color: #28a745; }
-.deadline-gray { color: #6c757d; }
+.deadline-red {
+    color: #dc3545;
+}
+
+.deadline-yellow {
+    color: #ffc107;
+}
+
+.deadline-green {
+    color: #28a745;
+}
+
+.deadline-gray {
+    color: #6c757d;
+}
 
 .column-header {
     cursor: pointer;
@@ -326,8 +389,13 @@ body {
     font-size: 12px;
 }
 
-.sort-asc .sort-arrow::after { content: '↑'; }
-.sort-desc .sort-arrow::after { content: '↓'; }
+.sort-asc .sort-arrow::after {
+    content: '↑';
+}
+
+.sort-desc .sort-arrow::after {
+    content: '↓';
+}
 
 /* Стили для бургер-меню */
 .burger-menu-btn {
@@ -351,17 +419,27 @@ body {
     transition: all 0.3s ease;
 }
 
-.burger-menu-btn span:nth-child(1) { top: 10px; }
-.burger-menu-btn span:nth-child(2) { top: 18px; }
-.burger-menu-btn span:nth-child(3) { top: 26px; }
+.burger-menu-btn span:nth-child(1) {
+    top: 10px;
+}
+
+.burger-menu-btn span:nth-child(2) {
+    top: 18px;
+}
+
+.burger-menu-btn span:nth-child(3) {
+    top: 26px;
+}
 
 .burger-menu-btn.open span:nth-child(1) {
     transform: rotate(45deg);
     top: 18px;
 }
+
 .burger-menu-btn.open span:nth-child(2) {
     opacity: 0;
 }
+
 .burger-menu-btn.open span:nth-child(3) {
     transform: rotate(-45deg);
     top: 18px;
@@ -418,4 +496,123 @@ body {
     #taskContainer {
         grid-template-columns: 1fr;
     }
+}
+
+
+
+.customers-modal .modal-content {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.customers-modal h2,
+.customers-modal h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.customer-form,
+.edit-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.customer-form input,
+.edit-form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.customer-form button,
+.edit-form button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.customer-form button,
+#saveCustomer {
+    grid-column: span 2;
+    background: #28a745;
+    color: #fff;
+}
+
+.customer-form button:hover,
+#saveCustomer:hover {
+    background: #218838;
+}
+
+#cancelEditCustomer {
+    grid-column: span 2;
+    background: #6c757d;
+    color: #fff;
+}
+
+#cancelEditCustomer:hover {
+    background: #5a6268;
+}
+
+.customer-list {
+    list-style: none;
+    padding: 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.customer-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.customer-item:hover {
+    background: #f0f0f0;
+}
+
+.customer-item:last-child {
+    border-bottom: none;
+}
+
+.customer-details {
+    flex: 1;
+}
+
+.customer-name {
+    font-weight: bold;
+}
+
+.customer-region,
+.customer-inn,
+.customer-pinfl,
+.customer-contact,
+.customer-phone {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.delete-customer {
+    padding: 5px 10px;
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.delete-customer:hover {
+    background: #c82333;
+}
+
+.hidden {
+    display: none;
 }

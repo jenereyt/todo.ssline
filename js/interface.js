@@ -3,6 +3,7 @@ import { openGlobalCustomerModal } from './customersModal.js';
 import { tasks, executors, getAllExecutors, filters, sortState, allProjects, customers, syncCustomers } from './app.js';
 import { showNotification } from './utils.js';
 import { applyFilters, openEditModal } from './modal.js';
+import { openGlobalRegionModal } from './regionsModal.js';
 
 export function createTaskCards(taskList) {
     const appDiv = document.getElementById('app');
@@ -120,16 +121,17 @@ export function createInterface() {
                 </div>
                 <button id="resetFiltersBtn"><img src="./image/X.svg" alt="Сбросить"></button>
             </div>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Поиск по задачам...">
-                <button id="searchBtn"><img src="./image/search.svg" alt="Поиск" width="16" height="16"></button>
-            </div>
-            <button id="addGlobalExecutorBtn">Исполнители</button>
-            <button id="addGlobalCustomerBtn">Заказчики</button>
-            <button id="createTaskBtn">Создать задачу</button>
+          <button id="addGlobalExecutorBtn"><img class="guest_img" src="./image/guest.svg" alt=""></button>
+         <button id="addGlobalCustomerBtn">Заказчики</button>
+        <button id="addGlobalRegionBtn"><img class="map_img" src="./image/world.svg" alt=""></button>
+       <button id="createTaskBtn">Создать задачу</button>
         </div>
     `;
     createTaskCards(tasks);
+
+    document.getElementById('addGlobalRegionBtn').addEventListener('click', () => {
+        openGlobalRegionModal();
+    });
 
     const dateFrom = document.getElementById('dateFrom');
     const dateTo = document.getElementById('dateTo');
@@ -212,28 +214,28 @@ export function createInterface() {
         applyFilters();
     });
 
-    document.getElementById('searchBtn').addEventListener('click', () => {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const filteredTasks = tasks.filter(
-            task => {
-                const customerName = customers.find(c => c.id === task.customerId)?.name || '';
-                return task.id.toString().includes(searchTerm) ||
-                    (task.dateSet || '').toLowerCase().includes(searchTerm) ||
-                    (task.deadline || '').toLowerCase().includes(searchTerm) ||
-                    (task.project || '').toLowerCase().includes(searchTerm) ||
-                    customerName.toLowerCase().includes(searchTerm) ||
-                    (task.theme || '').toLowerCase().includes(searchTerm) ||
-                    (task.description || '').toLowerCase().includes(searchTerm) ||
-                    task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
-                    (task.status || '').toLowerCase().includes(searchTerm);
-            }
-        );
-        createTaskCards(filteredTasks);
-    });
+    // document.getElementById('searchBtn').addEventListener('click', () => {
+    //     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    //     const filteredTasks = tasks.filter(
+    //         task => {
+    //             const customerName = customers.find(c => c.id === task.customerId)?.name || '';
+    //             return task.id.toString().includes(searchTerm) ||
+    //                 (task.dateSet || '').toLowerCase().includes(searchTerm) ||
+    //                 (task.deadline || '').toLowerCase().includes(searchTerm) ||
+    //                 (task.project || '').toLowerCase().includes(searchTerm) ||
+    //                 customerName.toLowerCase().includes(searchTerm) ||
+    //                 (task.theme || '').toLowerCase().includes(searchTerm) ||
+    //                 (task.description || '').toLowerCase().includes(searchTerm) ||
+    //                 task.executors.some(ex => ex.toLowerCase().includes(searchTerm)) ||
+    //                 (task.status || '').toLowerCase().includes(searchTerm);
+    //         }
+    //     );
+    //     createTaskCards(filteredTasks);
+    // });
 
-    document.getElementById('searchInput').addEventListener('keypress', e => {
-        if (e.key === 'Enter') document.getElementById('searchBtn').click();
-    });
+    // document.getElementById('searchInput').addEventListener('keypress', e => {
+    //     if (e.key === 'Enter') document.getElementById('searchBtn').click();
+    // });
 
     const executorInput = document.getElementById('executorFilter');
     const executorSuggestions = document.getElementById('executorSuggestions');

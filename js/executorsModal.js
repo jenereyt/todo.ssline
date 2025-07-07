@@ -5,12 +5,12 @@ import { createHistory } from './history.js';
 import { showNotification } from './utils.js';
 import { applyFilters } from './modal.js';
 
-export function openGlobalExecutorModal() {
+export async function openGlobalExecutorModal() {
     const modal = document.createElement("div");
     modal.className = "modal trello-style-modal";
 
     modal.innerHTML = `
-        <div class="modal-content">
+        <div class="modal-content wide-modal">
             <div class="modal-header">
                 <h2>Исполнители</h2>
                 <button class="close-modal-btn" id="closeModalBtn">×</button>
@@ -111,18 +111,18 @@ export function openGlobalExecutorModal() {
                 editContainer.className = "edit-executor-container";
                 editContainer.innerHTML = `
                     <input type="text" class="edit-executor-input" value="${currentName}">
-                    <input type="text" class="edit-executor-phone" value="${currentPhone}" placeholder="Номер телефона (+998...)">
+                    <input type="text" class="edit-executor-phone" value="${currentPhone || ''}" placeholder="Номер телефона (+998...)">
+                    <button class="action-btn" id="saveExecutor">Сохранить</button>
+                    <button class="action-btn cancel-btn" id="cancelEditExecutor">Отмена</button>
                 `;
                 listItem.replaceChild(editContainer, span);
                 const nameInput = editContainer.querySelector(".edit-executor-input");
                 const phoneInput = editContainer.querySelector(".edit-executor-phone");
+                const saveButton = editContainer.querySelector("#saveExecutor");
+                const cancelButton = editContainer.querySelector("#cancelEditExecutor");
                 nameInput.focus();
 
-                async function saveEdit(e) {
-                    // Проверяем, не переключается ли фокус между полями
-                    if (e.relatedTarget === nameInput || e.relatedTarget === phoneInput) {
-                        return;
-                    }
+                async function saveEdit() {
                     const newName = nameInput.value.trim();
                     const newPhone = phoneInput.value.trim();
                     if (!newName) {
@@ -149,7 +149,6 @@ export function openGlobalExecutorModal() {
                                 await refreshExecutorsList();
                                 return;
                             }
-                            console.log(`Отправка обновления для id=${id}: name=${newName}, phone=${newPhone}`);
                             await updateExecutor(id, { name: newName, phone_number: newPhone });
                             for (const task of tasks) {
                                 if (task.executors.includes(currentName)) {
@@ -167,7 +166,6 @@ export function openGlobalExecutorModal() {
                             applyFilters();
                             showNotification(`Исполнитель "${newName}" обновлён`);
                         } catch (error) {
-                            console.error('Ошибка при обновлении:', error);
                             showNotification(`Ошибка при обновлении исполнителя: ${error.message}`);
                             await refreshExecutorsList();
                         }
@@ -176,32 +174,25 @@ export function openGlobalExecutorModal() {
                     }
                 }
 
-                nameInput.addEventListener("blur", saveEdit);
-                phoneInput.addEventListener("blur", saveEdit);
+                saveButton.addEventListener("click", saveEdit);
+                cancelButton.addEventListener("click", () => refreshExecutorsList());
                 nameInput.addEventListener("keypress", async (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
-                        await saveEdit({ relatedTarget: null });
+                        await saveEdit();
                     }
                 });
                 phoneInput.addEventListener("keypress", async (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
-                        await saveEdit({ relatedTarget: null });
+                        await saveEdit();
                     }
                 });
-
-                editContainer.addEventListener("focusout", (e) => {
-                    if (!editContainer.contains(e.relatedTarget)) {
-                        nameInput.removeEventListener("blur", saveEdit);
-                        phoneInput.removeEventListener("blur", saveEdit);
-                    }
-                }, { once: true });
             });
         });
     }
 
-    refreshExecutorsList();
+    await refreshExecutorsList();
 
     modal.addEventListener("click", (e) => {
         if (e.target === modal) {
