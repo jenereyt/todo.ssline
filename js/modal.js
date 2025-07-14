@@ -66,7 +66,11 @@ export function applyFilters() {
                     const customer = customers.find(c => c.id === task.customerId);
                     const matchesCustomer = !customerFilter ||
                         (customer && customer.name && customer.name.toLowerCase().includes(customerFilter));
-                    return matchesExecutors && matchesProject && matchesCustomer;
+                    const matchesStatus = filters.status === 'all' ||
+                        (filters.status === 'accepted' && (task.status === 'Принято' || task.status === 'OPEN')) ||
+                        (filters.status === 'completed' && task.status === 'Выполнено') ||
+                        (filters.status === 'acceptedByCustomer' && task.status === 'Принято заказчиком');
+                    return matchesExecutors && matchesProject && matchesCustomer && matchesStatus;
                 });
 
                 sortTasks(filteredTasks);
@@ -85,7 +89,6 @@ export function applyFilters() {
         createTaskCards([]);
     }
 }
-
 export function sortTasks(taskList) {
     if (!sortState?.field || !taskList) return;
 
@@ -149,7 +152,7 @@ export function openEditModal(taskId) {
     tempTask.deadline = tempTask.deadline || '';
     tempTask.subtasks = tempTask.subtasks || [];
     const pendingHistory = [];
-    const statuses = ['Принято', 'Выполнено', 'Принято заказчиком', 'Аннулировано', 'Возвращено'];
+    const statuses = ['Принято', 'Выполнено', 'Принято заказчиком', 'Аннулировано'];
 
     modal.innerHTML = `
         <div class="modal-content trello-modal-content">
@@ -278,7 +281,7 @@ export function openEditModal(taskId) {
         </div>
     `;
 
-    // Обработчики событий и вспомогательные функции
+
     const setupTabs = () => {
         modal.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', e => {
@@ -294,7 +297,7 @@ export function openEditModal(taskId) {
     };
 
     const setupEditableFields = () => {
-        // Обработка редактируемых полей
+
         const fields = [
             { display: 'projectDisplay', input: 'editProject', prop: 'project', defaultText: 'Без проекта' },
             { display: 'themeDisplay', input: 'editTheme', prop: 'theme', defaultText: 'Нет темы' },
@@ -351,7 +354,6 @@ export function openEditModal(taskId) {
             }
         });
 
-        // В функции openEditModal, в части обработки заказчика:
         const customerDisplay = modal.querySelector('#customerDisplay');
         const customerSelect = modal.querySelector('#editCustomer');
 
@@ -374,8 +376,6 @@ export function openEditModal(taskId) {
                     customerDisplay.textContent = newCustomerName;
                     customerDisplay.classList.remove('hidden');
                     customerSelect.classList.add('hidden');
-
-                    // Добавляем запись в историю изменений
                     pendingHistory.push({
                         date: formatCommentDate(new Date()),
                         rawDate: new Date().toISOString(),
@@ -385,14 +385,12 @@ export function openEditModal(taskId) {
 
                     updateHistoryList();
 
-                    // Непосредственно обновляем задачу на сервере
                     try {
                         await updateTask({
                             ...tempTask,
                             customerId: newCustomerId
                         });
 
-                        // Обновляем локальное состояние
                         const taskIndex = tasks.findIndex(t => t.id === tempTask.id);
                         if (taskIndex !== -1) {
                             tasks[taskIndex].customerId = newCustomerId;
@@ -402,7 +400,6 @@ export function openEditModal(taskId) {
                     } catch (error) {
                         console.error('Ошибка при обновлении заказчика:', error);
                         showNotification('Ошибка при сохранении заказчика');
-                        // Откатываем изменения при ошибке
                         tempTask.customerId = oldCustomerId;
                         customerDisplay.textContent = oldCustomerName;
                     }
@@ -453,11 +450,11 @@ export function openEditModal(taskId) {
             `;
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Добавить';
-            confirmButton.classList.add('confirm-button'); // Добавляем класс для кнопки подтверждения
+            confirmButton.classList.add('confirm-button'); 
 
             const cancelButton = document.createElement('button');
             cancelButton.textContent = 'Отмена';
-            cancelButton.classList.add('cancel-button'); // Добавляем класс для кнопки отмены
+            cancelButton.classList.add('cancel-button'); 
 
             const container = document.createElement('div');
             container.className = 'executor-select-container';
@@ -489,7 +486,6 @@ export function openEditModal(taskId) {
             });
         });
 
-        // Обработка удаления исполнителей
         executorList.querySelectorAll('.delete-executor').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -538,7 +534,6 @@ export function openEditModal(taskId) {
                 </div>
             `).join('') : '<p>Нет подзадач</p>';
 
-        // Обработчики событий для подзадач
         subtaskList.querySelectorAll('.subtask-item').forEach((item, index) => {
             const descriptionInput = item.querySelector('.subtask-description');
             const dateSetInput = item.querySelector('.subtask-dateSet');
@@ -735,7 +730,6 @@ export function openEditModal(taskId) {
             showLoading(saveButton, true);
 
             try {
-                // 1. Обновляем статус если он изменился
                 const statusSelect = modal.querySelector('#statusSelect');
                 if (statusSelect && tempTask.status !== statusSelect.value) {
                     const oldStatus = tempTask.status;
@@ -748,19 +742,15 @@ export function openEditModal(taskId) {
                     });
                 }
 
-                // 2. Сохраняем все изменения задачи
                 let updatedTask;
                 if (!tempTask.id) {
-                    // Создаем новую задачу
                     updatedTask = await createTask(tempTask);
                     tempTask.id = updatedTask.id;
                     tasks.push(updatedTask);
                     showNotification('Новая задача успешно создана');
                 } else {
-                    // Обновляем существующую задачу
                     updatedTask = await updateTask(tempTask);
 
-                    // Обновляем локальную копию задачи
                     const taskIndex = tasks.findIndex(t => t.id === tempTask.id);
                     if (taskIndex !== -1) {
                         tasks[taskIndex] = { ...updatedTask };
@@ -768,7 +758,6 @@ export function openEditModal(taskId) {
                     showNotification('Задача успешно обновлена');
                 }
 
-                // 3. Сохраняем всю историю изменений
                 if (pendingHistory.length > 0) {
                     await Promise.all(
                         pendingHistory.map(entry =>
@@ -777,7 +766,6 @@ export function openEditModal(taskId) {
                     );
                 }
 
-                // 4. Синхронизируем исполнителей
                 const originalExecutors = task.executors || [];
                 const currentExecutors = tempTask.executors || [];
 
@@ -814,15 +802,11 @@ export function openEditModal(taskId) {
                         }
                     })
                 ]);
-
-                // 5. Обновляем данные в приложении
                 try {
-                    // Обновляем список исполнителей
                     const freshExecutors = await fetchExecutors();
                     executors.length = 0;
                     executors.push(...freshExecutors);
 
-                    // Обновляем список задач если указаны даты
                     if (filters.dateFrom && filters.dateTo) {
                         await fetchTasks(filters.dateFrom, filters.dateTo);
                     }
@@ -830,14 +814,12 @@ export function openEditModal(taskId) {
                     console.error('Ошибка при обновлении данных:', error);
                 }
 
-                // 6. Принудительно обновляем интерфейс
                 applyFilters();
                 createTaskCards(tasks.filter(t =>
                     (!filters.dateFrom || t.dateSet >= filters.dateFrom) &&
                     (!filters.dateTo || t.dateSet <= filters.dateTo)
                 ));
 
-                // 7. Закрываем модальное окно
                 modal.remove();
 
             } catch (error) {
@@ -870,7 +852,6 @@ export function openEditModal(taskId) {
         });
     };
 
-    // Инициализация всех обработчиков
     setupTabs();
     setupEditableFields();
     updateExecutorList();

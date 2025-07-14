@@ -1,18 +1,137 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7fa;
+    background: linear-gradient(135deg, #f4f7fa, #e0e7f0);
     margin: 0;
-    padding: 15px 15px 0px;
+    padding: 0;
     color: #333;
-    overflow-y: hidden;
+    overflow-y: auto;
     height: 100vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 button {
     border: none;
     color: white;
+    transition: background-color 0.3s ease;
+}
+
+#app {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    max-width: 1950px;
+    overflow-x: hidden;
+    margin: 0;
+}
+
+#app .sidebar {
+    width: 250px;
+    background: linear-gradient(180deg, #ffffff, #f4f4f4);
+    border-right: 1px solid #ddd;
+    padding: 10px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    transform: translateX(-200px);
+    /* Начальное свёрнутое состояние */
+}
+
+#app .sidebar.collapsed {
+    transform: translateX(-200px);
+}
+
+#app .sidebar:not(.collapsed) {
+    transform: translateX(0);
+}
+
+#app .app {
+    flex-grow: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: margin-left 0.3s ease;
+    border-radius: 10px;
+    position: relative;
+    will-change: margin-left;
+}
+
+#app .app.sidebar-collapsed {
+    margin-left: 0px !important;
+    /* Для свёрнутого сайдбара */
+}
+
+.burger-menu-btn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1100;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.burger-menu-btn img {
+    width: 30px;
+    height: 30px;
+    transition: transform 0.3s ease;
+}
+
+.burger-menu-btn.open img {
+    transform: rotate(90deg);
+}
+
+.burger-menu-btn:hover img {
+    transform: scale(1.1);
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar li {
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #444;
+    background: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+}
+
+.sidebar li:hover {
+    background: #007bff;
+    color: white;
+    transform: translateX(5px);
+}
+
+.sidebar li.active {
+    background: #0056b3;
+    color: white;
+    font-weight: bold;
+}
+
+.panel-content {
+    display: none;
+}
+
+.panel-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in;
 }
 
 .hidden {
@@ -29,25 +148,29 @@ button {
     }
 }
 
-#app {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    max-width: 1950px;
-}
-
 .history-item {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 0px;
+    gap: 10px;
     border: 1px solid #dfe1e6;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 #sortField {
-    height: 42px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #808080;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+#sortField:focus {
+    border-color: #007bff;
+    outline: none;
 }
 
 .history-executor {
@@ -82,11 +205,12 @@ button {
     background: #fff0e6;
 }
 
-
 .history-date {
     font-size: 12px;
     color: #5e6c84;
     min-width: 80px;
+    padding: 5px 10px;
+    border-radius: 4px;
 }
 
 .loading-overlay {
@@ -140,13 +264,14 @@ button {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: rgb(158, 255, 231);
+    background: #a3f0d6;
     color: #333;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 15px 25px;
+    border-radius: 8px;
     font-size: 14px;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
 }
 
@@ -154,14 +279,12 @@ button {
     opacity: 1;
 }
 
-
 .deadline-red {
     color: #FF0000;
 }
 
 .deadline-yellow {
     color: #b1b100;
-
 }
 
 .deadline-green {
@@ -181,6 +304,7 @@ button {
     justify-content: center;
     margin-right: 5px;
     font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .subtask-circle.yellow {
@@ -201,4 +325,53 @@ button {
 .subtask-circle.gray {
     background-color: #808080;
     color: #FFFFFF;
+}
+
+#app .sidebar.collapsed li {
+    text-indent: -9999px;
+    overflow: hidden;
+    padding: 12px 10px;
+}
+
+#app .sidebar.collapsed li::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+.task-tabs {
+    margin: 10px 0;
+}
+
+.task-tabs ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.task-tabs li {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    margin-right: 5px;
+    border-radius: 5px 5px 0 0;
+    transition: background-color 0.3s;
+}
+
+.task-tabs li:hover {
+    background-color: #e0e0e0;
+}
+
+.task-tabs li.active {
+    background-color: #0079bf;
+    border-bottom: 1px solid #007bff;
+    color: white;
+    font-weight: bold;
 }

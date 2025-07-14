@@ -14,7 +14,7 @@ async function createTask(taskData) {
         description: taskData.description || '',
         status: taskData.status || 'OPEN',
         deadline: toISODate(taskData.deadline) || null,
-        customerId: taskData.customerId || null // Добавляем customerId
+        customerId: taskData.customerId || null 
     };
     console.log('Создание задачи:', url, 'Тело:', body);
     try {
@@ -39,7 +39,7 @@ async function createTask(taskData) {
             description: data.description,
             status: data.status,
             deadline: formatDate(data.deadline),
-            customerId: data.customerId, // Добавляем customerId
+            customerId: data.customerId, 
             executors: [],
             files: [],
             history: [],
@@ -76,7 +76,7 @@ async function fetchTasks(startDate, endDate) {
         }
         const data = await response.json();
         console.log('Полученные задачи:', data);
-        tasks.length = 0; // Очищаем массив задач
+        tasks.length = 0; 
         tasks.push(...data.map(task => ({
             id: task.id,
             dateSet: formatDate(task.dateSet),
@@ -85,7 +85,7 @@ async function fetchTasks(startDate, endDate) {
             description: task.description,
             status: task.status,
             deadline: formatDate(task.deadline),
-            customerId: task.customerId, // Добавляем customerId
+            customerId: task.customerId, 
             executors: [],
             files: [],
             history: [],
@@ -218,7 +218,7 @@ async function updateTask(task) {
         description: task.description,
         status: task.status,
         deadline: toISODate(task.deadline),
-        customerId: task.customerId // Добавляем customerId
+        customerId: task.customerId 
     };
     console.log('Обновление задачи:', task.id, url, 'Тело:', body);
     try {

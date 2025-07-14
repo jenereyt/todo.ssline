@@ -19,7 +19,6 @@ export async function createComment(taskId, text) {
         if (!response.ok) {
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return await response.json(); // { id, text, date, taskId, task }
     } catch (error) {
         console.error('Ошибка при создании комментария:', error);
         throw error;
@@ -41,7 +40,7 @@ export async function fetchComments() {
         }
         const data = await response.json();
         console.log('Полученные комментарии:', data);
-        return data; // [{ id, text, date, taskId, task }, ...]
+        return data; 
     } catch (error) {
         console.error('Ошибка при получении комментариев:', error);
         alert(`Не удалось загрузить комментарии: ${error.message}`);
@@ -65,7 +64,7 @@ export async function fetchCommentById(id) {
             }
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return await response.json(); // { id, text, date, taskId, task }
+        return await response.json(); 
     } catch (error) {
         console.error('Ошибка при получении комментария:', error);
         throw error;
@@ -93,7 +92,7 @@ export async function updateComment(id, taskId, text, date) {
             }
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return await response.json(); // { id, text, date, taskId }
+        return await response.json(); 
     } catch (error) {
         console.error('Ошибка при обновлении комментария:', error);
         throw error;
@@ -116,7 +115,7 @@ export async function deleteComment(id) {
             }
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return true; // Успешное удаление
+        return true; 
     } catch (error) {
         console.error('Ошибка при удалении комментария:', error);
         throw error;

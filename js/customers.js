@@ -7,7 +7,6 @@ async function handleResponse(response) {
         const errorText = await response.text();
         throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
     }
-    // Для статусов вроде 204 No Content возвращаем null
     if (response.status === 204) {
         return null;
     }
@@ -69,16 +68,17 @@ export async function fetchCustomerById(customerId) {
 
 export async function createCustomer(customerData) {
     const url = `${BASE_URL}/customers`;
-    const body = {
-        name: customerData.name || 'Новый заказчик',
-        regionId: customerData.region?.id?.toString() || '0',
-        inn: customerData.inn || '000000000000',
-        pinfl: customerData.pinfl || '00000000000000',
-        contact_person: customerData.contact_person || 'Не указан',
-        phone_number: customerData.phone_number || 'Не указан'
-    };
-    console.log('Создание заказчика:', url, 'Тело:', body);
+    console.log('Создание заказчика, входные данные:', customerData);
     try {
+        const body = {
+            name: customerData.name,
+            regionId: customerData.regionId || "0",
+            inn: customerData.inn || "Не указано",
+            pinfl: customerData.pinfl || "Не указано",
+            contact_person: customerData.contact_person || "Не указано",
+            phone_number: customerData.phone_number || "Не указано"
+        };
+        console.log('Отправляемый запрос:', url, 'Тело:', body);
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -86,7 +86,19 @@ export async function createCustomer(customerData) {
             },
             body: JSON.stringify(body)
         });
-        const data = await handleResponse(response);
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Ошибка сервера:', response.status, response.statusText, errorText);
+            if (response.status === 400) {
+                throw new Error(`Некорректные данные: ${errorText}`);
+            } else if (response.status === 409) {
+                throw new Error('Заказчик с таким названием или ИНН уже существует');
+            } else if (response.status === 500) {
+                throw new Error(`Внутренняя ошибка сервера: ${errorText}`);
+            }
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        const data = await response.json();
         console.log('Создан заказчик:', data);
         return await mapCustomer(data);
     } catch (error) {
@@ -97,16 +109,17 @@ export async function createCustomer(customerData) {
 
 export async function updateCustomer(customerId, customerData) {
     const url = `${BASE_URL}/customers/${customerId}`;
-    const body = {
-        name: customerData.name,
-        regionId: customerData.region?.id?.toString() || '0',
-        inn: customerData.inn || '',
-        pinfl: customerData.pinfl || '',
-        contact_person: customerData.contact_person || '',
-        phone_number: customerData.phone_number || ''
-    };
-    console.log('Обновление заказчика:', customerId, url, 'Тело:', body);
+    console.log('Обновление заказчика, входные данные:', customerId, customerData);
     try {
+        const body = {
+            name: customerData.name,
+            regionId: customerData.regionId || "0",
+            inn: customerData.inn || "Не указано",
+            pinfl: customerData.pinfl || "Не указано",
+            contact_person: customerData.contact_person || "Не указано",
+            phone_number: customerData.phone_number || "Не указано"
+        };
+        console.log('Отправляемый запрос:', url, 'Тело:', body);
         const response = await fetch(url, {
             method: 'PUT',
             headers: {
@@ -114,7 +127,19 @@ export async function updateCustomer(customerId, customerData) {
             },
             body: JSON.stringify(body)
         });
-        const data = await handleResponse(response);
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Ошибка сервера:', response.status, response.statusText, errorText);
+            if (response.status === 400) {
+                throw new Error(`Некорректные данные: ${errorText}`);
+            } else if (response.status === 409) {
+                throw new Error('Заказчик с таким названием или ИНН уже существует');
+            } else if (response.status === 500) {
+                throw new Error(`Внутренняя ошибка сервера: ${errorText}`);
+            }
+            throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        const data = await response.json();
         console.log('Обновлён заказчик:', data);
         return await mapCustomer(data);
     } catch (error) {

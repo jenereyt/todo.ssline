@@ -23,7 +23,7 @@ async function fetchSubtasks() {
             taskId: subtask.taskId,
             description: subtask.description || '',
             dateSet: formatDate(subtask.dateSet),
-            deadline: subtask.deadline ? formatDate(subtask.deadline) : null, // Сохраняем null, если дедлайн не указан
+            deadline: subtask.deadline ? formatDate(subtask.deadline) : null, 
             done: subtask.done || false,
             executorId: subtask.executorId || null,
             executorName: executors.find(ex => ex.id === subtask.executorId)?.name || 'Не назначен'
@@ -88,7 +88,7 @@ async function createSubtask(taskId, subtaskData) {
             taskId: data.taskId,
             description: data.description || '',
             dateSet: formatDate(data.dateSet),
-            deadline: data.deadline ? formatDate(data.deadline) : null, // Сохраняем null, если дедлайн не указан
+            deadline: data.deadline ? formatDate(data.deadline) : null, 
             done: data.done || false,
             executorId: data.executorId || null,
             executorName: executors.find(ex => ex.id === data.executorId)?.name || 'Не назначен'
@@ -130,7 +130,7 @@ async function updateSubtask(subtaskId, subtaskData) {
             taskId: data.taskId,
             description: data.description || '',
             dateSet: formatDate(data.dateSet),
-            deadline: data.deadline ? formatDate(data.deadline) : null, // Сохраняем null, если дедлайн не указан
+            deadline: data.deadline ? formatDate(data.deadline) : null, 
             done: data.done || false,
             executorId: data.executorId || null,
             executorName: executors.find(ex => ex.id === data.executorId)?.name || 'Не назначен'

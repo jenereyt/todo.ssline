@@ -1,55 +1,6 @@
-.pagination {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 2px;
-    /* Уменьшили gap */
-    padding: 10px 0px;
-    background-color: #f8fafc;
-    border-top: 1px solid #e6eaee;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    z-index: 1;
-}
-
-.pagination button {
-    padding: 4px 8px;
-    /* Уменьшили padding */
-    border: 1px solid #d8dde3;
-    border-radius: 4px;
-    /* Уменьшили радиус */
-    background: linear-gradient(135deg, #4a90e2, #357abd);
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 11px;
-    /* Уменьшили шрифт */
-}
-
-.pagination button:hover {
-    background: linear-gradient(135deg, #357abd, #2a6097);
-    transform: translateY(-1px);
-}
-
-.pagination button:disabled {
-    background-color: #e6eaee;
-    cursor: not-allowed;
-    color: #999;
-}
-
-.pagination button.active {
-    background: linear-gradient(135deg, #357abd, #2a6097);
-    color: white;
-    border: none;
-}
-
 @media (max-width: 768px) {
     .table-wrapper {
         max-height: 250px;
-        /* Уменьшили для мобильных */
         overflow-x: auto;
     }
 
@@ -61,42 +12,34 @@
     th,
     td {
         font-size: 11px;
-        /* Уменьшили шрифт */
         padding: 6px 8px;
-        /* Уменьшили padding */
     }
 
     tbody {
         max-height: 180px;
-        /* Уменьшили max-height */
     }
 
     .pagination {
         flex-direction: column;
         align-items: center;
         gap: 1px;
-        /* Уменьшили gap */
     }
 
     .pagination button {
         width: 100%;
         text-align: center;
         padding: 3px 6px;
-        /* Уменьшили padding */
         font-size: 10px;
-        /* Уменьшили шрифт */
     }
 }
 
 @media screen and (max-width: 1150px) {
     .filter-group input[type="text"] {
         width: 120px !important;
-        /* Уменьшили ширину */
     }
 
     .clear-btn {
         right: 30px !important;
-        /* Уменьшили отступ */
     }
 }
 
@@ -112,10 +55,11 @@
     max-width: 1950px;
     display: flex;
     flex-wrap: wrap;
-    height: calc(75vh - 25px);
+    max-height: calc(88vh - 35px);
     overflow-y: auto;
     gap: 15px;
     padding: 15px;
+
 }
 
 .task-card {
@@ -169,9 +113,7 @@
 
 .task-field {
     margin-bottom: 8px;
-    /* Уменьшили margin */
     font-size: 13px;
-    /* Уменьшили шрифт */
 }
 
 .task-field strong {
@@ -182,12 +124,10 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    /* Уменьшили gap */
 }
 
 .sort-option {
     padding: 4px 8px;
-    /* Уменьшили padding */
     border: none;
     background: #f0f0f0;
     color: #333;
@@ -206,22 +146,18 @@
 }
 
 .sort-controls {
-    display: flex;
     gap: 8px;
-    /* Уменьшили gap */
     align-items: center;
 }
 
 .sort-controls select {
     padding: 4px;
-    /* Уменьшили padding */
     border-radius: 4px;
     border: 1px solid #ddd;
 }
 
 .sort-controls button {
     padding: 4px 8px;
-    /* Уменьшили padding */
     border: none;
     background: #007bff;
     color: #fff;
@@ -264,11 +200,16 @@
     filter: invert(1);
 }
 
+.add-task {
+    width: 20px;
+    height: 20px;
+    filter: invert(1);
+}
+
 .subtask-theme,
 .subtask-dateSet,
 .subtask-deadline {
     padding: 4px;
-    /* Уменьшили padding */
     border: 1px solid #ddd;
     border-radius: 4px;
 }
@@ -289,6 +230,13 @@
     padding: 2px;
 }
 
+.divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    width: 1950px;
+    margin: 20px -20px;
+}
+
 .remove-subtask img {
     height: 15px;
     width: 15px;
@@ -297,18 +245,13 @@
 
 .subtask-item.completed {
     background-color: #e6f4ea;
-    /* Light green background for completed subtasks */
     border-left: 4px solid #2ecc71;
-    /* Green left border for emphasis */
     padding-left: 8px;
-    /* Slight padding to align with border */
 }
 
 #addSubtaskBtn {
     margin-top: 8px;
-    /* Уменьшили margin */
     padding: 4px 8px;
-    /* Уменьшили padding */
     border: none;
     background: #007bff;
     color: white;
@@ -323,14 +266,6 @@
 .history-subtask {
     background: #e6fff3;
 }
-
-/* .subtask-circle{
-    position: absolute;
-    right: 10px;
-    top: 10px;
-} */
-
-
 
 .modal-content {
     background-color: white;
@@ -349,4 +284,14 @@
 #newGlobalExecutorPhone:focus {
     outline: none;
     border: #007bff 1px solid;
+}
+
+input {
+    padding: 5px;
+    border-radius: 5px;
+    border: #007bff 1px solid;
+}
+
+h2 {
+    margin: 0;
 }

@@ -1,400 +1,423 @@
-/* Стили для модальных окон заказчиков и регионов */
-.modal.trello-style-modal .modal-content.wide-modal {
-    width: 90%;
-    max-width: 700px;
-    /* Компактная ширина */
-    padding: 20px;
-    box-sizing: border-box;
-    border-radius: 8px;
+/* Стили для таблицы заказчиков */
+.customers-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
 }
 
-.modal.trello-style-modal .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
+.customers-table th,
+.customers-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
-.modal.trello-style-modal .modal-header h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-    color: #172b4d;
+.customers-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
 }
 
-.modal.trello-style-modal .close-modal-btn {
-    background: none;
-    border: none;
-    font-size: 24px;
+.customers-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.customer-name {
     cursor: pointer;
-    color: #6b778c;
 }
 
-.modal.trello-style-modal .close-modal-btn:hover {
-    color: #172b4d;
+.customer-actions {
+    text-align: center;
 }
 
-/* Стили для секции добавления */
-.modal.trello-style-modal .add-customer-section,
-.modal.trello-style-modal .add-region-section {
+.edit-customer-container td {
+    padding: 8px;
+}
+
+.edit-customer-container input,
+.edit-customer-container select {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.edit-customer-container button {
+    margin: 5px;
+}
+
+/* Стили для таблицы регионов */
+.regions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.regions-table th,
+.regions-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.regions-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.regions-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.region-name {
+    cursor: pointer;
+}
+
+.region-actions {
+    text-align: center;
+}
+
+.edit-region-form td {
+    padding: 8px;
+}
+
+.edit-region-form input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.edit-region-form button {
+    margin: 5px;
+}
+
+/* Стили для подсказок при наведении */
+.executor-name,
+.customer-name,
+.region-name {
+    position: relative;
+}
+
+.executor-name:hover::after,
+.customer-name:hover::after,
+.region-name:hover::after {
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 10;
+}
+
+/* Стили для таблицы заказчиков */
+.customers-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.customers-list {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.customers-table th,
+.customers-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.customers-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.customers-table tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+    /* Указывает, что строка кликабельна */
+}
+
+.customer-list-item {
+    position: relative;
+}
+
+.customer-list-item:hover::after {
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.edit-customer-container td {
+    padding: 8px;
+}
+
+.edit-customer-container input,
+.edit-customer-container select {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.edit-customer-container button {
+    margin: 5px;
+}
+
+/* Стили для таблицы регионов */
+.regions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.regions-table th,
+.regions-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.regions-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.regions-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.region-name {
+    cursor: pointer;
+}
+
+.region-actions {
+    text-align: center;
+}
+
+.edit-region-form td {
+    padding: 8px;
+}
+
+.edit-region-form input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.edit-region-form button {
+    margin: 5px;
+}
+
+/* Стили для подсказок при наведении */
+.executor-name,
+.customer-name,
+.region-name {
+    position: relative;
+}
+
+.executor-name:hover::after,
+.customer-name:hover::after,
+.region-name:hover::after {
+    position: absolute;
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 10;
+}
+
+
+#newGlobalCustomerTIN,
+#newGlobalCustomerPINFL {
+    width: 130px;
+}
+
+.executors-table,
+.customers-table,
+.regions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.executors-table th,
+.executors-table td,
+.customers-table th,
+.customers-table td,
+.regions-table th,
+.regions-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.executors-table th,
+.customers-table th,
+.regions-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: #333;
+}
+
+.executors-table tr:hover,
+.customers-table tr:hover,
+.regions-table tr:hover {
+    background-color: #fafafa;
+    cursor: default;
+}
+
+.executors-header,
+.customers-header,
+.regions-header {
     margin-bottom: 15px;
 }
 
-.modal.trello-style-modal .add-customer-section h3,
-.modal.trello-style-modal .add-region-section h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #172b4d;
-    margin: 0 0 10px;
+.action-btn {
+    padding: 8px 16px;
+    margin: 5px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.modal.trello-style-modal .input-with-clear {
+.action-btn:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+.edit-executor-btn,
+.edit-customer-btn,
+.edit-region-btn,
+.delete-executor-btn,
+.delete-customer-btn,
+.delete-region-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: opacity 0.2s;
+}
+
+.edit-executor-btn:hover,
+.edit-customer-btn:hover,
+.edit-region-btn:hover,
+.delete-executor-btn:hover,
+.delete-customer-btn:hover,
+.delete-region-btn:hover {
+    opacity: 0.7;
+}
+
+.customModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.customModal-open {
+    opacity: 1;
+}
+
+.customModal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-50px);
+    transition: transform 0.3s ease-in-out;
+}
+
+.customModal-open .customModal-content {
+    transform: translateY(0);
+}
+
+.customModal-content h2 {
+    margin: 0 0 15px;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.customModal-content form {
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
-.modal.trello-style-modal .input-with-clear input,
-.modal.trello-style-modal .input-with-clear select {
-    padding: 6px;
-    border: 1px solid #dfe1e6;
-    border-radius: 4px;
-    font-size: 12px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.modal.trello-style-modal .input-with-clear input:focus,
-.modal.trello-style-modal .input-with-clear select:focus {
-    outline: none;
-    border-color: #0079bf;
-    box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
-}
-
-.modal.trello-style-modal .input-with-clear .action-btn {
-    padding: 6px 12px;
-    background: #0079bf;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
+.customModal-content label {
+    margin-top: 10px;
     font-weight: 600;
+    color: #444;
 }
 
-.modal.trello-style-modal .input-with-clear .action-btn:hover {
-    background: #026aa7;
-}
-
-.modal.trello-style-modal .input-with-clear .action-btn.cancel-btn {
-    background: #dfe1e6;
-    color: #172b4d;
-}
-
-.modal.trello-style-modal .input-with-clear .action-btn.cancel-btn:hover {
-    background: #c4c9d0;
-}
-
-/* Стили для секции списка заказчиков */
-.modal.trello-style-modal .all-customers-section {
-    max-height: 300px;
-    overflow-y: auto;
+.customModal-content input,
+.customModal-content select {
+    margin-top: 5px;
     padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #dfe1e6;
+    border: 1px solid #ccc;
     border-radius: 4px;
-}
-
-.modal.trello-style-modal .customers-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.modal.trello-style-modal .customer-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-    transition: background 0.2s;
-}
-
-.modal.trello-style-modal .customer-list-item:hover {
-    background: #f4f5f7;
-}
-
-.modal.trello-style-modal .customer-info {
-    flex-grow: 1;
-    font-size: 14px;
-    color: #172b4d;
-}
-
-.modal.trello-style-modal .customer-info strong {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 4px;
-}
-
-.modal.trello-style-modal .customer-info p {
-    margin: 2px 0;
-    font-size: 12px;
-}
-
-.modal.trello-style-modal .customer-actions {
-    display: flex;
-    gap: 5px;
-}
-
-.modal.trello-style-modal .customer-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.modal.trello-style-modal .customer-actions button:hover {
-    background: #dfe1e6;
-    border-radius: 4px;
-}
-
-/* Стили для формы редактирования заказчика */
-.modal.trello-style-modal .edit-customer-form {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    /* По 2 поля в строке */
-    gap: 8px;
-    padding: 8px;
-    background: #f4f5f7;
-    border-radius: 4px;
-}
-
-.modal.trello-style-modal .edit-customer-form input,
-.modal.trello-style-modal .edit-customer-form select {
-    padding: 6px;
-    border: 1px solid #dfe1e6;
-    border-radius: 4px;
-    font-size: 12px;
     width: 100%;
     box-sizing: border-box;
-}
-
-.modal.trello-style-modal .edit-customer-form input:focus,
-.modal.trello-style-modal .edit-customer-form select:focus {
-    outline: none;
-    border-color: #0079bf;
-    box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
-}
-
-.modal.trello-style-modal .edit-customer-form .action-btn {
-    padding: 6px 12px;
-    background: #0079bf;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.modal.trello-style-modal .edit-customer-form .action-btn.cancel-btn {
-    background: #dfe1e6;
-    color: #172b4d;
-}
-
-.modal.trello-style-modal .edit-customer-form .action-btn:hover {
-    background: #026aa7;
-}
-
-.modal.trello-style-modal .edit-customer-form .action-btn.cancel-btn:hover {
-    background: #c4c9d0;
-}
-
-/* Кнопки "Сохранить" и "Отмена" в одну строку */
-.modal.trello-style-modal .edit-customer-form .action-btn:nth-child(7),
-.modal.trello-style-modal .edit-customer-form .action-btn:nth-child(8) {
-    grid-column: span 1;
-    /* Кнопки занимают по одной колонке */
-}
-
-/* Стили для секции списка регионов */
-.modal.trello-style-modal .all-regions-section {
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #dfe1e6;
-    border-radius: 4px;
-}
-
-.modal.trello-style-modal .regions-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.modal.trello-style-modal .region-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-    transition: background 0.2s;
-}
-
-.modal.trello-style-modal .region-list-item:hover {
-    background: #f4f5f7;
-}
-
-.modal.trello-style-modal .region-name {
     font-size: 14px;
-    color: #172b4d;
-    flex-grow: 1;
 }
 
-.modal.trello-style-modal .region-actions {
-    display: flex;
-    gap: 5px;
-}
-
-.modal.trello-style-modal .region-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.modal.trello-style-modal .region-actions button:hover {
-    background: #dfe1e6;
-    border-radius: 4px;
-}
-
-/* Стили для формы редактирования региона */
-.modal.trello-style-modal .edit-region-form {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    /* Поле и две кнопки в строке */
-    gap: 8px;
-    padding: 8px;
-    background: #f4f5f7;
-    border-radius: 4px;
-}
-
-.modal.trello-style-modal .edit-region-form input {
-    padding: 6px;
-    border: 1px solid #dfe1e6;
-    border-radius: 4px;
-    font-size: 12px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.modal.trello-style-modal .edit-region-form input:focus {
+.customModal-content input:focus,
+.customModal-content select:focus {
+    border-color: #007bff;
     outline: none;
-    border-color: #0079bf;
-    box-shadow: 0 0 0 2px rgba(0, 121, 191, 0.2);
 }
 
-.modal.trello-style-modal .edit-region-form .action-btn {
-    padding: 6px 12px;
-    background: #0079bf;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
+.customModal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
 }
 
-.modal.trello-style-modal .edit-region-form .action-btn.cancel-btn {
-    background: #dfe1e6;
-    color: #172b4d;
-}
-
-.modal.trello-style-modal .edit-region-form .action-btn:hover {
-    background: #026aa7;
-}
-
-.modal.trello-style-modal .edit-region-form .action-btn.cancel-btn:hover {
-    background: #c4c9d0;
-}
-
-/* Стили для спиннера */
-.modal.trello-style-modal .spinner {
-    border: 4px solid #f4f5f7;
-    border-top: 4px solid #0079bf;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    animation: spin 1s linear infinite;
-    margin: 8px auto;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .modal.trello-style-modal .modal-content.wide-modal {
-        width: 95%;
-        max-width: 500px;
-        padding: 12px;
-    }
-
-    .modal.trello-style-modal .all-customers-section,
-    .modal.trello-style-modal .all-regions-section {
-        max-height: 200px;
-    }
-
-    .modal.trello-style-modal .modal-header h2 {
-        font-size: 16px;
-    }
-
-    .modal.trello-style-modal .input-with-clear input,
-    .modal.trello-style-modal .input-with-clear select,
-    .modal.trello-style-modal .edit-customer-form input,
-    .modal.trello-style-modal .edit-customer-form select,
-    .modal.trello-style-modal .edit-region-form input {
-        font-size: 11px;
-    }
-
-    .modal.trello-style-modal .input-with-clear .action-btn,
-    .modal.trello-style-modal .edit-customer-form .action-btn,
-    .modal.trello-style-modal .edit-region-form .action-btn {
-        font-size: 11px;
-        padding: 5px 10px;
-    }
-
-    .modal.trello-style-modal .customer-info {
-        font-size: 12px;
-    }
-
-    .modal.trello-style-modal .customer-info p {
-        font-size: 11px;
-    }
-
-    .modal.trello-style-modal .region-name {
-        font-size: 12px;
-    }
-
-    /* На мобильных возвращаем столбец для формы редактирования заказчиков */
-    .modal.trello-style-modal .edit-customer-form {
-        grid-template-columns: 1fr;
-        /* Столбец на мобильных */
-    }
-
-    .modal.trello-style-modal .edit-customer-form .action-btn:nth-child(7),
-    .modal.trello-style-modal .edit-customer-form .action-btn:nth-child(8) {
-        grid-column: auto;
-        /* Сбрасываем для столбца */
-    }
+.customModal-actions button {
+    margin-left: 10px;
 }

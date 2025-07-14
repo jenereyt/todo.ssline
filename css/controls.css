@@ -1,16 +1,20 @@
 .controls {
     max-width: 1950px;
     display: flex;
-    justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 20px;
+    gap: 5px;
+
+}
+
+.tasks {
+    margin-top: 40px;
 }
 
 .filters {
     display: flex;
     flex-wrap: wrap;
     gap: 7px;
-    align-items: flex-end;
+    align-items: center;
     position: relative;
 }
 
@@ -26,19 +30,38 @@
 }
 
 .date-range {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+    align-items: center;
+    gap: 7px;
+}
+
+.action-btn {
+    display: inline-block;
+    padding:  8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.action-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .date-range input[type="date"] {
     width: 100px;
-    padding: 10px;
+    padding: 7px;
     border: 1px solid #d8dde3;
     border-radius: 6px;
-    font-size: 14px;
-    height: 20px;
     transition: border-color 0.3s ease;
+    font-size: 12px;
 }
 
 .date-range input[type="date"]:focus {
@@ -47,11 +70,18 @@
     box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
 }
 
+#newGlobalCustomerRegion {
+    padding: 5px;
+    outline: none;
+    border-radius: 5px;
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.2);
+}
+
 .filter-group input[type="text"] {
     position: relative;
-    width: 100px;
-    height: 20px;
-    padding: 10px;
+    width: 125px;
+    padding: 8px;
     border: 1px solid #d8dde3;
     border-radius: 6px;
     font-size: 12px;
@@ -75,7 +105,7 @@
 
 #createTaskBtn {
     font-size: 14px;
-    padding: 10px;
+    padding: 7px;
     height: 40px;
     cursor: pointer;
 }
@@ -123,6 +153,8 @@
 }
 
 
+
+
 .search-container {
     display: flex;
     align-items: center;
@@ -130,13 +162,10 @@
     position: relative;
 }
 
-.region-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+
 
 .delete-region-btn {
+    cursor: pointer;
     background: transparent;
 }
 
@@ -253,30 +282,12 @@ body {
     flex-wrap: wrap;
 }
 
-.filters input,
-.filters select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
 
 .header-actions {
     display: flex;
     gap: 10px;
 }
 
-/* .header-actions button {
-    padding: 8px 16px;
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-} */
-
-/* .header-actions button:hover {
-    background: #0056b3;
-} */
 
 .confirm-button {
     margin-left: 10px;
@@ -397,94 +408,9 @@ body {
     content: '↓';
 }
 
-/* Стили для бургер-меню */
-.burger-menu-btn {
-    display: none;
-    width: 40px;
-    height: 40px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    position: relative;
-}
-
-.burger-menu-btn span {
-    display: block;
-    width: 24px;
-    height: 3px;
-    background: #333;
-    position: absolute;
-    left: 8px;
-    transition: all 0.3s ease;
-}
-
-.burger-menu-btn span:nth-child(1) {
-    top: 10px;
-}
-
-.burger-menu-btn span:nth-child(2) {
-    top: 18px;
-}
-
-.burger-menu-btn span:nth-child(3) {
-    top: 26px;
-}
-
-.burger-menu-btn.open span:nth-child(1) {
-    transform: rotate(45deg);
-    top: 18px;
-}
-
-.burger-menu-btn.open span:nth-child(2) {
-    opacity: 0;
-}
-
-.burger-menu-btn.open span:nth-child(3) {
-    transform: rotate(-45deg);
-    top: 18px;
-}
-
-.burger-menu {
-    display: none;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 250px;
-    height: 100%;
-    background: #fff;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    z-index: 1000;
-}
-
-.burger-menu.open {
-    display: block;
-    transform: translateX(0);
-}
-
-.burger-menu-item {
-    display: block;
-    padding: 15px 20px;
-    color: #333;
-    text-decoration: none;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-}
-
-.burger-menu-item:hover {
-    background: #f0f0f0;
-}
-
-/* Адаптивность */
 @media (max-width: 1450px) {
     .header-actions {
         display: none;
-    }
-
-    .burger-menu-btn {
-        display: block;
     }
 }
 
@@ -611,8 +537,4 @@ body {
 
 .delete-customer:hover {
     background: #c82333;
-}
-
-.hidden {
-    display: none;
 }

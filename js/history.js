@@ -20,7 +20,7 @@ export async function createHistory(taskId, change, user) {
         if (!response.ok) {
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return await response.json(); // { id, date, change, user, taskId, task }
+        return await response.json();
     } catch (error) {
         console.error('Ошибка при создании записи в истории:', error);
         throw error;
@@ -42,7 +42,7 @@ export async function fetchHistory() {
         }
         const data = await response.json();
         console.log('Полученные записи истории:', data);
-        return data; // [{ id, date, change, user, taskId, task }, ...]
+        return data; 
     } catch (error) {
         console.error('Ошибка при получении истории:', error);
         alert(`Не удалось загрузить историю: ${error.message}`);
@@ -66,7 +66,7 @@ export async function fetchHistoryById(id) {
             }
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return await response.json(); // { id, date, change, user, taskId, task }
+        return await response.json(); 
     } catch (error) {
         console.error('Ошибка при получении записи истории:', error);
         throw error;
@@ -95,7 +95,7 @@ export async function updateHistory(id, taskId, change, user, date) {
             }
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return await response.json(); // { id, date, change, user, taskId }
+        return await response.json(); 
     } catch (error) {
         console.error('Ошибка при обновлении записи истории:', error);
         throw error;

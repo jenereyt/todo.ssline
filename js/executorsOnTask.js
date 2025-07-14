@@ -29,7 +29,7 @@ export async function assignExecutorToTask(taskId, executorId, task, executor) {
             }
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return await response.json(); // { taskId, executorId, task, executor }
+        return await response.json(); 
     } catch (error) {
         console.error('Ошибка при назначении исполнителя:', error);
         throw error;
@@ -51,7 +51,7 @@ export async function fetchExecutorsOnTasks() {
         }
         const data = await response.json();
         console.log('Полученные связи:', data);
-        return data; // [{ taskId, executorId, task, executor }, ...]
+        return data; 
     } catch (error) {
         console.error('Ошибка при получении связей:', error);
         alert(`Не удалось загрузить связи исполнителей и задач: ${error.message}`);
@@ -75,7 +75,7 @@ export async function removeExecutorFromTask(taskId, executorId) {
             }
             throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
         }
-        return true; // Успешное удаление
+        return true; 
     } catch (error) {
         console.error('Ошибка при удалении исполнителя из задачи:', error);
         throw error;
